@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRIDTypeInvalid">Personal customer ocr id type invalid</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRDifference">Personal customer ocr difference</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRBackId">Personal customer ocr back id not identified</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRPassport">Personal customer ocr passport not identified</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceRecognitionNoFaceDetected">Personal customer face recognition no face detected</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceMatch">Personal customer face match</text>
+		<text name="error_fpt_ekyc_PersonalCustomerAgeInvalid">Personal customer age invalid</text>
+		<text name="error_fpt_ekyc_PersonalCustomerIdExpired">Personal customer id expired</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRBackIdNotEmpty">Personal customer ocr back id not empty</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRFrontId">Personal customer ocr id type invalid</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceRecognitionNotMatch">Personal customer face recognition not match</text>
+		<text name="error_fpt_ekyc_PersonalCustomerHttpError">Error eKYC service</text>
+		<text name="error_fpt_ekyc_OCRNotPermission">ORC not permission connect to API</text>
+		<text name="error_fpt_ekyc_OCRErrorFromFPTPoc">OCR error from FPT Poc</text>
+		
+	</texts>
+</localizationDictionary>

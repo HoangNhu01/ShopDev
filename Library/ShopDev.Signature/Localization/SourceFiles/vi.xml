@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!--<text name="error_signature_">...</text>-->
+    <text name="error_signature_TimeOutToSign">Quá hạn thời gian kí</text>
+    <text name="error_signature_SignatureCanBeSign">Dịch vụ kí điện tử đang gặp sự cố </text>
+    <text name="error_signature_InternalServerError">Server đang gặp lỗi</text>
+    <text name="error_signature_InnerMessageCodeDetail">Trang kí không hợp lệ</text>
+
+  </texts>
+</localizationDictionary>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_convert_file_InvalidFormatFileExtension">File tải lên không hợp lệ</text>
+		<text name="error_convert_file_ConvertFileServiceOutOfDuration">Dịch vụ đang bảo trì</text>
+		<text name="error_convert_file_InternalServerError">Lỗi dịch vụ convert file</text>
+	</texts>
+</localizationDictionary>

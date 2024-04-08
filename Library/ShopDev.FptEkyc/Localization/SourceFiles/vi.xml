@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRIDTypeInvalid">Giấy tờ không đúng định dạng</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRDifference">Giấy tờ không cùng định dạng</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRBackId">Không nhận dạng được giấy tờ mặt sau</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRPassport">Không nhận đạng được ảnh hộ chiếu</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceRecognitionNoFaceDetected">Không có khuôn mặt trong ảnh</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceMatch">Không so khớp được gương mặt</text>
+		<text name="error_fpt_ekyc_PersonalCustomerAgeInvalid">Khách hàng phải từ 18 tuổi trở lên mới đủ điều kiện đăng ký tài khoản</text>
+		<text name="error_fpt_ekyc_PersonalCustomerIdExpired">Giấy tờ đã hết hạn</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRBackIdNotEmpty">Ảnh mặt sau CMND/CCCD không được bỏ trống</text>
+		<text name="error_fpt_ekyc_PersonalCustomerOCRFrontId">Không nhận dạng được giấy tờ mặt trước</text>
+		<text name="error_fpt_ekyc_PersonalCustomerFaceRecognitionNotMatch">Xác thực khuôn mặt không khớp</text>
+		<text name="error_fpt_ekyc_PersonalCustomerHttpError">Lỗi dịch vụ eKYC</text>
+		<text name="error_fpt_ekyc_OCRNotPermission">Không có quyền truy cập vào API</text>
+		<text name="error_fpt_ekyc_OCRErrorFromFPTPoc">Lỗi OCR từ FPTPoc</text>
+	</texts>
+</localizationDictionary>

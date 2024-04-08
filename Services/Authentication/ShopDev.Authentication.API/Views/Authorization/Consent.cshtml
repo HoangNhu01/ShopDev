@@ -1,0 +1,11 @@
+﻿@using ShopDev.Constants.Authorization;
+@model ShopDev.Authentication.API.Models.ConsentModel
+
+Chấp thuận
+Redirect url: @Model?.ReturnUrl
+
+<form action="/authenticate/consent" method="post">
+    <input type="submit" name="grant" value="@ConsentValue.Grant">
+    <input type="submit" name="grant" value="@ConsentValue.Deny" />
+    <input type="hidden" name="ReturnUrl" value="@Model?.ReturnUrl" />
+</form>

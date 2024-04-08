@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_s3_ErrorMessage">{0}</text>
+		<text name="error_s3_UploadMediaError">Upload media error</text>
+		<text name="error_s3_UploadMediaNotFound">Source/Bucket not found</text>
+		<text name="error_s3_UploadMediaBadRequest">Upload media bad request</text>
+
+		<text name="error_s3_DeleteMediaError">Delete media error</text>
+		<text name="error_s3_DeleteMediaNotFound">Source/Bucket not found</text>
+		<text name="error_s3_DeleteMediaBadRequest">Delete media bad request</text>
+		<text name="error_s3_ReadMediaNotFound">Read source not found</text>
+		<text name="error_s3_ReadMediaBadRequest">Read source bad request</text>
+		<text name="error_s3_ReadMediaError">Read media error</text>
+	</texts>
+</localizationDictionary>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_pvcb_ErrorMessage">{0}</text>
+		<!--HttpCode"> 201 -->
+		<text name="error_pvcb_WaitForConfirmation">Wait for confirmation (201)</text>
+		<!--//Code 04,No HttpStatuscode-->
+		<text name="error_pvcb_TransactionPendingPayment">Transaction pending payment (04)</text>
+		<text name="error_pvcb_TheTransactionHasBeenRefunded">The transaction has been refunded (06)</text>
+		<text name="error_pvcb_BackendResponseSuccess">Successful response (08)</text>
+		<!--//HttpCode"> 400-->
+		<text name="error_pvcb_NoDataFound">No data found (Code: 101)</text>
+		<text name="error_pvcb_TransactionIdNotFound">Transaction Id not found (Code: 102)</text>
+		<text name="error_pvcb_OriginalPaymentNeverReceived">Original payment never received (Code: 103)</text>
+		<text name="error_pvcb_JSONRequestInvalid">JSON request invalid (Code: 028)</text>
+		<text name="error_pvcb_AmountExceededDailyTransactionLimit">Amount exceeded daily transaction limit (Code: 301)</text>
+		<text name="error_pvcb_TransactionAmountExceedsTheAllowedLimit">Transaction amount exceeds the allowed limit (Code: 302)</text>
+		<text name="error_pvcb_TransactionAmountBelowAllowable">Transaction amount below allowable (Code: 303)</text>
+		<text name="error_pvcb_TheAmountInTheAccountIsNotEnoughToMakeTheTransaction">The amount in the account is not enough to make the transaction (Code: 304)</text>
+		<text name="error_pvcb_InvalidTransactionAmount">Invalid transaction amount (Code: 305)</text>
+		<text name="error_pvcb_CardNumberOrAccountNotFound">Card number/Account not found (Code: 401)</text>
+		<text name="error_pvcb_CardNumberOrAccountNotCorrect">Card number/Account not correct (Code: 402)</text>
+		<text name="error_pvcb_CardOrAccountStatusNotValid">Card/Account status not valid (Code: 403)</text>
+		<text name="error_pvcb_CardOrccountTypeNotValid">Card/Account type not valid (Code: 404)</text>
+		<text name="error_pvcb_NameOnCardOrAccountNotCorrect">Name on Card/Account not correct (Code: 405)</text>
+		<text name="error_pvcb_CardOrAccountNotActivated">Card/Account not activated (Code: 406)</text>
+		<text name="error_pvcb_CardOrAccountHasBeenBlocked">Card/Account has been blocked (Code: 407)</text>
+		<text name="error_pvcb_InsufficientFunds">Insufficient funds (Code: 409)</text>
+		<text name="error_pvcb_BeneficiaryBankIsNotValidOrHasNotJoinedTheService">Beneficiary bank is not valid or has not joined the service (Code: 410)</text>
+		<text name="error_pvcb_ExpiredBeneficiaryCard">Expired beneficiary card (Code: 411)</text>
+		<text name="error_pvcb_TransactionFailedBecauseDestinationCardIsInLostStatus">Transaction failed because destination card is in lost status (Code: 412)</text>
+		<text name="error_pvcb_CardNumberOrAccountHasExpired">Card number/account has expired (Code: 413)</text>
+		<text name="error_pvcb_CardNumberIsInLostStatus">Card number is in lost status (Code: 414)</text>
+		<text name="error_pvcb_TransactionAmountExceedsTheAllowedLimitForTheDay">Transaction amount exceeds the allowed limit for the day (Code: 415)</text>
+		<text name="error_pvcb_NumberOfTransactionsRxceedingTheAllowedLimitInADay">Number of transactions exceeding the allowed limit in a day (Code: 416)</text>
+		<text name="error_pvcb_TimeoutFromBeneficiaryBank">Timeout from beneficiary bank (Code: 417)</text>
+		<text name="error_pvcb_NoTransactionProcessingStatusMessagesFromNapas">No transaction processing status messages from Napas(Code: 418)</text>
+		<text name="error_pvcb_ThisTransactionDoesNotSupportRefund">This transaction does not support refund (Code: 501)</text>
+		<text name="error_pvcb_NotEligibleToUseTheService">Not eligible to use the service (Code: 502)</text>
+		<text name="error_pvcb_TransactionIsDuplicate">Transaction is duplicate (Code: 503)</text>
+		<text name="error_pvcb_ClientIDInvalid">Client ID invalid (Code: 600)</text>
+		<!--//No HttpStatus-->
+		<text name="error_pvcb_MACInvalid">MAC invalid (Code: 990)</text>
+		<!--//HttpStatus"> 500-->
+		<text name="error_pvcb_UnableToConnectToNapasSystem">Unable to connect to Napas system (Code: 991)</text>
+		<text name="error_pvcb_UnableToParseMessageFromNapas">Unable to parse message from Napas (Code: 992)</text>
+		<text name="error_pvcb_UnableToConnectToT24System">Unable to connect to T24 system (Code 993)</text>
+		<text name="error_pvcb_UnableToConnectToERSSystem">Unable to connect to ERS system (Code: 994)</text>
+		<!--//No HttpStatus-->
+		<text name="error_pvcb_GenerateMACFailure">Generate MAC failure (Code: 995)</text>
+		<!--//HttpStatus"> 504-->
+		<text name="error_pvcb_Timeout">Timeout (Code: 996)</text>
+		<!--//HttpStatus"> 500-->
+		<text name="error_pvcb_UnableToConnectToFESystem">Unable to connect to FE system (Code: 997)</text>
+		<text name="error_pvcb_UnableToGetMessageFromNapasSystem">Unable to get message from Napas system (Code: 68)</text>
+		<text name="error_pvcb_SystemHasAnErrorPleaseContactBankForMoreDetails">System has an error. Please contact bank for more details (Code: 999)</text>
+		<!--//HttpStatus"> 501-->
+		<text name="error_pvcb_TransactionsRejectedByInternalSystems">Transactions rejected by internal systems (Code: 027)</text>
+		<text name="error_pvcb_TransactionsRejectedByExternalSystems">Transactions rejected by external systems (Code: 029)</text>
+		<!--//HttpStatus"> 400-->
+		<text name="error_pvcb_DataCreditorAccountSourceNumberMustNotBeNull">Data.CreditorAccount.SourceNumber must not be null (Code: 0001)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeMustNotBeNull">Data.CreditorAccount.SourceType must not be null (Code: 0002)</text>
+		<text name="error_pvcb_RiskBINIdMustNotBeNull">Risk.BINId must not be null (Code: 0003)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeBeneficiaryAccountTypeACCAccountOrPANCard">Data.CreditorAccount.SourceType beneficiary account type, ACC: account PAN: card (Code: 0004)</text>
+		<text name="error_pvcb_DataTransIdMustNotBeNull">Data.TransId must not be null (Code: 0005)</text>
+		<text name="error_pvcb_DataDateTimeMustNotBeNull">Data.DateTime must not be null (Code: 0006)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberMustNotBeNull2">Data.CreditorAccount.SourceNumber must not be null (Code: 0007)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeMustNotBeNull2">Data.CreditorAccount.SourceType must not be null (Code: 0008)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountMustNotBeNull">Data.InstructedAmount.Amount must not be null (Code: 0009)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountIsNotNumber">Data.InstructedAmount.Amount is not number (Code: 0010)</text>
+		<text name="error_pvcb_RiskBINIdMustNotBeNull2">Risk.BINId must not be null (Code: 0011)</text>
+		<text name="error_pvcb_DataTransIdAlreadyExists">Data.TransId already exists (Code: 0012)</text>
+		<text name="error_pvcb_DataDateTimeIsNotInTheCorrectFormat">Data.DateTime is not in the correct format (Code: 0013)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeBeneficiaryAccountTypeACCAccountPANCard">Data.CreditorAccount.SourceType beneficiary account type, ACC: account PAN: card (Code: 0014)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountLimitPerTime">Data.InstructedAmount.Amount limit per time (Code: 0015)</text>
+		<text name="error_pvcb_RiskTransDescNeedsToBeLessThan210Characters">Risk.TransDesc needs to be less than 210 characters (Code: 0016)</text>
+		<text name="error_pvcb_RiskMustNotBeNull">Risk must not be nully (Code: 0017)</text>
+		<text name="error_pvcb_RiskTransDescMustNotBeNull">Risk.TransDesc must not be null (Code: 0018)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNameMustNotBeNull">Data.CreditorAccount.SourceName must not be null (Code: 0019)</text>
+		<text name="error_pvcb_RiskTransDescDoNotUseSpecialCharacters">Risk.TransDesc do not use special characters (Code: 0020)</text>
+		<text name="error_pvcb_DataTransIdCannotBeANumber">Data.TransId can not be a number (Code: 0021)</text>
+		<text name="error_pvcb_DataTransIdWrongFormat">Data.TransId wrong format (Code: 0022)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberCannotBeANumber">Data.CreditorAccount.SourceNumber can not be a number (Code: 0023)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberWrongFormat">Data.CreditorAccount.SourceNumber wrong format (Code: 0024)</text>
+		<text name="error_pvcb_RiskTransDescCannotBeANumber">Risk.TransDesc can not be a number (Code: 0025)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNameCannotBeANumber">Data.CreditorAccount.SourceName can not be a number (Code: 0026)</text>
+		<text name="error_pvcb_SystemErrorPleaseTrAagainLater">System error please try again later (Code: 500)</text>
+		<text name="error_pvcb_SystemError">System error (Code: 400)</text>
+
+		<text name="error_pvcb_PvcbBadRequest">Connect PVCB bad request</text>
+		<text name="error_pvcb_PvcbCannotConnectToServer">Unable to connect to PVCB</text>
+		<text name="error_pvcb_PvcbError">An error occurred while connecting to PVCB</text>
+
+		<text name="error_pvcb_PvcbResponseDataNull">Error returned from PVCB</text>
+		<text name="error_pvcb_PvcbResponseCredittorAccountNull">Error information returned from PVCB</text>
+		<text name="error_pvcb_PvcbResponseSourceNameNull">Error result of querying bank account from PVCB</text>
+    
+		<text name="error_pvcb_GetInforNotFound">Can not register virtual account infor (Code: 134)</text>
+		<text name="error_pvcb_GetVirtualAccNotFound">Virtual account infor not found (Code: 136)</text>
+		<text name="error_pvcb_GetTransactionVirtualAccNotFound">Transaction of virtual acc not found (Code: 135)</text>
+		<text name="error_pvcb_VAIsClosed">Virtual account is closed, can not be locked (Code: 113)</text>
+		<text name="error_pvcb_LiveRecordNotChange">Live record can not change (Code: 121)</text>
+		<text name="error_pvcb_NotAllowClose">Virtual account not allow closed when Virtual account on locked status (Code: 133)</text>
+		
+		<!--ErrorPVcomBankeKYC-->
+		<text name="error_pvcb_EkycErrorHttpRequest">PVcomBank Ekyc error http request</text>
+		<text name="error_pvcb_EkycErrorGetInformationUnauthorized">PVcomBank Ekyc get information error unauthorized</text>
+		<text name="error_pvcb_EkycErrorGetInformationNotFound">PVcomBank Ekyc get information not found</text>
+		<text name="error_pvcb_AnErrorOccurred">An error occurred!</text>
+	</texts>
+</localizationDictionary>

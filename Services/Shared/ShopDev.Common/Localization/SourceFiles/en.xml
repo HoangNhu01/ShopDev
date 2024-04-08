@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<!--Định nghĩa các lỗi-->
+		<text name="error_System">Error System</text>
+		<text name="error_Unauthorized">Unauthorized</text>
+		<text name="error_UsernameOrPasswordIncorrect">Incorrect user name or password</text>
+		<text name="error_UserNotFound">User not found</text>
+		<text name="error_UserOldPasswordIncorrect">Old password is incorrect</text>
+		<text name="error_UserCustomerNotFound">User customer not found</text>
+		<text name="error_UserCustomerIsVerifyOcr">User customer is verify ocr</text>
+		<text name="error_UserIsVerify">User is verify</text>
+		<text name="error_UserIsRequestVerify">User is request verify</text>
+
+		<text name="error_UserRegisterExistPersonalPhone">Personal phone is used</text>
+		<text name="error_UserRegisterExistPersonalEmail">Personal email is used</text>
+		<text name="error_UserIsVerifyCannotDetele">user is verify cannot delete</text>
+		<text name="error_UserStatusIsInvalid">User status is invalid</text>
+		
+		<text name="error_DepartmentNotFound">Department not found</text>
+		<text name="error_DepartmentNotCreate">Can not create Department</text>
+		<text name="error_DepartmentNotUpdate">Can not update Department</text>
+		<text name="error_DepartmentNotDelete">Can not delete Department</text>
+		<text name="error_DontHaveAnySalesInDepartment">Can not find any saler in Department</text>
+		<text name="error_SaleManagerNotFound">Can not found Department Manager </text>
+		<text name="error_SaleIsSameType">The type have existed in data</text>
+		<text name="error_ChooseTheWrongType">Choose the wrong type</text>
+
+		<text name="error_RoleNotFound">Role not found</text>
+		<text name="error_UserIsDeactive">User has been locked</text>
+		<text name="error_UsernameHasBeenUsed">Username has been used</text>
+		<text name="error_UserEmailIsExist">User email is exist</text>   
+		<!--Lỗi tài liệu-->
+		<text name="error_DocumentNotFound">Document not found</text>
+
+		<!--Lỗi phân quyền -->
+		<text name="error_UserNotHavePermission">Account has no permissions</text>
+
+		<!--Lỗi validate field-->
+		<text name="error_validation_field_Required">Field is required</text>
+		<text name="error_validation_field_MaxLength">Must not exceed {0} characters</text>
+		<text name="error_validation_field_MinLength">Must have at least {0} characters</text>
+		<text name="error_validation_EmailInvalid">Email invalid</text>
+		<text name="error_validation_PhoneInvalid">Phone invalid</text>
+
+		<!--validation model-->
+		<text name="error_validation_IntegerRange">Select one of the following values: {0}</text>
+		<text name="error_validation_StringRange">Select one of the following values: {0}</text>
+		<text name="error_validation_FileExtention">Files are only allowed in the following formats: {0}</text>
+		<text name="error_validation_FileMaxLength">File size must be less than or equal to {0} MB</text>
+		
+		<!--lỗi khách hàng doanh nghiệp-->
+		<text name="error_AddBusinessCustomerFailed">Add Business Customer Failed</text>
+		<text name="error_BusinessCustomerNotFound">Business Customer Not Found</text>
+		<text name="error_BusinessCustomerTempStatusInvalid">Business CustomerTemp Status Invalid</text>
+		<text name="error_BusinessCustomerExistRequestUpdate">Business Customer Exist Request Update</text>
+
+		<!--Lỗi phê duyệt-->
+		<text name="error_ApproveNotFound">Approve not found</text>
+		<text name="error_AppPasswordIncorrect">Password is invalid, your account will be locked if over ({0}) times in a row, ({1}) turns left</text>
+
+	</texts>
+</localizationDictionary>

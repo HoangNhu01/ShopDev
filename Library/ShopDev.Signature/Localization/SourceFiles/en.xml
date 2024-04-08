@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<!--<text name="error_signature_">...</text>-->
+    <text name="error_signature_TimeOutToSign">Time out to sign</text>
+    <text name="error_signature_SignatureCanBeSign">Signature can be sign</text>
+    <text name="error_signature_InternalServerError">Internal server error</text>
+    <text name="error_signature_InnerMessageCodeDetail">Page size not valid</text>
+  </texts>
+</localizationDictionary>

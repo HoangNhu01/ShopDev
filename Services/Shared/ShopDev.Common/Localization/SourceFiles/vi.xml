@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!--Định nghĩa các lỗi-->
+		<text name="error_System">Lỗi hệ thống</text>
+		<text name="error_Unauthorized">Unauthorized</text>
+		<text name="error_UsernameOrPasswordIncorrect">Mật khẩu không chính xác. Vui lòng kiểm tra và thử lại</text>
+		<text name="error_UserNotFound">Số điện thoại không tồn tại. Vui lòng kiểm tra lại</text>
+		<text name="error_UserOldPasswordIncorrect">Mật khẩu cũ không đúng</text>
+		<text name="error_UserCustomerNotFound">Số điện thoại không tồn tại. Vui lòng kiểm tra lại</text>
+		<text name="error_UserCustomerIsVerifyOcr">Người dùng đã đăng ký ocr thông tin giấy tờ</text>
+
+		<text name="error_RoleNotFound">Không tìm thấy vai trò</text>
+		<text name="error_UserIsDeactive">Tài khoản bị khoá</text>
+		<text name="error_UserRegisterExistPersonalPhone">Số điện thoại đã tồn tại trên hệ thống</text>
+		<text name="error_UserRegisterExistPersonalEmail">Email đã tồn tại trên hệ thống</text>
+		<text name="error_UserIsVerifyCannotDetele">Tài khoản đã được xác minh không thể xóa</text>
+		<text name="error_UserStatusIsInvalid">Trạng thái tài khoản không hợp lệ</text>
+		
+		<text name="error_DepartmentNotFound">Không tìm thấy phòng ban</text>
+		<text name="error_DepartmentNotCreate">Đã xảy ra lỗi, Không thể tạo mới phòng ban</text>
+		<text name="error_DepartmentNotUpdate">Đã xảy ra lỗi, Không thể cập nhật thông tin phòng ban</text>
+		<text name="error_DepartmentNotDelete">Đã xảy ra lỗi, không thể xóa phòng ban</text>
+		<text name="error_DontHaveAnySalesInDepartment">Phòng ban đang trống</text>
+		<text name="error_SaleManagerNotFound">Không tìm vị trí quản lý của phòng ban này </text>
+		<text name="error_SaleIsSameType">Chức vụ này đã được thêm trước đó</text>
+		<text name="error_ChooseTheWrongType">Chức vụ thêm khong hợp lệ</text>
+		<text name="error_UsernameHasBeenUsed">Tên người dùng đã được sử dụng</text>
+		<text name="error_UserEmailIsExist">Email đã được sử dụng trong tài khoản ứng dụng</text>
+		<text name="error_UserIsVerify">Tài khoản ứng dụng đã được xác thực</text>
+		<text name="error_UserIsRequestVerify">Tài khoản ứng dụng đang có yêu cầu xác thực</text>
+		<!--Lỗi phân quyền -->
+		<text name="error_UserNotHavePermission">Tài khoản không có quyền truy cập</text>
+
+		<!--Lỗi validate field-->
+		<text name="error_validation_field_Required">Trường bắt buộc nhập</text>
+		<text name="error_validation_field_MaxLength">Trường không được quá {0} ký tự</text>
+		<text name="error_validation_field_MinLength">Trường phải có ít nhất {0} ký tự</text>
+		<text name="error_validation_EmailInvalid">Địa chỉ Email không hợp lệ</text>
+		<text name="error_validation_PhoneInvalid">Số điện thoại không hợp lệ</text>
+
+		<!--validation model-->
+		<text name="error_validation_IntegerRange">Chỉ chọn 1 trong các giá trị sau: {0}</text>
+		<text name="error_validation_StringRange">Chỉ chọn 1 trong các giá trị sau: {0}</text>
+		<text name="error_validation_FileExtention">File chỉ thuộc các định dạng sau: {0}</text>
+		<text name="error_validation_FileMaxLength">File phải lớn hơn hoặc bằng {0} MB</text>
+
+		<!--lỗi khách hàng doanh nghiệp-->
+		<text name="error_AddBusinessCustomerFailed">Thêm mới khách hàng doanh nghiệp thất bại</text>
+		<text name="error_BusinessCustomerNotFound">Không tìm thấy khách hàng doanh nghiệp</text>
+		<text name="error_BusinessCustomerTempStatusInvalid">Trạng thái khách hàng doanh nghiệp không hợp lệ</text>
+		<text name="error_BusinessCustomerExistRequestUpdate">Đã tồn tại trình duyệt chỉnh sửa khách hàng doanh nghiệp</text>
+		<text name="error_CoreCustomerIdentificationNotFound">Không tìm thấy giấy tờ của Khách hàng cá nhân</text>
+
+		<!--Lỗi phê duyệt-->
+		<text name="error_ApproveNotFound">Không tìm thấy bản phê duyệt</text>
+		
+		<text name="error_AppPasswordIncorrect">Mật khẩu không chính xác, tài khoản sẽ bị khóa nếu sai liên tiếp ({0}) lần. Còn lại ({1})</text>
+  </texts>
+</localizationDictionary>
