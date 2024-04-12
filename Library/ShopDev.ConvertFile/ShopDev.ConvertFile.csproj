@@ -19,8 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Desktop\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
     <ProjectReference Include="..\ShopDev.ApplicationBase\ShopDev.ApplicationBase.csproj" />
+    <ProjectReference Include="..\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
   </ItemGroup>
 
 </Project>

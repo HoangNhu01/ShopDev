@@ -1,4 +1,4 @@
-﻿namespace ShopDev.Common.ContractData.Dto
+﻿namespace ShopDev.Common.ContractData.Dtos
 {
     public class ExportResultDto
     {

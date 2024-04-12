@@ -4,6 +4,6 @@ namespace ShopDev.Constants.Database
     {
         public const string TableMigrationsHistory = "__EFMigrationsHistory";
         public const string Default = "dbo";
-        public const string CRCore = "cr_core";
+        public const string SDLogistic = "sd_logistic";
     }
 }

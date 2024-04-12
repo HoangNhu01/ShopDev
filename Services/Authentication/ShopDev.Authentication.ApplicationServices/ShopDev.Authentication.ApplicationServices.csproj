@@ -17,8 +17,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\..\Desktop\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
 		<ProjectReference Include="..\..\..\Library\ShopDev.ApplicationBase\ShopDev.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
 		<ProjectReference Include="..\..\..\Library\ShopDev.Notification\ShopDev.Notification.csproj" />
 		<ProjectReference Include="..\..\..\Library\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
 		<ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />

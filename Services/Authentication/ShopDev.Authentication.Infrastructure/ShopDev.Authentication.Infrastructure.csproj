@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Desktop\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+    <ProjectReference Include="..\..\..\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
     <ProjectReference Include="..\ShopDev.Authentication.Domain\ShopDev.Authentication.Domain.csproj" />
   </ItemGroup>
 

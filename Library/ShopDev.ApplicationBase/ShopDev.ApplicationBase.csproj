@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Desktop\Library\ShopDev.EntitiesBase\ShopDev.EntitiesBase.csproj" />
+    <ProjectReference Include="..\ShopDev.EntitiesBase\ShopDev.EntitiesBase.csproj" />
   </ItemGroup>
 
 </Project>

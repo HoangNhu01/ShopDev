@@ -15,7 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\..\Desktop\Library\ShopDev.Utils\ShopDev.Utils.csproj" />
 		<ProjectReference Include="..\..\Authentication\ShopDev.Authentication.ApplicationServices\ShopDev.Authentication.ApplicationServices.csproj" />
 		<ProjectReference Include="..\ShopDev.Common\ShopDev.Common.csproj" />
 		<ProjectReference Include="..\ShopDev.Constants\ShopDev.Constants.csproj" />

@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\Desktop\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
 		<ProjectReference Include="..\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
 	</ItemGroup>
 	<ItemGroup>

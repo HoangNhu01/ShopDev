@@ -15,9 +15,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\..\Desktop\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
-		<ProjectReference Include="..\..\..\..\..\..\Desktop\Library\ShopDev.Utils\ShopDev.Utils.csproj" />
 		<ProjectReference Include="..\..\..\Library\ShopDev.ApplicationBase\ShopDev.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\..\Authentication\ShopDev.Authentication.Infrastructure\ShopDev.Authentication.Infrastructure.csproj" />
 		<ProjectReference Include="..\ShopDev.Constants\ShopDev.Constants.csproj" />
 	</ItemGroup>
 

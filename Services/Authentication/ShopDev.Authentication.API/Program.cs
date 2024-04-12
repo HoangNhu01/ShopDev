@@ -18,13 +18,13 @@ using ShopDev.Constants.Common;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
 using ShopDev.Constants.RabbitMQ;
+using ShopDev.IdentityServerBase.Middlewares;
+using ShopDev.IdentityServerBase.StartUp;
 using ShopDev.S3Bucket;
+using ShopDev.S3Bucket.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
-using ShopDev.S3Bucket.Configs;
-using ShopDev.IdentityServerBase.StartUp;
-using ShopDev.IdentityServerBase.Middlewares;
 
 namespace ShopDev.Authentication.API
 {
@@ -94,7 +94,7 @@ namespace ShopDev.Authentication.API
                 );
 
             //entity framework
-            builder.Services.AddDbContext<AuthenticationDbContext>(
+            builder.Services.AddDbContextPool<AuthenticationDbContext>(
                 options =>
                 {
                     //options.UseInMemoryDatabase("DbDefault");
@@ -111,15 +111,7 @@ namespace ShopDev.Authentication.API
                     );
                     options.UseOpenIddict();
                 },
-                ServiceLifetime.Scoped
-            );
-
-            builder.Services.AddDbContext<AuthenticationDbContextTransient>(
-                options =>
-                {
-                    options.UseSqlServer(connectionString);
-                },
-                ServiceLifetime.Transient
+                poolSize: 128
             );
 
             builder.ConfigureS3();
@@ -136,9 +128,9 @@ namespace ShopDev.Authentication.API
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<INotificationTokenService, NotificationTokenService>();
             builder.Services.AddScoped<IS3ManagerFile, S3ManagerFile>();
-                        builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
+            builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
-                        var app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (EnvironmentNames.DevelopEnv.Contains(app.Environment.EnvironmentName))
@@ -160,7 +152,7 @@ namespace ShopDev.Authentication.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCheckAuthorizationToken();
-            app.UseCheckUser();
+            //app.UseCheckUser();
             app.MapControllers();
             app.MapHealthChecks("/health");
             app.Run();
