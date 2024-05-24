@@ -11,9 +11,9 @@ using ShopDev.InfrastructureBase.Persistence;
 
 namespace ShopDev.Authentication.Infrastructure.Persistence
 {
-    public partial class AuthenticationDbContext : ApplicationDbContext<User>
+    public partial class AuthenticationDbContext : ApplicationDbContext
     {
-        public override DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
@@ -33,25 +33,7 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(DbSchemas.Default);
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.Property(e => e.IsTempPin).HasColumnName("IsTempPin").HasDefaultValue(false);
-                entity
-                    .Property(e => e.Status)
-                    .HasColumnName("Status")
-                    .HasDefaultValue(UserStatus.ACTIVE);
-                entity
-                    .Property(e => e.UserType)
-                    .HasColumnName("UserType")
-                    .HasDefaultValue(UserTypes.ADMIN);
-                entity
-                    .Property(e => e.LoginFailCount)
-                    .HasColumnName("LoginFailCount")
-                    .HasDefaultValue(0);
-                entity
-                    .Property(e => e.DateTimeLoginFailCount)
-                    .HasColumnName("DateTimeLoginFailCount");
-            });
+           
             //modelBuilder
             //    .Entity<NotificationToken>()
             //    .HasOne(e => e.User)

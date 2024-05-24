@@ -50,7 +50,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             {
                 throw new UserFriendlyException(ErrorCode.UserNotFound);
             }
-            else if (!new int[] { UserTypes.ADMIN, UserTypes.SUPER_ADMIN }.Contains(user.UserType))
+            else if (!new int[] { UserTypes.SHOP, UserTypes.SUPER_ADMIN }.Contains(user.UserType))
             {
                 throw new UserFriendlyException(ErrorCode.UserLoginUserTypeInvalid);
             }
@@ -149,7 +149,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             {
                 user.Status = UserStatus.ACTIVE;
             }
-            user.UserType = UserTypes.ADMIN;
+            user.UserType = UserTypes.SHOP;
             var result = _dbContext.Users.Add(user);
             _dbContext.SaveChanges();
 
@@ -251,7 +251,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                     .AsEnumerable()
                 where
                     !user.Deleted
-                    && user.UserType == UserTypes.ADMIN
+                    && user.UserType == UserTypes.SHOP
                     && (input.Username == null || user.Username.Contains(input.Username))
                     && (
                         input.FullName == null

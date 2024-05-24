@@ -1,11 +1,11 @@
-﻿using ShopDev.ApplicationBase.Localization;
-using ShopDev.Common;
-using ShopDev.Constants.Users;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using ShopDev.ApplicationBase.Localization;
+using ShopDev.Common;
+using ShopDev.Constants.Users;
 
 namespace ShopDev.UserRolePermission
 {
@@ -60,6 +60,6 @@ namespace ShopDev.UserRolePermission
     public class AuthorizeAdminUserTypeFilterAttribute : AuthorizeUserTypeFilterAttribute
     {
         public AuthorizeAdminUserTypeFilterAttribute()
-            : base(UserTypes.SUPER_ADMIN, UserTypes.ADMIN) { }
+            : base(UserTypes.SUPER_ADMIN, UserTypes.SHOP) { }
     }
 }

@@ -43,7 +43,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.U
         /// <summary>
         /// Loại tài khoản
         /// </summary>
-        [IntegerRange(AllowableValues = new int[] { UserTypes.ADMIN, UserTypes.CUSTOMER })]
+        [IntegerRange(AllowableValues = [UserTypes.SHOP, UserTypes.CUSTOMER])]
         public int? UserType { get; set; }
         public int? Status { get; set; }
         public int CustomerId { get; set; }

@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Users;
-using Microsoft.EntityFrameworkCore;
 using ShopDev.EntitiesBase.AuthorizationEntities;
 
 namespace ShopDev.Authentication.Domain.Users
@@ -11,7 +11,6 @@ namespace ShopDev.Authentication.Domain.Users
     [Table(nameof(User), Schema = DbSchemas.Default)]
     [Index(
         nameof(Username),
-        nameof(CustomerId),
         nameof(CreatedDate),
         nameof(Status),
         nameof(UserType),
@@ -26,12 +25,12 @@ namespace ShopDev.Authentication.Domain.Users
         [Required]
         [MaxLength(128)]
         [Unicode(false)]
-        public string Username { get; set; } = null!;
+        public required string Username { get; set; }
 
         [Required]
         [MaxLength(128)]
         [Unicode(false)]
-        public string Password { get; set; } = null!;
+        public required string Password { get; set; }
 
         [MaxLength(256)]
         public string? FullName { get; set; }
@@ -58,11 +57,6 @@ namespace ShopDev.Authentication.Domain.Users
         [Unicode(false)]
         public string? PinCode { get; set; }
         public bool IsTempPin { get; set; }
-
-        /// <summary>
-        /// Id của khách hàng bảng chính
-        /// </summary>
-        public int? CustomerId { get; set; }
 
         /// <summary>
         /// Có phải là mật khẩu tạm, Yêu cầu thay đổi mật khẩu mới ngay khi đăng nhập
