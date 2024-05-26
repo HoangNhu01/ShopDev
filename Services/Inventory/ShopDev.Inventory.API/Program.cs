@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.ApplicationServices.Common.Localization;
@@ -40,13 +41,13 @@ namespace ShopDev.Logistic.API
             builder.ConfigureAuthentication();
             builder.ConfigureCors();
             builder.ConfigureRabbitMQ();
-			// Khởi tạo instance cho MongoDB
-			builder.Services.AddSingleton<IMapErrorCode, InventoryMapErrorCode>();
-			builder.Services.AddSingleton<ExtensionsDbContext>();
+            // Khởi tạo instance cho MongoDB
+            builder.Services.AddSingleton<IMapErrorCode, InventoryMapErrorCode>();
+            builder.Services.AddSingleton<ExtensionsDbContext>();
             builder.Services.AddScoped<IProductService, ProductService>();
-			builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
+            builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
 
-			string authConnectionString =
+            string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
                 ?? throw new InvalidOperationException(
                     "Không tìm thấy connection string \"Default\" trong appsettings.json"
@@ -59,7 +60,13 @@ namespace ShopDev.Logistic.API
             builder.Services.AddDbContextPool<AuthenticationDbContext>(
                 options =>
                 {
-                    options.UseSqlServer(authConnectionString);
+                    options.UseSqlServer(
+                        authConnectionString,
+                        sqlOptions =>
+                        {
+                            sqlOptions.EnableRetryOnFailure();
+                        }
+                    );
                     options.UseOpenIddict();
                 },
                 poolSize: 128
@@ -75,6 +82,7 @@ namespace ShopDev.Logistic.API
                 {
                     //options.UseInMemoryDatabase("DbDefault");
                     options.UseMongoDB(inventoryConnectionString, "InventoryDB");
+                    options.UseLazyLoadingProxies();
                 },
                 poolSize: 128
             );

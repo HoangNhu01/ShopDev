@@ -18,7 +18,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
         public double Price { get; set; }
-        public required string ShopId { get; set; }
+        public ObjectId ShopId { get; set; }
         public List<AttributeCreateDto> Attributes { get; set; } = [];
         public List<VariationCreateDto> Variations { get; set; } = [];
         public List<SpuCreateDto> Spus { get; set; } = [];

@@ -41,8 +41,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         ShopId = input.ShopId,
                         Variations =
                         [
-                            ..input
-                            .Variations.Select(x => new Variation
+                            .. input.Variations.Select(x => new Variation
                             {
                                 Name = x.Name,
                                 Options = x.Options
@@ -50,23 +49,21 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         ],
                         Attributes =
                         [
-                            .. input
-					        .Attributes.Select(x => new AttributeType
-					        {
-						        Name = x.Name,
-						        Value = x.Value,
-						        AttributeId = Guid.NewGuid()
-					        })
+                            .. input.Attributes.Select(x => new AttributeType
+                            {
+                                Name = x.Name,
+                                Value = x.Value,
+                                AttributeId = Guid.NewGuid()
+                            })
                         ],
                         Spus =
                         [
-                            .. input
-					        .Spus.Select(x => new Spu
-					        {
-						        Index = x.Index,
-						        Price = x.Price,
-						        Stock = x.Stock
-					        })
+                            .. input.Spus.Select(x => new Spu
+                            {
+                                Index = x.Index,
+                                Price = x.Price,
+                                Stock = x.Stock
+                            })
                         ]
                     }
                 )
@@ -76,27 +73,42 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 
         public ProductDetailDto FindById(string id)
         {
-            var product = _dbContext.Products.FirstOrDefault(x => x.Id == id);
-
+            var product = _dbContext.Products.FirstOrDefault(x => x.Id == ObjectId.Parse(id));
             return new()
             {
                 Description = product.Description,
                 Name = product.Name,
-                Id = product.Id,
+                Id = product.Id.ToString(),
                 ShopId = product.ShopId,
                 ThumbUri = product.ThumbUri,
                 Title = product.Title,
                 Attributes =
                 [
-                    .. product.Attributes.GroupBy(x => x.Name).Select(x => new AttributeDetailDto 
-                    { 
-                        Name = x.Key, 
-                        Value = [.. x.Select(c => c.Value)] 
-                    })
+                    .. product
+                        .Attributes.GroupBy(x => x.Name)
+                        .Select(x => new AttributeDetailDto
+                        {
+                            Name = x.Key,
+                            Value = [.. x.Select(c => c.Value)]
+                        })
                 ],
                 Spus =
                 [
-                    .. product.Spus.Select(x => new SpuDetailDto { Id = x.Id, Index = x.Index, Price = x.Price, Stock = x.Stock })
+                    .. product.Spus.Select(x => new SpuDetailDto
+                    {
+                        Id = x.Id.ToString(),
+                        Index = x.Index,
+                        Price = x.Price,
+                        Stock = x.Stock
+                    })
+                ],
+                Variations =
+                [
+                    .. product.Variations.Select(x => new VariationDetailDto
+                    {
+                        Options = x.Options,
+                        Name = x.Name
+                    })
                 ]
             };
         }

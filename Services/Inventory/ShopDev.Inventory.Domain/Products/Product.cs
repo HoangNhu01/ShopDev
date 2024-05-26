@@ -17,7 +17,7 @@ namespace ShopDev.Inventory.Domain.Products
     public class Product : IFullAudited
     {
         [BsonId]
-		public string? Id { get; set; }
+		public ObjectId Id { get; set; }
 
         [MaxLength(100)]
         [BsonElement("name")]
@@ -38,10 +38,10 @@ namespace ShopDev.Inventory.Domain.Products
         public double Price { get; set; }
 
         [BsonElement("shopId")]
-		public required string ShopId { get; set; }
+		public ObjectId ShopId { get; set; }
 
 		[NotMapped]
-		public List<Spu> Spus { get; set; } = [];
+		public virtual List<Spu> Spus { get; set; } = [];
         #region audit
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

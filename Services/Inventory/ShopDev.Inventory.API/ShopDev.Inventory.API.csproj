@@ -30,8 +30,14 @@
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="protect_key_certificate.Development.pfx" />
+    </ItemGroup>
   
   <ItemGroup>
+	  
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.5" />
 	  
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
   </ItemGroup>

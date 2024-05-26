@@ -30,6 +30,7 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
                 .WithOne(x => x.Product)
                 .HasForeignKey(x => x.ProductId);
             modelBuilder.Entity<Spu>().ToCollection(nameof(Spus));
+            modelBuilder.Entity<Spu>().Property(m => m.Version).IsRowVersion();
         }
     }
 }

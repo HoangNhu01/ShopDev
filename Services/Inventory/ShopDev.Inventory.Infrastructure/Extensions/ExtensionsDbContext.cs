@@ -20,9 +20,9 @@ namespace ShopDev.Inventory.Infrastructure.Extensions
         }
 
         public IMongoCollection<TEntity> GetMongoCollection<TEntity>()
-            where TEntity : class
         {
-            return _database.GetCollection<TEntity>(nameof(TEntity));
+            string collectionName = typeof(TEntity).Name.Pluralize();
+            return _database.GetCollection<TEntity>(collectionName);
         }
 
         public async Task CreateNewCollectionAsync()

@@ -36,7 +36,7 @@ namespace ShopDev.Logistic.API.Controllers
 		}
 
 		[Authorize]
-		[HttpGet(Name = "GetWeatherForecast")]
+		[HttpGet("GetWeatherForecast")]
 		public IEnumerable<object> Get()
 		{
 			return Enumerable
@@ -50,7 +50,7 @@ namespace ShopDev.Logistic.API.Controllers
 				.ToArray();
 		}
 
-		[HttpPost(Name = "GetWeatherForecast")]
+		[HttpPost("GetWeatherForecast")]
 		public void Create(ProductCreateDto input)
 		{
 			_productService.Create(input);

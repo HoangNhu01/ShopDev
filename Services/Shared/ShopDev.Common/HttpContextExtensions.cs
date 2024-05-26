@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using ShopDev.Constants.Users;
 using Microsoft.AspNetCore.Http;
+using ShopDev.Constants.Users;
 
 namespace ShopDev.Common
 {
@@ -53,16 +53,13 @@ namespace ShopDev.Common
         )
         {
             string? senderIpv4 = httpContextAccessor
-                ?.HttpContext
-                ?.Connection
-                ?.RemoteIpAddress
-                ?.MapToIPv4()
+                ?.HttpContext?.Connection?.RemoteIpAddress?.MapToIPv4()
                 .ToString();
             if (
-                httpContextAccessor
-                    ?.HttpContext
-                    ?.Request
-                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
+                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
+                    "x-forwarded-for",
+                    out var forwardedIps
+                ) == true
             )
             {
                 senderIpv4 = forwardedIps.FirstOrDefault();
@@ -74,10 +71,10 @@ namespace ShopDev.Common
         {
             string? forwardedIpsStr = null;
             if (
-                httpContextAccessor
-                    ?.HttpContext
-                    ?.Request
-                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
+                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
+                    "x-forwarded-for",
+                    out var forwardedIps
+                ) == true
             )
             {
                 forwardedIpsStr = JsonSerializer.Serialize(forwardedIps.ToList());

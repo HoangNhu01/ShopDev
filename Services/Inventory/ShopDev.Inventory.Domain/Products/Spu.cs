@@ -6,12 +6,13 @@ namespace ShopDev.Inventory.Domain.Products
     public class Spu
     {
         [BsonId]
-		public string? Id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("productId")]
-		public string? ProductId { get; set; }
+        public ObjectId ProductId { get; set; }
+
         [NotMapped]
-        public Product Product { get; } = null!;
+        public virtual Product Product { get; } = null!;
 
         [BsonElement("index")]
         public List<int> Index { get; set; } = [];
@@ -21,5 +22,8 @@ namespace ShopDev.Inventory.Domain.Products
 
         [BsonElement("stock")]
         public int Stock { get; set; }
+
+        [BsonElement("version")]
+        public int Version { get; set; }
     }
 }
