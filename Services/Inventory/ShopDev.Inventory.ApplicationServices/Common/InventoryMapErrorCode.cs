@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ShopDev.Authentication.ApplicationServices.Common
 {
-    public class InventoryMapErrorCode : MapErrorCodeBase<AuthenticationErrorCode>
+    public class InventoryMapErrorCode : MapErrorCodeBase<InventoryErrorCode>
     {
         public InventoryMapErrorCode(
             LocalizationBase localization,

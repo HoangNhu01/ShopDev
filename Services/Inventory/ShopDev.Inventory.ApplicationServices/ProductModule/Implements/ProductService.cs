@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
+using DocumentFormat.OpenXml.InkML;
 using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ShopDev.Authentication.ApplicationServices.Common;
+using ShopDev.Constants.ErrorCodes;
+using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Products;
@@ -29,6 +33,12 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 
         public void Create(ProductCreateDto input)
         {
+            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            HashSet<string> checkDuplicate = [];
+            if (input.Variations.Exists(x => checkDuplicate.Add(x.Name)))
+            {
+                throw new UserFriendlyException(InventoryErrorCode.VariationIsDuplicate);
+            }
             var product = _dbContext
                 .Products.Add(
                     new()
@@ -71,9 +81,45 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             _dbContext.SaveChanges();
         }
 
+        public void Update(ProductUpdateDto input)
+        {
+            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            HashSet<string> checkDuplicate = [];
+            if (input.Variations.Exists(x => !checkDuplicate.Add(x.Name)))
+            {
+                throw new UserFriendlyException(InventoryErrorCode.VariationIsDuplicate);
+            }
+            if (input.Spus.Exists(x => !checkDuplicate.Add(string.Join(string.Empty, x.Index))))
+            {
+                throw new UserFriendlyException(InventoryErrorCode.VariationIsDuplicate);
+            }
+            checkDuplicate.Clear();
+            var product =
+                FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(input.Id))
+                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            if (input.Spus.Count > 0)
+            {
+                UpdateItems(
+                    product.Spus,
+                    input.Spus,
+                    (x, y) => x.Id == ObjectId.Parse(y.Id),
+                    (x, y) =>
+                    {
+                        x.Index = y.Index;
+                        x.Price = y.Price;
+                        x.Stock = y.Stock;
+                    }
+                );
+            }
+            _dbContext.SaveChanges();
+        }
+
         public ProductDetailDto FindById(string id)
         {
-            var product = _dbContext.Products.FirstOrDefault(x => x.Id == ObjectId.Parse(id));
+            _logger.LogInformation($"{nameof(FindById)}: id = {id}");
+            var product =
+                _dbContext.Products.FirstOrDefault(x => x.Id == ObjectId.Parse(id))
+                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {
                 Description = product.Description,

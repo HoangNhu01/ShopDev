@@ -11,5 +11,6 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Abstract
 	{
 		void Create(ProductCreateDto input);
 		ProductDetailDto FindById(string id);
+		void Update(ProductUpdateDto input);
 	}
 }

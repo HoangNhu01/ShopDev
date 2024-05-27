@@ -4,5 +4,6 @@
     {
         protected AuthenticationErrorCode()
             : base() { }
-    }
+
+	}
 }

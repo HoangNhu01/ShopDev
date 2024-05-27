@@ -4,5 +4,8 @@ namespace ShopDev.Constants.ErrorCodes
     {
         protected InventoryErrorCode()
             : base() { }
+
+        public const int ProductNotFound = 9000;
+        public const int VariationIsDuplicate = 9001;
     }
 }

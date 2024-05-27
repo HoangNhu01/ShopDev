@@ -1,9 +1,10 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
 
 namespace ShopDev.Inventory.Domain.Products
 {
-    public class Spu
+    public class Spu : IFullAudited
     {
         [BsonId]
         public ObjectId Id { get; set; }
@@ -25,5 +26,16 @@ namespace ShopDev.Inventory.Domain.Products
 
         [BsonElement("version")]
         public int Version { get; set; }
-    }
+
+		#region audit
+		public DateTime? CreatedDate { get; set; }
+		public int? CreatedBy { get; set; }
+		public DateTime? ModifiedDate { get; set; }
+		public int? ModifiedBy { get; set; }
+		public DateTime? DeletedDate { get; set; }
+		public int? DeletedBy { get; set; }
+		public bool Deleted { get; set; }
+		#endregion
+
+	}
 }

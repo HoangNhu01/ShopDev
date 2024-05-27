@@ -50,16 +50,25 @@ namespace ShopDev.Logistic.API.Controllers
 				.ToArray();
 		}
 
-		[HttpPost("GetWeatherForecast")]
+		[HttpPost("create")]
 		public void Create(ProductCreateDto input)
 		{
 			_productService.Create(input);
 		}
 
-		[HttpGet("GetWeatherForecast/{id}")]
+		[HttpGet("find-by-id/{id}")]
 		public ProductDetailDto Create(string id)
 		{
 			return _productService.FindById(id);
 		}
+
+		[HttpPut("update")]
+		public void Update(ProductUpdateDto input)
+		{
+			 _productService.Update(input);
+			return;
+		}
+
+
 	}
 }
