@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 using System.Text.Json;
 using DocumentFormat.OpenXml.InkML;
-using Humanizer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -52,28 +50,34 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         Variations =
                         [
                             .. input.Variations.Select(x => new Variation
-                            {
-                                Name = x.Name,
-                                Options = x.Options
-                            })
+							{
+								Name = x.Name,
+								Options = x.Options
+							})
                         ],
                         Attributes =
                         [
                             .. input.Attributes.Select(x => new AttributeType
-                            {
-                                Name = x.Name,
-                                Value = x.Value,
-                                AttributeId = Guid.NewGuid()
-                            })
+							{
+								Name = x.Name,
+								Value = x.Value,
+								AttributeId = Guid.NewGuid()
+							})
                         ],
                         Spus =
                         [
                             .. input.Spus.Select(x => new Spu
-                            {
-                                Index = x.Index,
-                                Price = x.Price,
-                                Stock = x.Stock
-                            })
+							{
+								Index = x.Index,
+								Price = x.Price,
+								Stock = x.Stock
+							})
+                        ],
+                        Categories =
+                        [
+                            .. input.Categories.Select(x => new CategoryType {
+                            CategoryId = ObjectId.Parse(x.CategoryId)
+                        })
                         ]
                     }
                 )
@@ -97,6 +101,17 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             var product =
                 FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(input.Id))
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            product.Attributes = _mapper.Map<List<AttributeType>>(input.Attributes);
+            if (
+                input.Variations.ExceptBy(product.Variations.Select(x => x.Name), x => x.Name)
+                is not null
+            )
+            {
+                product.Spus.Clear();
+            }
+
+            product.Variations = _mapper.Map<List<Variation>>(input.Variations);
+            product.Price = input.Price;
             if (input.Spus.Count > 0)
             {
                 UpdateItems(
@@ -118,7 +133,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var product =
-                _dbContext.Products.FirstOrDefault(x => x.Id == ObjectId.Parse(id))
+                FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(id))
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {
@@ -131,29 +146,36 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 Attributes =
                 [
                     .. product
-                        .Attributes.GroupBy(x => x.Name)
-                        .Select(x => new AttributeDetailDto
-                        {
-                            Name = x.Key,
-                            Value = [.. x.Select(c => c.Value)]
-                        })
+						.Attributes.GroupBy(x => x.Name)
+						.Select(x => new AttributeDetailDto
+						{
+							Name = x.Key,
+							Value = [.. x.Select(c => c.Value)]
+						}) 
                 ],
                 Spus =
                 [
                     .. product.Spus.Select(x => new SpuDetailDto
-                    {
-                        Id = x.Id.ToString(),
-                        Index = x.Index,
-                        Price = x.Price,
-                        Stock = x.Stock
-                    })
+					{
+						Id = x.Id.ToString(),
+						Index = x.Index,
+						Price = x.Price,
+						Stock = x.Stock
+					})
                 ],
                 Variations =
                 [
                     .. product.Variations.Select(x => new VariationDetailDto
-                    {
-                        Options = x.Options,
-                        Name = x.Name
+					{
+						Options = x.Options,
+						Name = x.Name
+					})
+                ],
+                Categories =
+                [
+                    .. product.Categories.Select(x => new CategoryTypeDetailDto{
+                        CategoryId = x.CategoryId.ToString(),
+                        Name = x.Category.Name
                     })
                 ]
             };

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
+using ShopDev.Inventory.Domain.Categories;
 
 namespace ShopDev.Inventory.Domain.Products
 {
@@ -51,11 +52,20 @@ namespace ShopDev.Inventory.Domain.Products
         public int? DeletedBy { get; set; }
         public bool Deleted { get; set; }
         #endregion
+        [BsonElement("categories")]
+        public List<CategoryType> Categories { get; set; } = [];
         [BsonElement("attributes")]
         public List<AttributeType> Attributes { get; set; } = [];
 
         [BsonElement("variations")]
         public List<Variation> Variations { get; set; } = [];
+    }
+    public class CategoryType
+    {
+        [BsonElement("categoryId")]
+        public ObjectId CategoryId { get; set; }
+        [NotMapped]
+        public virtual Category Category { get; } = null!;
     }
 
     public class AttributeType

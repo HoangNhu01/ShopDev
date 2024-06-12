@@ -1,8 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
 using ShopDev.ApplicationBase.Common.Validations;
-using ShopDev.Inventory.Domain.Products;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 {
@@ -10,6 +7,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
     {
         [CustomMaxLength(100)]
         public required string Name { get; set; }
+        public required string CategoryId { get; set; }
 
         [CustomMaxLength(2500)]
         public required string Description { get; set; }
@@ -20,10 +18,14 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
         public double Price { get; set; }
         public ObjectId ShopId { get; set; }
         public List<AttributeCreateDto> Attributes { get; set; } = [];
+        public List<CategoryTypeDto> Categories { get; set; } = [];
         public List<VariationCreateDto> Variations { get; set; } = [];
         public List<SpuCreateDto> Spus { get; set; } = [];
     }
-
+    public class CategoryTypeDto
+    {
+        public required string CategoryId { get; set; }
+    }
     public class AttributeCreateDto
     {
         [CustomMaxLength(255)]

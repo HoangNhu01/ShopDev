@@ -8,6 +8,8 @@ using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
+using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
+using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Implements;
 using ShopDev.Inventory.Infrastructure.Extensions;
@@ -45,6 +47,7 @@ namespace ShopDev.Logistic.API
             builder.Services.AddSingleton<IMapErrorCode, InventoryMapErrorCode>();
             builder.Services.AddSingleton<ExtensionsDbContext>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
 
             string authConnectionString =

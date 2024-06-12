@@ -10,16 +10,23 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 {
     public class ProductDetailDto
     {
-        public string Id { get; set; }
+        public required string Id { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
         public double Price { get; set; }
         public ObjectId ShopId { get; set; }
+        public List<CategoryTypeDetailDto> Categories { get; set; } = [];
         public List<AttributeDetailDto> Attributes { get; set; } = [];
         public List<VariationDetailDto> Variations { get; set; } = [];
         public List<SpuDetailDto> Spus { get; set; } = [];
+    }
+
+    public class CategoryTypeDetailDto
+    {
+        public required string CategoryId { get; set; }
+        public required string Name { get; set; }
     }
 
     public class AttributeDetailDto

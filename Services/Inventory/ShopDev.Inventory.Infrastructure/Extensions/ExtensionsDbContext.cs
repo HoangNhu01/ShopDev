@@ -5,18 +5,22 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
-using ShopDev.Inventory.Domain.Products;
 
 namespace ShopDev.Inventory.Infrastructure.Extensions
 {
-    public class ExtensionsDbContext
+    public class ExtensionsDbContext 
     {
         private readonly IMongoDatabase _database;
 
         public ExtensionsDbContext(IConfiguration config)
         {
-            var client = new MongoClient(config.GetConnectionString("MongoDb"));
+            MongoClient client = new(config.GetConnectionString("MongoDb"));
             _database = client.GetDatabase("InventoryDB");
+        }
+
+        public IClientSessionHandle GetClientSession()
+        {
+            return _database.Client.StartSession();
         }
 
         public IMongoCollection<TEntity> GetMongoCollection<TEntity>()
