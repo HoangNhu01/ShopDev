@@ -7,8 +7,6 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
     {
         [CustomMaxLength(100)]
         public required string Name { get; set; }
-        public required string CategoryId { get; set; }
-
         [CustomMaxLength(2500)]
         public required string Description { get; set; }
 
