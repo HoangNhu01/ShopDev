@@ -16,7 +16,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
         public double Price { get; set; }
-        public ObjectId ShopId { get; set; }
+        public int ShopId { get; set; }
         public List<AttributeCreateDto> Attributes { get; set; } = [];
         public List<CategoryTypeDto> Categories { get; set; } = [];
         public List<VariationCreateDto> Variations { get; set; } = [];
@@ -24,7 +24,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
     }
     public class CategoryTypeDto
     {
-        public required string CategoryId { get; set; }
+        public int CategoryId { get; set; }
     }
     public class AttributeCreateDto
     {

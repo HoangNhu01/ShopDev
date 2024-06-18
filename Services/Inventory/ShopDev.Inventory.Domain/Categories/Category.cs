@@ -1,29 +1,40 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using Microsoft.EntityFrameworkCore;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
+using ShopDev.Constants.Database;
 
 namespace ShopDev.Inventory.Domain.Categories
 {
+    [Table(nameof(Category), Schema = DbSchemas.SDInventory)]
+    [Index(
+        nameof(Name),
+        nameof(ParentId),
+        nameof(IsShowOnHome),
+        nameof(Deleted),
+        AllDescending = true,
+        Name = $"IX_{nameof(Category)}",
+        IsUnique = false
+    )]
     public class Category : IFullAudited
     {
-        [BsonId]
-        public ObjectId Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [MaxLength(100)]
-        [BsonElement("name")]
+        //[BsonElement("name")]
         public required string Name { get; set; }
 
         [MaxLength(1024)]
-        [BsonElement("description")]
+        //[BsonElement("description")]
         public required string Description { get; set; }
 
-        [BsonElement("sortOrder")]
+        //[BsonElement("sortOrder")]
         public int SortOrder { set; get; }
 
-        [BsonElement("isShowOnHome")]
+        //[BsonElement("isShowOnHome")]
         public bool IsShowOnHome { set; get; }
 
-        [BsonElement("parentId")]
+        //[BsonElement("parentId")]
         public int? ParentId { set; get; }
         #region audit
         public DateTime? CreatedDate { get; set; }

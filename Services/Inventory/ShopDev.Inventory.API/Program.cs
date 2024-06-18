@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.ApplicationServices.Common.Localization;
@@ -18,7 +17,7 @@ using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
 
-namespace ShopDev.Logistic.API
+namespace ShopDev.Inventory.API
 {
     public static class Program
     {
@@ -75,16 +74,27 @@ namespace ShopDev.Logistic.API
                 poolSize: 128
             );
             string inventoryConnectionString =
-                builder.Configuration.GetConnectionString("MongoDb")
+                builder.Configuration.GetConnectionString("InventoryDb")
                 ?? throw new InvalidOperationException(
-                    "Không tìm thấy connection string \"Default\" trong appsettings.json"
+                    "Không tìm thấy connection string \"InventoryDb\" trong appsettings.json"
                 );
 
             builder.Services.AddDbContextPool<InventoryDbContext>(
                 options =>
                 {
                     //options.UseInMemoryDatabase("DbDefault");
-                    options.UseMongoDB(inventoryConnectionString, "InventoryDB");
+                    options.UseSqlServer(
+                        inventoryConnectionString,
+                        sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(Program).Namespace);
+                            sqlOptions.MigrationsHistoryTable(
+                                DbSchemas.TableMigrationsHistory,
+                                DbSchemas.SDInventory
+                            );
+                            sqlOptions.EnableRetryOnFailure();
+                        }
+                    );
                     options.UseLazyLoadingProxies();
                 },
                 poolSize: 128

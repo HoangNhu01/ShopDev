@@ -16,7 +16,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
         public double Price { get; set; }
-        public ObjectId ShopId { get; set; }
+        public int ShopId { get; set; }
         public List<CategoryTypeDetailDto> Categories { get; set; } = [];
         public List<AttributeDetailDto> Attributes { get; set; } = [];
         public List<VariationDetailDto> Variations { get; set; } = [];

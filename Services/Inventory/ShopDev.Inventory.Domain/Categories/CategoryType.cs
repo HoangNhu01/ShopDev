@@ -1,34 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Database;
 using ShopDev.Inventory.Domain.Products;
 
-namespace ShopDev.Inventory.Domain.Shops
+namespace ShopDev.Inventory.Domain.Categories
 {
-    [Table(nameof(Shop), Schema = DbSchemas.SDInventory)]
+    [Table(nameof(CategoryType), Schema = DbSchemas.SDInventory)]
     [Index(
-        nameof(Name),
-        nameof(Title),
         nameof(Deleted),
         AllDescending = true,
-        Name = $"IX_{nameof(Shop)}",
+        Name = $"IX_{nameof(CategoryType)}",
         IsUnique = false
     )]
-    public class Shop
+    public class CategoryType : IFullAudited
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        [MaxLength(100)]
-        public required string Name { get; set; }
-
-        [MaxLength(2500)]
-        public required string Description { get; set; }
-
-        [MaxLength(255)]
-        public required string Title { get; set; }
-        public required string ThumbUri { get; set; }
-        public virtual List<Product> Products { get; } = [];
+        public int CategoryId { get; set; }
+        public int ProductId { get; set; }
+        public virtual Category Category { get; } = null!;
+        public virtual Product Product { get; } = null!;
         #region audit
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

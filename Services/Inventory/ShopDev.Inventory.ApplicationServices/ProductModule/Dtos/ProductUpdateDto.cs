@@ -5,7 +5,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 {
 	public class ProductUpdateDto
 	{
-		public string Id { get; set; }
+		public int Id { get; set; }
 
 		[CustomMaxLength(100)]
 		public required string Name { get; set; }
@@ -42,7 +42,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 
 	public class SpuUpdateDto
 	{
-		public string? Id { get; set; }
+		public int? Id { get; set; }
 		public List<int> Index { get; set; } = [];
 		public double Price { get; set; }
 		public int Stock { get; set; }

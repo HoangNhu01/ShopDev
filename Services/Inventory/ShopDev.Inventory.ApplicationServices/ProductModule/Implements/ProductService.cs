@@ -10,6 +10,7 @@ using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
+using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
 
@@ -33,7 +34,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
             HashSet<string> checkDuplicate = [];
-            if (input.Variations.Exists(x => checkDuplicate.Add(x.Name)))
+            if (input.Variations.Exists(x => !checkDuplicate.Add(x.Name)))
             {
                 throw new UserFriendlyException(InventoryErrorCode.VariationIsDuplicate);
             }
@@ -76,7 +77,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         Categories =
                         [
                             .. input.Categories.Select(x => new CategoryType {
-                            CategoryId = ObjectId.Parse(x.CategoryId)
+                            CategoryId = x.CategoryId
                         })
                         ]
                     }
@@ -99,7 +100,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             }
             checkDuplicate.Clear();
             var product =
-                FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(input.Id))
+                FindEntities<Product>(expression: x => x.Id == input.Id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             product.Attributes = _mapper.Map<List<AttributeType>>(input.Attributes);
             if (
@@ -117,7 +118,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 UpdateItems(
                     product.Spus,
                     input.Spus,
-                    (x, y) => x.Id == ObjectId.Parse(y.Id),
+                    (x, y) => x.Id == y.Id,
                     (x, y) =>
                     {
                         x.Index = y.Index;
@@ -129,11 +130,11 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             _dbContext.SaveChanges();
         }
 
-        public ProductDetailDto FindById(string id)
+        public ProductDetailDto FindById(int id)
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var product =
-                FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(id))
+                FindEntities<Product>(expression: x => x.Id == id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {
@@ -151,7 +152,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 						{
 							Name = x.Key,
 							Value = [.. x.Select(c => c.Value)]
-						}) 
+						})
                 ],
                 Spus =
                 [
