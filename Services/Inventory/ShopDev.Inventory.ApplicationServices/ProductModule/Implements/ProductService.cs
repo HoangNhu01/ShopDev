@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Text.Json;
-using DocumentFormat.OpenXml.InkML;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
@@ -13,6 +8,7 @@ using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
+using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {
@@ -51,28 +47,28 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         Variations =
                         [
                             .. input.Variations.Select(x => new Variation
-							{
-								Name = x.Name,
-								Options = x.Options
-							})
+                            {
+                                Name = x.Name,
+                                Options = x.Options
+                            })
                         ],
                         Attributes =
                         [
                             .. input.Attributes.Select(x => new AttributeType
-							{
-								Name = x.Name,
-								Value = x.Value,
-								AttributeId = Guid.NewGuid()
-							})
+                            {
+                                Name = x.Name,
+                                Value = x.Value,
+                                AttributeId = Guid.NewGuid()
+                            })
                         ],
                         Spus =
                         [
                             .. input.Spus.Select(x => new Spu
-							{
-								Index = x.Index,
-								Price = x.Price,
-								Stock = x.Stock
-							})
+                            {
+                                Index = x.Index,
+                                Price = x.Price,
+                                Stock = x.Stock
+                            })
                         ],
                         Categories =
                         [
@@ -147,30 +143,30 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 Attributes =
                 [
                     .. product
-						.Attributes.GroupBy(x => x.Name)
-						.Select(x => new AttributeDetailDto
-						{
-							Name = x.Key,
-							Value = [.. x.Select(c => c.Value)]
-						})
+                        .Attributes.GroupBy(x => x.Name)
+                        .Select(x => new AttributeDetailDto
+                        {
+                            Name = x.Key,
+                            Value = [.. x.Select(c => c.Value)]
+                        })
                 ],
                 Spus =
                 [
                     .. product.Spus.Select(x => new SpuDetailDto
-					{
-						Id = x.Id.ToString(),
-						Index = x.Index,
-						Price = x.Price,
-						Stock = x.Stock
-					})
+                    {
+                        Id = x.Id.ToString(),
+                        Index = x.Index,
+                        Price = x.Price,
+                        Stock = x.Stock
+                    })
                 ],
                 Variations =
                 [
                     .. product.Variations.Select(x => new VariationDetailDto
-					{
-						Options = x.Options,
-						Name = x.Name
-					})
+                    {
+                        Options = x.Options,
+                        Name = x.Name
+                    })
                 ],
                 Categories =
                 [
