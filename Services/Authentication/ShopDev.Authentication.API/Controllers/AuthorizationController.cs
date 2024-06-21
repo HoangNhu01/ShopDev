@@ -206,7 +206,7 @@ namespace ShopDev.Authentication.API.Controllers
                         : null;
                     return View("Authenticate", input);
                 }
-                var user = _userServices.ValidateAdminUser(input.Username!, input.Password!);
+                var user = _userServices.ValidateAdmin(input.Username!, input.Password!);
 
                 var identity = new ClaimsIdentity(
                     CookieAuthenticationDefaults.AuthenticationScheme
@@ -391,7 +391,7 @@ namespace ShopDev.Authentication.API.Controllers
                             // Allow the "name" claim to be stored in both the access and identity tokens
                             // when the "profile" scope was granted (by calling principal.SetScopes(...)).
                             Claims.Name when claim.Subject?.HasScope(Scopes.Profile) == true
-                                => new[] { Destinations.AccessToken, Destinations.IdentityToken },
+                                => [Destinations.AccessToken, Destinations.IdentityToken],
 
                             // Otherwise, only store the claim in the access tokens.
                             _ => new[] { Destinations.AccessToken }
@@ -404,7 +404,7 @@ namespace ShopDev.Authentication.API.Controllers
                 }
                 else if (request.IsPasswordGrantType())
                 {
-                    var user = _userServices.ValidateAdminUser(
+                    var user = _userServices.ValidateAdmin(
                         request.Username!,
                         request.Password!
                     );

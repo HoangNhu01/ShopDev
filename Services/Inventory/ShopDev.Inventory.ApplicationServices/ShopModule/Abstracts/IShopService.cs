@@ -4,7 +4,7 @@ namespace ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts
 {
     public interface IShopService
     {
-        Task<ShopDetailDto> FindByIdAsync(int id);
+        Task<ShopDetailDto> FindById(int id);
         void Create(ShopCreateDto input);
     }
 }

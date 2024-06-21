@@ -1,23 +1,21 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text.Json;
-using DocumentFormat.OpenXml.InkML;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.InfrastructureBase.Exceptions;
-using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Dtos;
-using ShopDev.Inventory.Domain.Shops;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.ShopModule.Implements
 {
     public class ShopService : InventoryServiceBase, IShopService
     {
         private readonly AuthenticationDbContext _authenticationDbContext;
+        private static JsonSerializerOptions jsonSerializerOptions =
+            new() { PropertyNameCaseInsensitive = true };
 
         public ShopService(
             ILogger<ShopService> logger,
@@ -46,9 +44,9 @@ namespace ShopDev.Inventory.ApplicationServices.ShopModule.Implements
             _dbContext.SaveChanges();
         }
 
-        public async Task<ShopDetailDto> FindByIdAsync(int id)
+        public async Task<ShopDetailDto> FindById(int id)
         {
-            _logger.LogInformation($"{nameof(FindByIdAsync)}: id = {id}");
+            _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var query =
                 $@"
             SELECT 
@@ -80,7 +78,8 @@ namespace ShopDev.Inventory.ApplicationServices.ShopModule.Implements
             if (!string.IsNullOrEmpty(joinedData.Products))
             {
                 joinedData.ProductDetails = JsonSerializer.Deserialize<List<ProductDetailDto>>(
-                    joinedData.Products
+                    joinedData.Products,
+                    jsonSerializerOptions
                 )!;
             }
             return joinedData;

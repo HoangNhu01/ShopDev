@@ -50,7 +50,7 @@ namespace ShopDev.Inventory.API.Controllers
         {
             try
             {
-                return new(await _shopService.FindByIdAsync(id));
+                return new(await _shopService.FindById(id));
             }
             catch (Exception ex)
             {

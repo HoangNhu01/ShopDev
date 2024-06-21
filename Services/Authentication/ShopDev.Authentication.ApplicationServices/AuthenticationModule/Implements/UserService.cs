@@ -36,9 +36,9 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _s3ManagerFile = s3ManagerFile;
         }
 
-        public User ValidateAdminUser(string username, string password)
+        public User ValidateAdmin(string username, string password)
         {
-            _logger.LogInformation($"{nameof(ValidateAdminUser)}: username = {username}");
+            _logger.LogInformation($"{nameof(ValidateAdmin)}: username = {username}");
             var user =
                 FindEntities<User>(u => u.Username == username)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
@@ -71,7 +71,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var user =
                 _dbContext.Users.FirstOrDefault(u => u.Username == username && !u.Deleted)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            
+
             if (new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP }.Contains(user.Status))
             {
                 throw new UserFriendlyException(ErrorCode.UserNotFound);
