@@ -28,6 +28,7 @@ namespace ShopDev.Inventory.Domain.Shops
         [MaxLength(255)]
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
+        public int OwnerId { get; set; }
         public virtual List<Product> Products { get; } = [];
         #region audit
         public DateTime? CreatedDate { get; set; }

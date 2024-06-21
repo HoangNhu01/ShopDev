@@ -25,8 +25,7 @@ namespace ShopDev.Inventory.Domain.Products
         //[BsonElement("stock")]
         public int Stock { get; set; }
 
-        //[BsonElement("version")]
-        public int Version { get; set; }
+        public byte[] Version { get; set; } = null!;
 
         #region audit
         public DateTime? CreatedDate { get; set; }

@@ -67,7 +67,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                             {
                                 Index = x.Index,
                                 Price = x.Price,
-                                Stock = x.Stock
+                                Stock = x.Stock,
                             })
                         ],
                         Categories =
@@ -136,7 +136,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             {
                 Description = product.Description,
                 Name = product.Name,
-                Id = product.Id.ToString(),
+                Id = product.Id,
                 ShopId = product.ShopId,
                 ThumbUri = product.ThumbUri,
                 Title = product.Title,

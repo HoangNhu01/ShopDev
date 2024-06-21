@@ -11,6 +11,8 @@ using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Implements;
+using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
+using ShopDev.Inventory.ApplicationServices.ShopModule.Implements;
 using ShopDev.Inventory.Infrastructure.Extensions;
 using ShopDev.RabbitMQ.Configs;
 using ShopDev.WebAPIBase;
@@ -47,6 +49,7 @@ namespace ShopDev.Inventory.API
             builder.Services.AddSingleton<ExtensionsDbContext>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
 
             string authConnectionString =

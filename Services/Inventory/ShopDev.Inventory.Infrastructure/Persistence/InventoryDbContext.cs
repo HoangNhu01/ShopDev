@@ -56,15 +56,26 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
             //});
             modelBuilder
                 .Entity<Product>()
-                .OwnsMany(pr => pr.Attributes, ownerNav => ownerNav.ToJson())
+                .OwnsMany(
+                    pr => pr.Attributes,
+                    ownerNav =>
+                    {
+                        ownerNav.Property(ad => ad.Name).HasColumnType("nvarchar(max)");
+                        ownerNav.Property(ad => ad.Value).HasColumnType("nvarchar(max)");
+                        ownerNav.ToJson();
+                    }
+                )
                 .OwnsMany(
                     pr => pr.Variations,
                     ownerNav =>
                     {
+                        ownerNav.Property(ad => ad.Name).HasColumnType("nvarchar(max)");
+                        ownerNav.Property(ad => ad.Options).HasColumnType("nvarchar(max)");
                         ownerNav.ToJson();
                     }
                 )
                 .HasQueryFilter(x => !x.Deleted);
+
             //modelBuilder.Entity<Spu>().ToCollection(nameof(Spus));
             JsonSerializerOptions options =
                 new() { WriteIndented = true, PropertyNameCaseInsensitive = true };

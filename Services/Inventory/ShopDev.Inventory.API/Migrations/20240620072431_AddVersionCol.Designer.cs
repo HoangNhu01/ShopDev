@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopDev.Authentication.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using ShopDev.Authentication.Infrastructure.Persistence;
 namespace ShopDev.Inventory.API.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240620072431_AddVersionCol")]
+    partial class AddVersionCol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,11 +239,10 @@ namespace ShopDev.Inventory.API.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Version")
+                    b.Property<long>("Version")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -335,7 +337,7 @@ namespace ShopDev.Inventory.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Product.Attributes#ShopDev.Inventory.Domain.Products.AttributeType", "Attributes", b1 =>
+                    b.OwnsMany("ShopDev.Inventory.Domain.Products.AttributeType", "Attributes", b1 =>
                         {
                             b1.Property<int>("ProductId")
                                 .HasColumnType("int");
@@ -365,7 +367,7 @@ namespace ShopDev.Inventory.API.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
-                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Product.Variations#ShopDev.Inventory.Domain.Products.Variation", "Variations", b1 =>
+                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Variation", "Variations", b1 =>
                         {
                             b1.Property<int>("ProductId")
                                 .HasColumnType("int");
