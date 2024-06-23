@@ -13,6 +13,7 @@ using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.API.Extensions;
 using ShopDev.Authentication.API.Models;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
+using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.UserDto;
 using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.Authorization;
 using ShopDev.Constants.ErrorCodes;
@@ -183,7 +184,7 @@ namespace ShopDev.Authentication.API.Controllers
             {
                 return View();
             }
-            AuthenticateModel model = new AuthenticateModel { ReturnUrl = returnUrl, };
+            AuthenticateModel model = new() { ReturnUrl = returnUrl, };
             return View(model);
         }
 
@@ -274,7 +275,7 @@ namespace ShopDev.Authentication.API.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal
             );
-            return Redirect(dto.ReturnUrl ?? "");
+            return Redirect(dto.ReturnUrl ?? string.Empty);
         }
 
         [
@@ -305,7 +306,7 @@ namespace ShopDev.Authentication.API.Controllers
                     int userId = int.Parse(result.Principal!.GetClaim(UserClaimTypes.UserId)!);
 
                     var user =
-                        _userServices.FindUserAuthorizatonById(userId)
+                        _userServices.FindById(userId)
                         ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
                     SetClaims(identity, user);
@@ -404,10 +405,7 @@ namespace ShopDev.Authentication.API.Controllers
                 }
                 else if (request.IsPasswordGrantType())
                 {
-                    var user = _userServices.ValidateAdmin(
-                        request.Username!,
-                        request.Password!
-                    );
+                    var user = _userServices.ValidateAdmin(request.Username!, request.Password!);
                     _userServices.Login(user.Id);
                     SetClaims(identity, user);
 
@@ -443,7 +441,7 @@ namespace ShopDev.Authentication.API.Controllers
                     );
                     // Retrieve the user profile corresponding to the refresh token.
                     var user =
-                        _userServices.FindUserAuthorizatonById(
+                        _userServices.FindById(
                             int.Parse(result.Principal!.GetClaim(UserClaimTypes.UserId)!)
                         ) ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
@@ -537,7 +535,7 @@ namespace ShopDev.Authentication.API.Controllers
             return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
-        private void SetClaims(ClaimsIdentity identity, User user)
+        private void SetClaims(ClaimsIdentity identity, UserDto user)
         {
             // Add the claims that will be persisted in the tokens.
             identity

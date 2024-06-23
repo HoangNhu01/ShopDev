@@ -1,4 +1,6 @@
 using System.Text.Json;
+using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -36,11 +38,11 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _s3ManagerFile = s3ManagerFile;
         }
 
-        public User ValidateAdmin(string username, string password)
+        public UserDto ValidateAdmin(string username, string password)
         {
             _logger.LogInformation($"{nameof(ValidateAdmin)}: username = {username}");
             var user =
-                FindEntities<User>(u => u.Username == username)
+                FindEntities<User>(u => u.Username == username, isTracking: true)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
             if (
                 new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP, UserStatus.LOCK }.Contains(
@@ -62,10 +64,10 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             {
                 throw new UserFriendlyException(ErrorCode.UserIsDeactive);
             }
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
 
-        public User ValidateAppUser(string username, string password)
+        public UserDto ValidateAppUser(string username, string password)
         {
             _logger.LogInformation($"{nameof(ValidateAppUser)}: username = {username}");
             var user =
@@ -98,7 +100,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                 // Trả về param Token
                 user.IsFirstTime = true;
             }
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
 
         private void HandleIncorrectPassword(User user)
@@ -170,26 +172,17 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             transaction.Commit();
         }
 
-        public User FindUserAuthorizatonById(int id)
+        public UserDto FindById(int id)
         {
-            _logger.LogInformation($"{nameof(FindUserAuthorizatonById)}: id = {id}");
+            _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var user =
-                _dbContext.Users.FirstOrDefault(u =>
-                    u.Id == id && u.Status == UserStatus.ACTIVE && !u.Deleted
-                ) ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            if (
-                new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP, UserStatus.LOCK }.Contains(
-                    user.Status
-                )
-            )
-            {
-                throw new UserFriendlyException(ErrorCode.UserNotFound);
-            }
-            else if (user.Status == UserStatus.DEACTIVE)
+                _dbContext.Users.Find(id)
+                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
+            if (user.Status == UserStatus.DEACTIVE)
             {
                 throw new UserFriendlyException(ErrorCode.UserIsDeactive);
             }
-            return user;
+            return _mapper.Map<UserDto>(user);
         }
 
         public UserDto GetById(int id)
@@ -422,17 +415,17 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             _logger.LogInformation($"{nameof(Login)}: id = {id}");
             var user =
-                _dbContext.Users.FirstOrDefault(u => u.Id == id && !u.Deleted)
+                _dbContext.Set<User>().Find(id)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.LastLogin = DateTimeUtils.GetDate();
             var contextInfo = _httpContext.HttpContext;
 
             // Lấy thông tin trình duyệt
-            if (contextInfo != null)
+            if (contextInfo is not null)
             {
                 var header = contextInfo.Request.Headers;
-                string? operatingSystem = "";
-                string? browser = "";
+                string? operatingSystem = string.Empty;
+                string? browser = string.Empty;
                 var platFormCheck = header.ContainsKey("Sec-Ch-Ua-Platform");
                 if (platFormCheck)
                 {
@@ -462,18 +455,17 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(GetPrivacyInfo)}: userId = {userId}");
-            var userFind =
-                _dbContext.Users.FirstOrDefault(o => o.Id == userId)
+            var user =
+                FindEntities<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
-            var result = new PrivacyInfoDto()
+            return new()
             {
-                OperatingSystem = userFind.OperatingSystem,
-                Browser = userFind.Browser,
-                LastLogin = userFind.LastLogin,
-                AvatarImageUri = userFind.AvatarImageUri
+                OperatingSystem = user.OperatingSystem,
+                Browser = user.Browser,
+                LastLogin = user.LastLogin,
+                AvatarImageUri = user.AvatarImageUri
             };
-            return result;
         }
 
         public async Task UpdateAvatar(string s3Key)
@@ -481,7 +473,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(UpdateAvatar)}: userId = {userId}, s3Key = {s3Key}");
             var user =
-                _dbContext.Users.FirstOrDefault(u => u.Id == userId && !u.Deleted)
+                FindEntities<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             //var returnValueS3Key = await _s3ManagerFile.MoveAsync((s3Key, MediaTypes.Image));
             //var image = returnValueS3Key?.Images?.Find(c => c.S3KeyOld == s3Key);
@@ -500,10 +492,10 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             return int.Parse(sysVar.VarValue);
         }
 
-        public void UpdateUserStatus(string userName, int userStatus)
+        public void UpdateStatus(string userName, int userStatus)
         {
             var user =
-                _dbContext.Users.FirstOrDefault(u => u.Username == userName && !u.Deleted)
+                FindEntities<User>(o => o.Username == userName)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.Status = userStatus;
             _dbContext.SaveChanges();

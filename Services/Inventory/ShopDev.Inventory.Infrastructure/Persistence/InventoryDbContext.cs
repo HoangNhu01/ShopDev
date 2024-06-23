@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using ShopDev.Constants.Database;
 using ShopDev.InfrastructureBase.Persistence;
 using ShopDev.Inventory.Domain.Categories;
+using ShopDev.Inventory.Domain.Comments;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Domain.Shops;
 
@@ -17,6 +18,7 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
         public DbSet<Shop> Shops { get; init; }
         public DbSet<Category> Categories { get; init; }
         public DbSet<CategoryType> CategoryTypes { get; init; }
+        public DbSet<Comment> Comments { get; init; }
 
         public InventoryDbContext()
             : base() { }

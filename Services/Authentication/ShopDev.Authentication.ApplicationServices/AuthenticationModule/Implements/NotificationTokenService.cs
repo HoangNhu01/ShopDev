@@ -1,9 +1,9 @@
-using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
-using ShopDev.Authentication.ApplicationServices.Common;
-using ShopDev.Authentication.Domain.AuthToken;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
+using ShopDev.Authentication.ApplicationServices.Common;
+using ShopDev.Authentication.Domain.AuthToken;
 
 namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements
 {
@@ -21,10 +21,9 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                 $"{nameof(AddNotificationToken)}: userId = {userId}, fcmToken = {fcmToken}, apnsToken = {apnsToken}"
             );
             var transaction = _dbContext.Database.BeginTransaction();
-            var authTokens = _dbContext.NotificationTokens;
-            var auths = authTokens.Where(x => x.UserId == userId).ExecuteDelete();
-            authTokens.Add(
-                new NotificationToken
+            _dbContext.NotificationTokens.Where(x => x.UserId == userId).ExecuteDelete();
+            _dbContext.Add<NotificationToken>(
+                new()
                 {
                     FcmToken = fcmToken,
                     ApnsToken = apnsToken,

@@ -36,5 +36,7 @@
         public bool IsPasswordTemp { get; set; }
         public IEnumerable<string>? RoleNames { get; set; }
         public IEnumerable<int>? RoleIds { get; set; }
+        public string? PinCode { get; set; }
+        public bool IsTempPin { get; set; }
     }
 }

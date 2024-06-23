@@ -74,10 +74,18 @@ namespace ShopDev.ApplicationBase
             return query;
         }
 
-        protected Entity? FindEntities<Entity>(Expression<Func<Entity, bool>> expression)
+        protected Entity? FindEntities<Entity>(
+            Expression<Func<Entity, bool>> expression,
+            bool isTracking = false
+        )
             where Entity : class
         {
-            return _dbContext.Set<Entity>().FirstOrDefault(expression);
+            IQueryable<Entity> entities = _dbContext.Set<Entity>();
+            if (isTracking)
+            {
+                entities.AsNoTracking();
+            }
+            return entities.FirstOrDefault(expression);
         }
 
         protected IEnumerable<TResult> GetIEnumerableResult<TResult, TEntity>(
@@ -109,7 +117,7 @@ namespace ShopDev.ApplicationBase
         #endregion
 
         /// <summary>
-        /// Update các item trong 
+        /// Update các item trong
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TDto"></typeparam>
@@ -140,6 +148,7 @@ namespace ShopDev.ApplicationBase
                 }
             }
         }
+
         /// <summary>
         /// Dịch sang ngôn ngữ đích dựa theo keyName và request ngôn ngữ là gì <br/>
         /// Input: <paramref name="keyName"/> = "error_System" <br/>

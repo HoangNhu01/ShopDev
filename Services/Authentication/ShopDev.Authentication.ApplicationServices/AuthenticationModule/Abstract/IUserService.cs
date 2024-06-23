@@ -12,7 +12,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        User FindUserAuthorizatonById(int id);
+        UserDto FindById(int id);
 
         /// <summary>
         /// Tìm user theo Id
@@ -27,7 +27,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        User ValidateAdmin(string username, string password);
+        UserDto ValidateAdmin(string username, string password);
 
         /// <summary>
         /// Validate app user
@@ -35,7 +35,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        User ValidateAppUser(string username, string password);
+        UserDto ValidateAppUser(string username, string password);
 
         /// <summary>
         /// Xem danh sách User CMS (tài khoản SUPER_ADMIN + ADMIN)
@@ -107,7 +107,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="userStatus"></param>
-        void UpdateUserStatus(string userName, int userStatus);
+        void UpdateStatus(string userName, int userStatus);
 
         /// <summary>
         /// Cập nhật trạng thái user
