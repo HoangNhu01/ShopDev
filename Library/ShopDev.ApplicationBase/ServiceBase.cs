@@ -109,6 +109,38 @@ namespace ShopDev.ApplicationBase
         #endregion
 
         /// <summary>
+        /// Update các item trong 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TDto"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="inputItems"></param>
+        /// <param name="comparer"></param>
+        /// <param name="updateAction"></param>
+        public static void UpdateItems<TEntity, TDto>(
+            List<TEntity> items,
+            List<TDto> inputItems,
+            Func<TEntity, TDto, bool> comparer,
+            Action<TEntity, TDto> updateAction
+        )
+            where TEntity : class
+            where TDto : class
+        {
+            foreach (var item in items)
+            {
+                var inputItem = inputItems.Find(x => comparer(item, x));
+                if (inputItem is null && item.GetType().GetProperty("Deleted") is not null)
+                {
+                    item.GetType().GetProperty("Deleted")!.SetValue(item, true);
+                }
+                else
+                {
+                    updateAction(item, inputItem!);
+                    inputItems.Remove(inputItem!);
+                }
+            }
+        }
+        /// <summary>
         /// Dịch sang ngôn ngữ đích dựa theo keyName và request ngôn ngữ là gì <br/>
         /// Input: <paramref name="keyName"/> = "error_System" <br/>
         /// Return: "Error System" hoặc "Lỗi" tuỳ theo request ngôn ngữ đang là gì ví dụ ở đây là "en" và "VI"
