@@ -1,35 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Database;
-using ShopDev.Inventory.Domain.Products;
 
-namespace ShopDev.Inventory.Domain.Shops
+namespace ShopDev.Inventory.Domain.Categories
 {
-    [Table(nameof(Shop), Schema = DbSchemas.SDInventory)]
+    [Table(nameof(Category), Schema = DbSchemas.SDInventory)]
     [Index(
         nameof(Name),
-        nameof(Title),
+        nameof(ParentId),
+        nameof(IsShowOnHome),
         nameof(Deleted),
         AllDescending = true,
-        Name = $"IX_{nameof(Shop)}",
+        Name = $"IX_{nameof(Category)}",
         IsUnique = false
     )]
-    public class Shop
+    public class Category : IFullAudited
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [MaxLength(100)]
+        //[BsonElement("name")]
         public required string Name { get; set; }
 
-        [MaxLength(2500)]
+        [MaxLength(1024)]
+        //[BsonElement("description")]
         public required string Description { get; set; }
 
-        [MaxLength(255)]
-        public required string Title { get; set; }
-        public required string ThumbUri { get; set; }
-        public int OwnerId { get; set; }
-        public virtual List<Product> Products { get; } = [];
+        //[BsonElement("sortOrder")]
+        public int SortOrder { set; get; }
+
+        //[BsonElement("isShowOnHome")]
+        public bool IsShowOnHome { set; get; }
+
+        //[BsonElement("parentId")]
+        public int? ParentId { set; get; }
         #region audit
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

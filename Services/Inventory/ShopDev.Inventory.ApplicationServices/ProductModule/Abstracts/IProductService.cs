@@ -9,8 +9,8 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Abstract
 {
 	public interface IProductService
 	{
-		void Create(ProductCreateDto input);
-		ProductDetailDto FindById(string id);
+        void Create(ProductCreateDto input);
+		ProductDetailDto FindById(int id);
 		void Update(ProductUpdateDto input);
 	}
 }

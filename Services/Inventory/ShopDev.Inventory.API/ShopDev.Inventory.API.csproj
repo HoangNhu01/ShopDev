@@ -37,6 +37,11 @@
   
   <ItemGroup>
 	  
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.5" />
 	  
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
@@ -47,6 +52,7 @@
     <ProjectReference Include="..\..\..\Library\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\..\Library\ShopDev.WebAPIBase\ShopDev.WebAPIBase.csproj" />
     <ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />
+    <ProjectReference Include="..\..\Shared\ShopDev.UserRolePermission\ShopDev.UserRolePermission.csproj" />
     <ProjectReference Include="..\ShopDev.Inventory.ApplicationServices\ShopDev.Inventory.ApplicationServices.csproj" />
   </ItemGroup>
 </Project>

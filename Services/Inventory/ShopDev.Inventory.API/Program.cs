@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.ApplicationServices.Common.Localization;
@@ -8,15 +7,19 @@ using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
+using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
+using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Implements;
+using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
+using ShopDev.Inventory.ApplicationServices.ShopModule.Implements;
 using ShopDev.Inventory.Infrastructure.Extensions;
 using ShopDev.RabbitMQ.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
 
-namespace ShopDev.Logistic.API
+namespace ShopDev.Inventory.API
 {
     public static class Program
     {
@@ -45,6 +48,8 @@ namespace ShopDev.Logistic.API
             builder.Services.AddSingleton<IMapErrorCode, InventoryMapErrorCode>();
             builder.Services.AddSingleton<ExtensionsDbContext>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
 
             string authConnectionString =
@@ -72,16 +77,27 @@ namespace ShopDev.Logistic.API
                 poolSize: 128
             );
             string inventoryConnectionString =
-                builder.Configuration.GetConnectionString("MongoDb")
+                builder.Configuration.GetConnectionString("InventoryDb")
                 ?? throw new InvalidOperationException(
-                    "Không tìm thấy connection string \"Default\" trong appsettings.json"
+                    "Không tìm thấy connection string \"InventoryDb\" trong appsettings.json"
                 );
 
             builder.Services.AddDbContextPool<InventoryDbContext>(
                 options =>
                 {
                     //options.UseInMemoryDatabase("DbDefault");
-                    options.UseMongoDB(inventoryConnectionString, "InventoryDB");
+                    options.UseSqlServer(
+                        inventoryConnectionString,
+                        sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(Program).Namespace);
+                            sqlOptions.MigrationsHistoryTable(
+                                DbSchemas.TableMigrationsHistory,
+                                DbSchemas.SDInventory
+                            );
+                            sqlOptions.EnableRetryOnFailure();
+                        }
+                    );
                     options.UseLazyLoadingProxies();
                 },
                 poolSize: 128

@@ -27,7 +27,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        User ValidateAdminUser(string username, string password);
+        User ValidateAdmin(string username, string password);
 
         /// <summary>
         /// Validate app user

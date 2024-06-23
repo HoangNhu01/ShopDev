@@ -1,19 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Text.Json;
-using DocumentFormat.OpenXml.InkML;
-using Humanizer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
+using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
+using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {
@@ -35,7 +30,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
             HashSet<string> checkDuplicate = [];
-            if (input.Variations.Exists(x => checkDuplicate.Add(x.Name)))
+            if (input.Variations.Exists(x => !checkDuplicate.Add(x.Name)))
             {
                 throw new UserFriendlyException(InventoryErrorCode.VariationIsDuplicate);
             }
@@ -72,8 +67,14 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                             {
                                 Index = x.Index,
                                 Price = x.Price,
-                                Stock = x.Stock
+                                Stock = x.Stock,
                             })
+                        ],
+                        Categories =
+                        [
+                            .. input.Categories.Select(x => new CategoryType {
+                            CategoryId = x.CategoryId
+                        })
                         ]
                     }
                 )
@@ -95,14 +96,25 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             }
             checkDuplicate.Clear();
             var product =
-                FindEntities<Product>(expression: x => x.Id == ObjectId.Parse(input.Id))
+                FindEntities<Product>(expression: x => x.Id == input.Id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            product.Attributes = _mapper.Map<List<AttributeType>>(input.Attributes);
+            if (
+                input.Variations.ExceptBy(product.Variations.Select(x => x.Name), x => x.Name)
+                is not null
+            )
+            {
+                product.Spus.Clear();
+            }
+
+            product.Variations = _mapper.Map<List<Variation>>(input.Variations);
+            product.Price = input.Price;
             if (input.Spus.Count > 0)
             {
                 UpdateItems(
                     product.Spus,
                     input.Spus,
-                    (x, y) => x.Id == ObjectId.Parse(y.Id),
+                    (x, y) => x.Id == y.Id,
                     (x, y) =>
                     {
                         x.Index = y.Index;
@@ -114,17 +126,17 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             _dbContext.SaveChanges();
         }
 
-        public ProductDetailDto FindById(string id)
+        public ProductDetailDto FindById(int id)
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var product =
-                _dbContext.Products.FirstOrDefault(x => x.Id == ObjectId.Parse(id))
+                FindEntities<Product>(expression: x => x.Id == id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {
                 Description = product.Description,
                 Name = product.Name,
-                Id = product.Id.ToString(),
+                Id = product.Id,
                 ShopId = product.ShopId,
                 ThumbUri = product.ThumbUri,
                 Title = product.Title,
@@ -154,6 +166,13 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                     {
                         Options = x.Options,
                         Name = x.Name
+                    })
+                ],
+                Categories =
+                [
+                    .. product.Categories.Select(x => new CategoryTypeDetailDto{
+                        CategoryId = x.CategoryId.ToString(),
+                        Name = x.Category.Name
                     })
                 ]
             };

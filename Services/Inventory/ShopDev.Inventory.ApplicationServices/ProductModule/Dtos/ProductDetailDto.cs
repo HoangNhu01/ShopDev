@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MongoDB.Bson;
-using ShopDev.ApplicationBase.Common.Validations;
+﻿using ShopDev.ApplicationBase.Common.Validations;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 {
     public class ProductDetailDto
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required string Title { get; set; }
         public required string ThumbUri { get; set; }
         public double Price { get; set; }
-        public ObjectId ShopId { get; set; }
+        public int ShopId { get; set; }
+        public List<CategoryTypeDetailDto> Categories { get; set; } = [];
         public List<AttributeDetailDto> Attributes { get; set; } = [];
         public List<VariationDetailDto> Variations { get; set; } = [];
         public List<SpuDetailDto> Spus { get; set; } = [];
+    }
+
+    public class CategoryTypeDetailDto
+    {
+        public required string CategoryId { get; set; }
+        public required string Name { get; set; }
     }
 
     public class AttributeDetailDto
