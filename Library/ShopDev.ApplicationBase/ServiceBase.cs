@@ -74,7 +74,7 @@ namespace ShopDev.ApplicationBase
             return query;
         }
 
-        protected Entity? FindEntities<Entity>(
+        protected Entity? FindEntity<Entity>(
             Expression<Func<Entity, bool>> expression,
             bool isTracking = false
         )
@@ -88,7 +88,7 @@ namespace ShopDev.ApplicationBase
             return entities.FirstOrDefault(expression);
         }
 
-        protected IEnumerable<TResult> GetIEnumerableResult<TResult, TEntity>(
+        protected IQueryable<TResult> GetIQueryableResult<TResult, TEntity>(
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>>? predicate,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,

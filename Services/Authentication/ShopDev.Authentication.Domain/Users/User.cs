@@ -112,6 +112,7 @@ namespace ShopDev.Authentication.Domain.Users
         /// Thời gian hết hạn mã bí mật khi xác nhận quên mật khẩu
         /// </summary>
         public DateTime? SecretPasswordExpiryDate { get; set; }
+        public List<UserRole> UserRoles { get; set; } = [];
 
         #region audit
         public DateTime? CreatedDate { get; set; }

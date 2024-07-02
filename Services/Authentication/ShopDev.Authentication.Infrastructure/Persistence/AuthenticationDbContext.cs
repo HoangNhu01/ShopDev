@@ -53,7 +53,7 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
 
             modelBuilder
                 .Entity<UserRole>()
-                .HasOne<Role>()
+                .HasOne(x => x.Role)
                 .WithMany()
                 .HasForeignKey(e => e.RoleId);
 
@@ -73,11 +73,11 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
                     .HasDefaultValue(PermissionInWebs.Home);
             });
 
-            //modelBuilder
-            //	.Entity<User>()
-            //	.HasMany(e => e.UserRoles)
-            //	.WithOne(e => e.User)
-            //	.HasForeignKey(e => e.UserId);
+            modelBuilder
+                .Entity<User>()
+                .HasMany(e => e.UserRoles)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
             //modelBuilder
             //	.Entity<Role>()
             //	.HasMany(e => e.UserRoles)
