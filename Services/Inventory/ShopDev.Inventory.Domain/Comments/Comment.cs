@@ -22,7 +22,7 @@ namespace ShopDev.Inventory.Domain.Comments
         public int Star { get; set; }
 
         public int UserId { get; set; }
-
+        [MaxLength(255)]
         public required string Content { get; set; }
 
         public Guid ParentId { get; set; }

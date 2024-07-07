@@ -110,6 +110,15 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
                 .WithMany()
                 .HasForeignKey(x => x.CategoryId);
             //modelBuilder.Entity<Category>().ToCollection(nameof(Categories));
+            modelBuilder
+                .Entity<Comment>()
+                .OwnsMany(
+                    pr => pr.MediaComments,
+                    ownerNav =>
+                    {
+                        ownerNav.ToJson();
+                    }
+                );
             base.OnModelCreating(modelBuilder);
         }
     }

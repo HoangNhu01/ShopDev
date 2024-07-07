@@ -129,6 +129,46 @@ namespace ShopDev.Inventory.API.Migrations
                     b.ToTable("CategoryType", "sd_inventory");
                 });
 
+            modelBuilder.Entity("ShopDev.Inventory.Domain.Comments.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Star")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "UserId", "ParentId", "Deleted" }, "IX_Comment")
+                        .IsDescending();
+
+                    b.ToTable("Comment", "sd_inventory");
+                });
+
             modelBuilder.Entity("ShopDev.Inventory.Domain.Products.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -327,6 +367,36 @@ namespace ShopDev.Inventory.API.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ShopDev.Inventory.Domain.Comments.Comment", b =>
+                {
+                    b.OwnsMany("ShopDev.Inventory.Domain.Comments.MediaComment", "MediaComments", b1 =>
+                        {
+                            b1.Property<Guid>("CommentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("S3Key")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Uri")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CommentId", "Id");
+
+                            b1.ToTable("Comment", "sd_inventory");
+
+                            b1.ToJson("MediaComments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CommentId");
+                        });
+
+                    b.Navigation("MediaComments");
+                });
+
             modelBuilder.Entity("ShopDev.Inventory.Domain.Products.Product", b =>
                 {
                     b.HasOne("ShopDev.Inventory.Domain.Shops.Shop", "Shop")
@@ -335,7 +405,7 @@ namespace ShopDev.Inventory.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Product.Attributes#ShopDev.Inventory.Domain.Products.AttributeType", "Attributes", b1 =>
+                    b.OwnsMany("ShopDev.Inventory.Domain.Products.AttributeType", "Attributes", b1 =>
                         {
                             b1.Property<int>("ProductId")
                                 .HasColumnType("int");
@@ -365,7 +435,7 @@ namespace ShopDev.Inventory.API.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
-                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Product.Variations#ShopDev.Inventory.Domain.Products.Variation", "Variations", b1 =>
+                    b.OwnsMany("ShopDev.Inventory.Domain.Products.Variation", "Variations", b1 =>
                         {
                             b1.Property<int>("ProductId")
                                 .HasColumnType("int");

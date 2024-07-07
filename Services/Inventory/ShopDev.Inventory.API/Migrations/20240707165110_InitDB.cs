@@ -40,6 +40,27 @@ namespace ShopDev.Inventory.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comment",
+                schema: "sd_inventory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Star = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    DeletedBy = table.Column<int>(type: "int", nullable: true),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    MediaComments = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comment", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Shop",
                 schema: "sd_inventory",
                 columns: table => new
@@ -50,7 +71,7 @@ namespace ShopDev.Inventory.API.Migrations
                     Description = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ThumbUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -146,7 +167,7 @@ namespace ShopDev.Inventory.API.Migrations
                     Index = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    Version = table.Column<int>(type: "int", rowVersion: true, nullable: false),
+                    Version = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -194,6 +215,13 @@ namespace ShopDev.Inventory.API.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comment",
+                schema: "sd_inventory",
+                table: "Comment",
+                columns: new[] { "UserId", "ParentId", "Deleted" },
+                descending: new bool[0]);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Product",
                 schema: "sd_inventory",
                 table: "Product",
@@ -225,6 +253,10 @@ namespace ShopDev.Inventory.API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CategoryType",
+                schema: "sd_inventory");
+
+            migrationBuilder.DropTable(
+                name: "Comment",
                 schema: "sd_inventory");
 
             migrationBuilder.DropTable(
