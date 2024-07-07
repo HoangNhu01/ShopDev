@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
@@ -135,11 +136,9 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             );
         }
 
-        public virtual void CreateUser(CreateUserDto input)
+        public virtual async Task Create(CreateUserDto input)
         {
-            _logger.LogInformation(
-                $"{nameof(CreateUser)}: input = {JsonSerializer.Serialize(input)}"
-            );
+            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
             input.Password = PasswordHasher.HashPassword(input.Password);
             var user = _mapper.Map<User>(input);
             if (_dbContext.Users.Any(u => u.Username == input.Username && !u.Deleted))
@@ -515,33 +514,22 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _logger.LogInformation(
                 $"{nameof(UpdateRole)}: input = {JsonSerializer.Serialize(input)}"
             );
-
-            var inputUserRole = input.RoleIds ?? [];
             //Danh sách role hiện tại được gán cho user
             var currentUserRole = _dbContext
-                .UserRoles.Where(e => e.UserId == input.UserId && !e.Deleted)
-                .Select(e => e.RoleId)
+                .UserRoles.Where(e => e.UserId == input.UserId)
                 .ToList();
-
-            //Xóa những role gán với user
-            var removeUserRole = currentUserRole.Except(inputUserRole).ToList();
-            foreach (var item in removeUserRole)
-            {
-                _dbContext
-                    .UserRoles.Where(e =>
-                        e.UserId == input.UserId && e.RoleId == item && !e.Deleted
-                    )
-                    .ToList()
-                    .ForEach(o => o.Deleted = true);
-            }
-
-            //Thêm những role trong input chưa  có trong db
-            var insertUserRole = inputUserRole.Except(currentUserRole).ToList();
-            foreach (var item in insertUserRole)
-            {
-                _dbContext.UserRoles.Add(new UserRole { UserId = input.UserId, RoleId = item });
-            }
-
+            UpdateItems(
+                currentUserRole,
+                input.RoleIds,
+                (x, y) => x.Id == y,
+                (x, y) =>
+                {
+                    x.Deleted = true;
+                }
+            );
+            _dbContext.UserRoles.AddRange(
+                input.RoleIds.Select(x => new UserRole { UserId = input.UserId, RoleId = x })
+            );
             _dbContext.SaveChanges();
         }
     }

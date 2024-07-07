@@ -46,8 +46,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.U
         [IntegerRange(AllowableValues = [UserTypes.SHOP, UserTypes.CUSTOMER])]
         public int? UserType { get; set; }
         public int? Status { get; set; }
-        public int CustomerId { get; set; }
         public bool IsPasswordTemp { get; set; }
-        public List<int>? RoleIds { get; set; }
+        public List<int> RoleIds { get; set; } = [];
     }
 }

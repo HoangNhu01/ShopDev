@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ShopDev.Authentication.API.Controllers
 {
-    [Authorize]
-    [AuthorizeAdminUserTypeFilter]
+    //[Authorize]
+    //[AuthorizeAdminUserTypeFilter]
     [Route("api/auth/user")]
     [ApiController]
     public class UsersController : ApiControllerBase
@@ -92,12 +92,12 @@ namespace ShopDev.Authentication.API.Controllers
         /// <returns></returns>
         [HttpPost("add")]
         [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
-        [PermissionFilter(PermissionKeys.UserButtonAccountManagerAdd)]
-        public ApiResponse Add([FromBody] CreateUserDto input)
+        //[PermissionFilter(PermissionKeys.UserButtonAccountManagerAdd)]
+        public async Task<ApiResponse> Add([FromBody] CreateUserDto input)
         {
             try
             {
-                _userService.CreateUser(input);
+                await _userService.Create(input);
                 return new();
             }
             catch (Exception ex)

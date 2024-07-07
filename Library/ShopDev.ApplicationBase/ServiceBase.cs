@@ -132,7 +132,6 @@ namespace ShopDev.ApplicationBase
             Action<TEntity, TDto> updateAction
         )
             where TEntity : class
-            where TDto : class
         {
             foreach (var item in items)
             {

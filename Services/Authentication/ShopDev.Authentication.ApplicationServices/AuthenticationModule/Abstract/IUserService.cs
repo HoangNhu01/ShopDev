@@ -49,7 +49,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        void CreateUser(CreateUserDto input);
+        Task Create(CreateUserDto input);
 
         /// <summary>
         /// Cập nhật thông tin tài khoản
