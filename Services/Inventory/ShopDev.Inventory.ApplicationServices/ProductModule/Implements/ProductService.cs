@@ -96,7 +96,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             }
             checkDuplicate.Clear();
             var product =
-                FindEntities<Product>(expression: x => x.Id == input.Id)
+                FindEntity<Product>(expression: x => x.Id == input.Id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             product.Attributes = _mapper.Map<List<AttributeType>>(input.Attributes);
             if (
@@ -130,7 +130,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var product =
-                FindEntities<Product>(expression: x => x.Id == id)
+                FindEntity<Product>(expression: x => x.Id == id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {

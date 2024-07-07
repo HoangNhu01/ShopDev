@@ -1,5 +1,4 @@
 using System.Text.Json;
-using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +14,7 @@ using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.SysVar;
 using ShopDev.Constants.Users;
+using ShopDev.EntitiesBase.AuthorizationEntities;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.InfrastructureBase.Files;
 using ShopDev.S3Bucket;
@@ -43,7 +43,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             _logger.LogInformation($"{nameof(ValidateAdmin)}: username = {username}");
             var user =
-                FindEntities<User>(u => u.Username == username, isTracking: true)
+                FindEntity<User>(u => u.Username == username, isTracking: true)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
             if (
                 new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP, UserStatus.LOCK }.Contains(
@@ -187,91 +187,83 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         public UserDto GetById(int id)
         {
             _logger.LogInformation($"{nameof(GetById)}: id = {id}");
-
-            var user = (
-                from u in _dbContext.Users
-                where u.Id == id && !u.Deleted
-                select new UserDto
-                {
-                    Id = u.Id,
-                    AvatarImageUri = u.AvatarImageUri,
-                    Username = u.Username,
-                    UserType = u.UserType,
-                }
-            ).FirstOrDefault();
-
-            return user ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
+            return GetIQueryableResult<UserDto, User>(
+                        selector: x =>
+                            new()
+                            {
+                                Id = x.Id,
+                                AvatarImageUri = x.AvatarImageUri,
+                                Username = x.Username,
+                                UserType = x.UserType,
+                                Status = x.Status,
+                            },
+                        predicate: x => x.Id == id
+                    )
+                    .AsSplitQuery()
+                    .FirstOrDefault() ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
         }
 
         public UserDto FindByUser()
         {
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(FindByUser)}: userId = {userId}");
-
-            var user = (
-                from u in _dbContext.Users
-                where u.Id == userId && !u.Deleted && u.Status == UserStatus.ACTIVE
-                select new UserDto
-                {
-                    Id = u.Id,
-                    AvatarImageUri = u.AvatarImageUri,
-                    Username = u.Username,
-                    UserType = u.UserType,
-                    IsPasswordTemp = u.IsPasswordTemp,
-                    RoleNames = (
-                        from userRole in _dbContext.UserRoles
-                        join role in _dbContext.Roles on userRole.RoleId equals role.Id
-                        where userRole.UserId == userId && !userRole.Deleted && !role.Deleted
-                        select role.Name
-                    ).AsEnumerable(),
-                }
-            ).FirstOrDefault();
-
-            return user ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
+            return GetIQueryableResult<UserDto, User>(
+                        selector: x =>
+                            new()
+                            {
+                                Id = x.Id,
+                                AvatarImageUri = x.AvatarImageUri,
+                                Username = x.Username,
+                                UserType = x.UserType,
+                                Status = x.Status,
+                                RoleNames = x.UserRoles.Select(x => x.Role.Name),
+                                RoleIds = x.UserRoles.Select(x => x.RoleId),
+                            },
+                        predicate: x => x.Id == userId,
+                        include: x => x.Include(x => x.UserRoles).ThenInclude(x => x.Role)
+                    )
+                    .AsSplitQuery()
+                    .FirstOrDefault() ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
         }
 
         public PagingResult<UserDto> FindAll(FilterUserDto input)
         {
             _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
             var result = new PagingResult<UserDto>();
-
-            var users =
-                from user in _dbContext.Users
-                let roleIds = _dbContext
-                    .UserRoles.Where(e => e.UserId == user.Id && !e.Deleted)
-                    .Select(e => e.RoleId)
-                    .AsEnumerable()
-                where
-                    !user.Deleted
-                    && user.UserType == UserTypes.SHOP
-                    && (input.Username == null || user.Username.Contains(input.Username))
+            var users = GetIQueryableResult<UserDto, User>(
+                selector: x =>
+                    new()
+                    {
+                        Id = x.Id,
+                        AvatarImageUri = x.AvatarImageUri,
+                        Username = x.Username,
+                        UserType = x.UserType,
+                        Status = x.Status,
+                        RoleNames = x.UserRoles.Select(x => x.Role.Name),
+                        RoleIds = x.UserRoles.Select(x => x.RoleId),
+                    },
+                predicate: x =>
+                    !x.Deleted
+                    && x.UserType == UserTypes.SHOP
+                    && (string.IsNullOrEmpty(input.Username) || x.Username.Contains(input.Username))
                     && (
-                        input.FullName == null
-                        || (user.FullName != null && user.FullName.Contains(input.FullName))
+                        string.IsNullOrEmpty(input.FullName)
+                        || (
+                            !string.IsNullOrEmpty(x.FullName) && x.FullName.Contains(input.FullName)
+                        )
                     )
-                    && (input.Status == null || user.Status == input.Status)
-                select new UserDto
-                {
-                    Id = user.Id,
-                    AvatarImageUri = user.AvatarImageUri,
-                    Username = user.Username,
-                    UserType = user.UserType,
-                    Status = user.Status,
-                    RoleNames = _dbContext
-                        .Roles.Where(r => roleIds.Contains(r.Id))
-                        .Select(r => r.Name)
-                        .AsEnumerable(),
-                    RoleIds = roleIds,
-                };
+                    && (!input.Status.HasValue || x.Status == input.Status),
+                include: x => x.Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            );
+
             // đếm tổng trước khi phân trang
             result.TotalItems = users.Count();
             users = users.OrderDynamic(input.Sort);
-
             if (input.PageSize != -1)
             {
                 users = users.Skip(input.GetSkip()).Take(input.PageSize);
             }
-            result.Items = _mapper.Map<IEnumerable<UserDto>>(users);
+            result.Items = users;
             return result;
         }
 
@@ -455,7 +447,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(GetPrivacyInfo)}: userId = {userId}");
             var user =
-                FindEntities<User>(o => o.Id == userId)
+                FindEntity<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
             return new()
@@ -472,7 +464,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(UpdateAvatar)}: userId = {userId}, s3Key = {s3Key}");
             var user =
-                FindEntities<User>(o => o.Id == userId)
+                FindEntity<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             //var returnValueS3Key = await _s3ManagerFile.MoveAsync((s3Key, MediaTypes.Image));
             //var image = returnValueS3Key?.Images?.Find(c => c.S3KeyOld == s3Key);
@@ -494,7 +486,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         public void UpdateStatus(string userName, int userStatus)
         {
             var user =
-                FindEntities<User>(o => o.Username == userName)
+                FindEntity<User>(o => o.Username == userName)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.Status = userStatus;
             _dbContext.SaveChanges();
