@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
-using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Implements
 {
@@ -38,7 +38,5 @@ namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Implements
                 _dbContext.Categories.Find(id) ?? throw new UserFriendlyException(10000)
             );
         }
-
-        public 
     }
 }

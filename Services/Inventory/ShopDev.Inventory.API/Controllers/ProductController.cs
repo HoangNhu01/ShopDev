@@ -1,40 +1,33 @@
-using Microsoft.AspNetCore.Mvc;
-using ShopDev.Authentication.Domain.Users;
-using ShopDev.Common.Filters;
-using ShopDev.Constants.RolePermission.Constant;
-using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
-using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
 using System.Net;
 
-namespace ShopDev.Authentication.API.Controllers
+namespace ShopDev.Inventory.API.Controllers
 {
     //[Authorize]
-    //[AuthorizeAdminUserTypeFilter]
-    [Route("api/inventory/category")]
+    [Route("api/inventory/product")]
     [ApiController]
-    public class CategoryController : ApiControllerBase
+    public class ProductController : ApiControllerBase
     {
-        private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
 
-        public CategoryController(
-            ILogger<CategoryController> logger,
-            ICategoryService categoryService
-        )
+        public ProductController(ILogger<ProductController> logger, IProductService productService)
             : base(logger)
         {
-            _categoryService = categoryService;
+            _productService = productService;
         }
 
         [HttpGet("find-all")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserTableAccountManager)]
-        public ApiResponse FindAll()
+        public ApiResponse FindAll(ProductFilterDto input)
         {
             try
             {
-                return new();
+                return new(_productService.FindAll(input));
             }
             catch (Exception ex)
             {
@@ -49,7 +42,7 @@ namespace ShopDev.Authentication.API.Controllers
         {
             try
             {
-                return new();
+                return new(_productService.FindById(id));
             }
             catch (Exception ex)
             {
@@ -58,13 +51,13 @@ namespace ShopDev.Authentication.API.Controllers
         }
 
         [HttpPost("add")]
-        [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter()]
-        public ApiResponse Create(CategoryCreateDto input)
+        public ApiResponse Create(ProductCreateDto input)
         {
             try
             {
-                _categoryService.Create(input);
+                _productService.Create(input);
                 return new();
             }
             catch (Exception ex)
@@ -74,12 +67,13 @@ namespace ShopDev.Authentication.API.Controllers
         }
 
         [HttpPut("update")]
-        [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserUpdate)]
-        public ApiResponse Update()
+        public ApiResponse Update(ProductUpdateDto input)
         {
             try
             {
+                _productService.Update(input);
                 return new();
             }
             catch (Exception ex)
@@ -89,8 +83,8 @@ namespace ShopDev.Authentication.API.Controllers
         }
 
         [HttpPut("delete/{id}")]
-        [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
-        [PermissionFilter(PermissionKeys.UserButtonAccountManagerDelete)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
+        //[PermissionFilter(PermissionKeys.UserButtonAccountManagerDelete)]
         public ApiResponse Delete(int id)
         {
             try

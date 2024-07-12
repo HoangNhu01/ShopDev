@@ -1,16 +1,14 @@
-﻿using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShopDev.ApplicationBase.Common;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Abstract
 {
-	public interface IProductService
-	{
+    public interface IProductService
+    {
         void Create(ProductCreateDto input);
-		ProductDetailDto FindById(int id);
-		void Update(ProductUpdateDto input);
-	}
+        ProductDetailDto FindById(int id);
+        void Update(ProductUpdateDto input);
+        PagingResult<ProductDetailDto> FindAll(ProductFilterDto input);
+
+    }
 }

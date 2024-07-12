@@ -36,6 +36,8 @@ namespace ShopDev.Inventory.Domain.Products
         //[BsonElement("thumbUri")]
         [Unicode(false)]
         public required string ThumbUri { get; set; }
+        public bool IsFeatured { get; set; }
+        public DateTime SetFeaturedDate { get; set; }
 
         //[BsonElement("price")]
         public double Price { get; set; }

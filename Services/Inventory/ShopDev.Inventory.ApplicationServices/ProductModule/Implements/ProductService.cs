@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ShopDev.ApplicationBase.Common;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
@@ -8,7 +12,7 @@ using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
-using System.Text.Json;
+using ShopDev.Utils.Linq;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {
@@ -130,8 +134,10 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var product =
-                FindEntity<Product>(expression: x => x.Id == id)
-                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+                FindEntity<Product>(
+                    expression: x => x.Id == id,
+                    include: s => s.Include(x => x.Spus)
+                ) ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             return new()
             {
                 Description = product.Description,
@@ -171,11 +177,76 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 Categories =
                 [
                     .. product.Categories.Select(x => new CategoryTypeDetailDto{
-                        CategoryId = x.CategoryId.ToString(),
+                        CategoryId = x.CategoryId,
                         Name = x.Category.Name
                     })
                 ]
             };
+        }
+
+        public PagingResult<ProductDetailDto> FindAll(ProductFilterDto input)
+        {
+            _logger.LogInformation(
+                $"{nameof(FindById)}: input = {JsonSerializer.Serialize(input)}"
+            );
+            var product =
+                GetIQueryableResult<ProductDetailDto, Product>(
+                    selector: x =>
+                        new()
+                        {
+                            Description = x.Description,
+                            Name = x.Name,
+                            Id = x.Id,
+                            ShopId = x.ShopId,
+                            ThumbUri = x.ThumbUri,
+                            Title = x.Title,
+                            Attributes = x.Attributes.GroupBy(x => x.Name)
+                                .Select(x => new AttributeDetailDto
+                                {
+                                    Name = x.Key,
+                                    Value = x.Select(c => c.Value).ToList()
+                                })
+                                .ToList(),
+                            Variations = x.Variations.Select(x => new VariationDetailDto
+                            {
+                                Options = x.Options,
+                                Name = x.Name
+                            })
+                                .ToList()
+                        },
+                    predicate: x =>
+                        (
+                            string.IsNullOrEmpty(input.ShopName)
+                            || x.Shop.Name.Contains(input.ShopName)
+                        )
+                        && (
+                            string.IsNullOrEmpty(input.ProductName)
+                            || x.Shop.Name.Contains(input.ProductName)
+                        )
+                        && (!input.Price.HasValue || x.Price == input.Price.Value)
+                        && (!input.ShopId.HasValue || x.ShopId == input.ShopId.Value)
+                        && (
+                            input.AttributeNames == null
+                            || x.Attributes.Any(s => input.AttributeNames.Contains(s.Value))
+                        )
+                        && (
+                            input.CategoryNames == null
+                            || x.Categories.Any(s => input.CategoryNames.Contains(s.Category.Name))
+                        )
+                    //include: x => x.Include(x => x.Shop).Include(x => x.Categories).ThenInclude(x => x.Category)
+                ) ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            var result = new PagingResult<ProductDetailDto>
+            {
+                // đếm tổng trước khi phân trang
+                TotalItems = product.Count()
+            };
+            product = product.OrderDynamic(input.Sort);
+            if (input.PageSize != -1)
+            {
+                product = product.Skip(input.GetSkip()).Take(input.PageSize);
+            }
+            result.Items = product;
+            return result;
         }
     }
 }

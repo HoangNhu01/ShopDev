@@ -12,29 +12,31 @@ services:
     volumes:
       - ./data:/var/opt/mssql/data
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.10
 
-  cr.core.api:
-    image: cr.core.api
-    container_name: cr.core
+  sd.authenticate.api:
+    image: sd.authenticate.api
+    container_name: sd.authenticate
+    profiles:
+      - donotstart
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     build:
-      context: ../../BE
-      dockerfile: Services/Core/CR.Core.API/Dockerfile
+      context: ../../
+      dockerfile: Services/Authentication/ShopDev.Authentication.API/Dockerfile
     ports:
       - 5001:8080
     configs:
       - source: appsettings
-        target: /app/appsettings.json
+        target: /app/appsettings.${ASPNETCORE_ENVIRONMENT}.json
     secrets:
       - source: public_key
         target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
       - source: private_key
         target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
-    volumes:
-      - ${PWD}/secrets/DataProtection-Keys:/app/DataProtection-Keys
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.11
 
   minio:
@@ -42,7 +44,7 @@ services:
     container_name: minio-manager
     ports:
       - 9000:9000
-      - 9001:9001
+      - 9001:9001 
     volumes:
       - ./data:/data
     environment:
@@ -50,7 +52,7 @@ services:
       - MINIO_ROOT_PASSWORD=123qwe@123
     command: server --console-address ":9001" /data
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.12
 
   seq:
@@ -62,7 +64,7 @@ services:
       - 5341:5341
       - 8081:80
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.13
 
   gotenberg:
@@ -83,7 +85,7 @@ services:
       RABBITMQ_DEFAULT_USER: "user"
       RABBITMQ_DEFAULT_PASS: "123@123abc"
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.14
 
   mongodb:
@@ -97,12 +99,12 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123qwe
     networks:
-      cr_network:
+      sd_network:
         ipv4_address: 10.0.0.15
 
 configs:
   appsettings:
-    file: ./configs/appsettings.json
+    file: ./configs/appsettings.${ASPNETCORE_ENVIRONMENT}.json
     name: appsettings
   notification-env:
     file: ./configs/.env
@@ -114,7 +116,7 @@ secrets:
     file: ./secrets/private_key.${ASPNETCORE_ENVIRONMENT}.pem
 
 networks:
-  cr_network:
+  sd_network:
     driver: bridge
     ipam:
       config:

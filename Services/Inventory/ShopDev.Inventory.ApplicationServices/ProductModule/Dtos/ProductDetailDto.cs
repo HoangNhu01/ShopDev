@@ -19,7 +19,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 
     public class CategoryTypeDetailDto
     {
-        public required string CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public required string Name { get; set; }
     }
 

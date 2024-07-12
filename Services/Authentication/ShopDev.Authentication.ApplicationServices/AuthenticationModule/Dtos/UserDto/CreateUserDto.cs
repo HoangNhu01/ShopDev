@@ -47,6 +47,11 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.U
         public int? UserType { get; set; }
         public int? Status { get; set; }
         public bool IsPasswordTemp { get; set; }
-        public List<int> RoleIds { get; set; } = [];
+        public List<CreateUserRoleDto> UserRoles { get; set; } = [];
+    }
+
+    public class CreateUserRoleDto
+    {
+        public int RoleId { get; set; }
     }
 }

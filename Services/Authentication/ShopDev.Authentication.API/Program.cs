@@ -92,6 +92,7 @@ namespace ShopDev.Authentication.API
                 ?? throw new InvalidOperationException(
                     "Không tìm thấy connection string \"Default\" trong appsettings.json"
                 );
+            Console.WriteLine(connectionString);
 
             //entity framework
             builder.Services.AddDbContextPool<AuthenticationDbContext>(
@@ -133,13 +134,14 @@ namespace ShopDev.Authentication.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (EnvironmentNames.DevelopEnv.Contains(app.Environment.EnvironmentName))
+            if (EnvironmentNames.DevelopEnv.Any(x => x == app.Environment.EnvironmentName))
             {
+                Console.WriteLine(app.Environment.EnvironmentName);
                 app.UseDeveloperExceptionPage();
                 app.UseSwaggerConfig("api/auth/swagger");
             }
 
-            if (EnvironmentNames.Productions.Contains(app.Environment.EnvironmentName))
+            if (EnvironmentNames.Productions.Any(x => x == app.Environment.EnvironmentName))
             {
                 app.UseHttpsRedirection();
                 app.UpdateMigrations<AuthenticationDbContext>();

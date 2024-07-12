@@ -1,8 +1,6 @@
 using System.Text.Json;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
@@ -14,7 +12,6 @@ using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.SysVar;
 using ShopDev.Constants.Users;
-using ShopDev.EntitiesBase.AuthorizationEntities;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.InfrastructureBase.Files;
 using ShopDev.S3Bucket;
@@ -45,21 +42,14 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var user =
                 FindEntity<User>(u => u.Username == username, isTracking: true)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
-            if (
-                new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP, UserStatus.LOCK }.Contains(
-                    user.Status
-                )
-            )
-            {
-                throw new UserFriendlyException(ErrorCode.UserNotFound);
-            }
-            else if (!new int[] { UserTypes.SHOP, UserTypes.SUPER_ADMIN }.Contains(user.UserType))
+
+            if (user.UserType != UserTypes.SHOP && user.UserType != UserTypes.SUPER_ADMIN)
             {
                 throw new UserFriendlyException(ErrorCode.UserLoginUserTypeInvalid);
             }
             else if (!PasswordHasher.VerifyPassword(password, user.Password))
             {
-                HandleIncorrectPassword(user);
+                HandleIncorrectPassword(user.Id);
             }
             else if (user.Status == UserStatus.DEACTIVE)
             {
@@ -72,16 +62,12 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             _logger.LogInformation($"{nameof(ValidateAppUser)}: username = {username}");
             var user =
-                _dbContext.Users.FirstOrDefault(u => u.Username == username && !u.Deleted)
-                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
+                FindEntity<User>(u => u.Username == username, isTracking: true)
+                ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
 
-            if (new int[] { UserStatus.TEMP, UserStatus.TEMP_OTP }.Contains(user.Status))
+            if (!PasswordHasher.VerifyPassword(password, user.Password))
             {
-                throw new UserFriendlyException(ErrorCode.UserNotFound);
-            }
-            else if (!PasswordHasher.VerifyPassword(password, user.Password))
-            {
-                HandleIncorrectPassword(user);
+                HandleIncorrectPassword(user.Id);
             }
             else if (user.Status == UserStatus.DEACTIVE)
             {
@@ -104,70 +90,61 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             return _mapper.Map<UserDto>(user);
         }
 
-        private void HandleIncorrectPassword(User user)
+        private void HandleIncorrectPassword(int userId)
         {
-            if (user.DateTimeLoginFailCount < DateTimeUtils.GetDate() && user.LoginFailCount != 0)
+            var user = _dbContext.Users.Find(userId);
+            if (user is not null)
             {
-                user.LoginFailCount = 0;
-                user.DateTimeLoginFailCount = new DateTime(0, DateTimeKind.Local);
+                if (
+                    user.DateTimeLoginFailCount < DateTimeUtils.GetDate()
+                    && user.LoginFailCount != 0
+                )
+                {
+                    user.LoginFailCount = 0;
+                    user.DateTimeLoginFailCount = new DateTime(0, DateTimeKind.Local);
+                }
+                user.LoginFailCount++;
+                var loginMaxTurn = GetLimitedInputTurn(VarNames.LOGINMAXTURN);
+                user.DateTimeLoginFailCount = DateTimeUtils.GetDate().AddMinutes(15);
+                if (user.LoginFailCount >= loginMaxTurn)
+                {
+                    user.Status = UserStatus.DEACTIVE;
+                    user.LoginFailCount = 0;
+                    user.DateTimeLoginFailCount = new DateTime(0, DateTimeKind.Local);
+                }
+                _dbContext.SaveChanges();
+                if (user.Status == UserStatus.DEACTIVE)
+                {
+                    throw new UserFriendlyException(ErrorCode.UserIsDeactive);
+                }
+                if (user.LoginFailCount == 1)
+                {
+                    throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
+                }
+                throw new UserFriendlyException(
+                    ErrorCode.AppPasswordIncorrect,
+                    loginMaxTurn.ToString(),
+                    (loginMaxTurn - user.LoginFailCount).ToString()
+                );
             }
-            user.LoginFailCount++;
-            var loginMaxTurn = GetLimitedInputTurn(VarNames.LOGINMAXTURN);
-            user.DateTimeLoginFailCount = DateTimeUtils.GetDate().AddMinutes(15);
-            if (user.LoginFailCount >= loginMaxTurn)
-            {
-                user.Status = UserStatus.DEACTIVE;
-                user.LoginFailCount = 0;
-                user.DateTimeLoginFailCount = new DateTime(0, DateTimeKind.Local);
-            }
-            _dbContext.SaveChanges();
-            if (user.Status == UserStatus.DEACTIVE)
-            {
-                throw new UserFriendlyException(ErrorCode.UserIsDeactive);
-            }
-            if (user.LoginFailCount == 1)
-            {
-                throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
-            }
-            throw new UserFriendlyException(
-                ErrorCode.AppPasswordIncorrect,
-                loginMaxTurn.ToString(),
-                (loginMaxTurn - user.LoginFailCount).ToString()
-            );
         }
 
         public virtual async Task Create(CreateUserDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
             input.Password = PasswordHasher.HashPassword(input.Password);
-            var user = _mapper.Map<User>(input);
             if (_dbContext.Users.Any(u => u.Username == input.Username && !u.Deleted))
             {
                 throw new UserFriendlyException(ErrorCode.UsernameHasBeenUsed);
             }
             var transaction = _dbContext.Database.BeginTransaction();
-            if (input.Status == null)
-            {
-                user.Status = UserStatus.ACTIVE;
-            }
+            var user = _mapper.Map<User>(input);
             user.UserType = UserTypes.SHOP;
-            var result = _dbContext.Users.Add(user);
+            user.UserRoles.AddRange(
+                input.UserRoles.Select(x => new UserRole { RoleId = x.RoleId })
+            );
+            _dbContext.Users.Add(user);
             _dbContext.SaveChanges();
-
-            //Thêm role
-            if (input.RoleIds != null)
-            {
-                foreach (var item in input.RoleIds.Distinct())
-                {
-                    var role =
-                        _dbContext.Roles.FirstOrDefault(e => e.Id == item)
-                        ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
-                    _dbContext.UserRoles.Add(
-                        new UserRole { UserId = result.Entity.Id, RoleId = item }
-                    );
-                }
-                _dbContext.SaveChanges();
-            }
             transaction.Commit();
         }
 
@@ -275,47 +252,12 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             );
 
             var user =
-                _dbContext.Users.FirstOrDefault(u =>
-                    u.Id == input.Id && u.Status == UserStatus.ACTIVE && !u.Deleted
+                FindEntity<User>(
+                    x => x.Id == input.Id,
+                    isTracking: true,
+                    include: x => x.Include(x => x.UserRoles).ThenInclude(x => x.Role)
                 ) ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.FullName = input.FullName;
-
-            //Thêm role
-            if (input.RoleIds != null)
-            {
-                foreach (var item in input.RoleIds)
-                {
-                    if (_dbContext.Roles.FirstOrDefault(e => e.Id == item) == null)
-                        throw new UserFriendlyException(ErrorCode.RoleNotFound);
-                }
-            }
-
-            var inputUserRole = input.RoleIds ?? [];
-            //Danh sách role hiện tại được gán cho user
-            var currentUserRole = _dbContext
-                .UserRoles.Where(e => e.UserId == input.Id)
-                .Select(e => e.RoleId)
-                .ToList();
-
-            //Xóa những role gán với user
-            var removeUserRole = currentUserRole.Except(inputUserRole).ToList();
-            foreach (var item in removeUserRole)
-            {
-                var userRole = _dbContext.UserRoles.FirstOrDefault(e =>
-                    e.UserId == input.Id && e.RoleId == item
-                );
-                if (userRole != null)
-                {
-                    userRole.Deleted = true;
-                }
-            }
-
-            //Thêm những role trong input chưa  có trong db
-            var insertUserRole = inputUserRole.Except(currentUserRole).ToList();
-            foreach (var item in insertUserRole)
-            {
-                _dbContext.UserRoles.Add(new UserRole { UserId = input.Id, RoleId = item });
-            }
 
             _dbContext.SaveChanges();
         }
@@ -389,19 +331,6 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _dbContext.SaveChanges();
         }
 
-        public void UpdateUserFullname(UpdateFullNameUserDto input)
-        {
-            var userId = _httpContext.GetCurrentUserId();
-            _logger.LogInformation(
-                $"{nameof(UpdateUserFullname)}: id = {input.Id}, userId = {userId}"
-            );
-            var user =
-                _dbContext.Users.FirstOrDefault(u => u.Id == input.Id && !u.Deleted)
-                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            user.FullName = input.FullName;
-            _dbContext.SaveChanges();
-        }
-
         public void Login(int id)
         {
             _logger.LogInformation($"{nameof(Login)}: id = {id}");
@@ -432,7 +361,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                 var browserInfo = contextInfo.Request.Headers["Sec-Ch-Ua"].ToString();
                 var browserInfoString =
                     browserInfo.Length > 0 ? browserInfo.Replace("\"", "").Split(',') : null;
-                if (browserInfoCheck && browserInfoString != null)
+                if (browserInfoCheck && browserInfoString is not null)
                 {
                     browser = browserInfoString.Length > 0 ? browserInfoString[0].Trim() : null;
                 }
@@ -492,35 +421,32 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _dbContext.SaveChanges();
         }
 
-        public void UpdateUserStatus(int userId, int userStatus)
-        {
-            var user =
-                _dbContext.Users.Find(userId)
-                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            user.Status = userStatus;
-            _dbContext.SaveChanges();
-        }
-
         public void UpdateRole(UpdateRoleDto input)
         {
             _logger.LogInformation(
                 $"{nameof(UpdateRole)}: input = {JsonSerializer.Serialize(input)}"
             );
             //Danh sách role hiện tại được gán cho user
-            var currentUserRole = _dbContext
+            List<UserRole> currentUserRoles =
+            [
+                .. _dbContext
                 .UserRoles.Where(e => e.UserId == input.UserId)
-                .ToList();
+            ];
             UpdateItems(
-                currentUserRole,
-                input.RoleIds,
-                (x, y) => x.Id == y,
+                currentUserRoles,
+                input.UserRoles,
+                (x, y) => x.Id == y.RoleId,
                 (x, y) =>
                 {
                     x.Deleted = true;
                 }
             );
-            _dbContext.UserRoles.AddRange(
-                input.RoleIds.Select(x => new UserRole { UserId = input.UserId, RoleId = x })
+            currentUserRoles.AddRange(
+                input.UserRoles.Select(x => new UserRole
+                {
+                    UserId = input.UserId,
+                    RoleId = x.RoleId
+                })
             );
             _dbContext.SaveChanges();
         }

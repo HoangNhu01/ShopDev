@@ -1,4 +1,6 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.RoleDto;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.UserDto;
@@ -8,8 +10,6 @@ using ShopDev.Constants.RolePermission.Constant;
 using ShopDev.UserRolePermission;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ShopDev.Authentication.API.Controllers
 {
@@ -202,25 +202,6 @@ namespace ShopDev.Authentication.API.Controllers
             try
             {
                 _userService.SetPassword(input);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Đổi tên hiển thị
-        /// </summary>
-        /// <returns></returns>
-        [HttpPut("update-fullname")]
-        [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
-        public ApiResponse UpdateFullname(UpdateFullNameUserDto input)
-        {
-            try
-            {
-                _userService.UpdateUserFullname(input);
                 return new();
             }
             catch (Exception ex)

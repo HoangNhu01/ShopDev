@@ -75,7 +75,6 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// </summary>
         /// <param name="input"></param>
         void ChangePassword(ChangePasswordDto input);
-        void UpdateUserFullname(UpdateFullNameUserDto input);
 
         /// <summary>
         /// Lưu thông tin ngày gần nhất + thiết bị khi đăng nhập
@@ -108,13 +107,6 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// <param name="userName"></param>
         /// <param name="userStatus"></param>
         void UpdateStatus(string userName, int userStatus);
-
-        /// <summary>
-        /// Cập nhật trạng thái user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="userStatus"></param>
-        void UpdateUserStatus(int userId, int userStatus);
 
         /// <summary>
         /// Cập nhật role theo userId

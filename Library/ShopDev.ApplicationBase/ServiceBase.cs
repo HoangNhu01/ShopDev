@@ -74,13 +74,14 @@ namespace ShopDev.ApplicationBase
             return query;
         }
 
-        protected Entity? FindEntity<Entity>(
-            Expression<Func<Entity, bool>> expression,
-            bool isTracking = false
+        protected TEntity? FindEntity<TEntity>(
+            Expression<Func<TEntity, bool>> expression,
+            bool isTracking = false,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
         )
-            where Entity : class
+            where TEntity : class
         {
-            IQueryable<Entity> entities = _dbContext.Set<Entity>();
+            IQueryable<TEntity> entities = _dbContext.Set<TEntity>();
             if (isTracking)
             {
                 entities.AsNoTracking();
