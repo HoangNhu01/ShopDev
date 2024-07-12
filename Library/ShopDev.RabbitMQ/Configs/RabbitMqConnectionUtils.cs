@@ -44,7 +44,7 @@ namespace ShopDev.RabbitMQ.Configs
                     | SslPolicyErrors.RemoteCertificateChainErrors;
             }
 
-            connection.DispatchConsumersAsync = dispatchConsumersAsync;
+            //connection.DispatchConsumersAsync = dispatchConsumersAsync;
             var channel = connection.CreateConnection();
             return channel;
         }

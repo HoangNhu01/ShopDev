@@ -39,6 +39,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ShopDev.ConvertFile\ShopDev.ConvertFile.csproj" />
 		<ProjectReference Include="..\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
 		<ProjectReference Include="..\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
 		<ProjectReference Include="..\ShopDev.Utils\ShopDev.Utils.csproj" />
 	</ItemGroup>

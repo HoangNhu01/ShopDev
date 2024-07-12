@@ -1,3 +1,4 @@
+using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Hangfire;
@@ -11,8 +12,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using Serilog;
+using Serilog.Sinks.RabbitMQ;
+using Serilog.Sinks.RabbitMQ.Sinks.RabbitMQ;
 using ShopDev.Constants.Environments;
+using ShopDev.Constants.RabbitMQ;
+using ShopDev.RabbitMQ.Configs;
 using ShopDev.Utils.Security;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
@@ -78,41 +84,57 @@ namespace ShopDev.WebAPIBase
             string routingKey
         )
         {
-            //var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMqConfig>()!;
-            //var rabbitMqConnection = rabbitMqConfig.CreateConnection();
-            //var model = rabbitMqConnection.CreateModel();
+            var rabbitMqConfig = builder
+                .Configuration.GetSection("RabbitMQ")
+                .Get<RabbitMqConfig>()!;
+            IConnection rabbitMqConnection = rabbitMqConfig.CreateConnection();
+            IModel model = rabbitMqConnection.CreateModel();
 
-            //var queueArgs = new Dictionary<string, object>
-            //{
-            //    { "x-queue-type", "quorum" }
-            //};
-            //model.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false, arguments: queueArgs);
-            //model.ExchangeDeclare(RabbitExchangeNames.Log, ExchangeType.Direct, durable: true, autoDelete: false);
-            //model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+            Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
+            model.QueueDeclare(
+                queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: queueArgs
+            );
+            model.ExchangeDeclare(
+                RabbitExchangeNames.Log,
+                ExchangeType.Direct,
+                durable: true,
+                autoDelete: false
+            );
+            model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
 
-            //var configRabbitMqSerilog = new RabbitMQClientConfiguration
-            //{
-            //    Username = rabbitMqConfig.Username,
-            //    Password = rabbitMqConfig.Password,
-            //    Port = rabbitMqConfig.Port,
-            //    VHost = rabbitMqConfig.VirtualHost,
-            //    DeliveryMode = RabbitMQDeliveryMode.Durable,
-            //    Exchange = RabbitExchangeNames.Log,
-            //    ExchangeType = ExchangeType.Direct,
-            //    RouteKey = routingKey,
-            //};
-            //configRabbitMqSerilog.Hostnames.Add(rabbitMqConfig.HostName);
+            RabbitMQClientConfiguration configRabbitMqSerilog =
+                new()
+                {
+                    Username = rabbitMqConfig.Username,
+                    Password = rabbitMqConfig.Password,
+                    Port = rabbitMqConfig.Port,
+                    VHost = rabbitMqConfig.VirtualHost,
+                    DeliveryMode = RabbitMQDeliveryMode.Durable,
+                    Exchange = RabbitExchangeNames.Log,
+                    ExchangeType = ExchangeType.Direct,
+                    RouteKey = routingKey,
+                };
+            configRabbitMqSerilog.Hostnames.Add(rabbitMqConfig.HostName);
 
-            //if (rabbitMqConfig.Ssl != null)
-            //{
-            //    configRabbitMqSerilog.SslOption = new SslOption()
-            //    {
-            //        ServerName = rabbitMqConfig.Ssl!.ServerName,
-            //        Enabled = true,
-            //        CertPath = Path.Combine(Directory.GetCurrentDirectory(), rabbitMqConfig.Ssl!.CertPath!),
-            //        AcceptablePolicyErrors = SslPolicyErrors.RemoteCertificateNameMismatch | SslPolicyErrors.RemoteCertificateChainErrors
-            //    };
-            //}
+            if (rabbitMqConfig.Ssl is not null)
+            {
+                configRabbitMqSerilog.SslOption = new SslOption()
+                {
+                    ServerName = rabbitMqConfig.Ssl!.ServerName,
+                    Enabled = true,
+                    CertPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        rabbitMqConfig.Ssl!.CertPath!
+                    ),
+                    AcceptablePolicyErrors =
+                        SslPolicyErrors.RemoteCertificateNameMismatch
+                        | SslPolicyErrors.RemoteCertificateChainErrors
+                };
+            }
 
             var environment = builder.Environment.EnvironmentName;
             ConfigurationManager configurationManager = builder.Configuration;
