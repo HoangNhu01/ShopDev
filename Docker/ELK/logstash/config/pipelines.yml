@@ -1,0 +1,23 @@
+- pipeline.id: log-auth
+  path.config: "/usr/share/logstash/pipeline/log-auth.conf"
+  pipeline.workers: 1
+
+- pipeline.id: log-core
+  path.config: "/usr/share/logstash/pipeline/log-core.conf"
+  pipeline.workers: 1
+
+- pipeline.id: log-media
+  path.config: "/usr/share/logstash/pipeline/log-media.conf"
+  pipeline.workers: 1
+
+- pipeline.id: log-invest
+  path.config: "/usr/share/logstash/pipeline/log-invest.conf"
+  pipeline.workers: 1
+
+- pipeline.id: log-noti
+  path.config: "/usr/share/logstash/pipeline/log-noti.conf"
+  pipeline.workers: 1
+
+- pipeline.id: log-payment
+  path.config: "/usr/share/logstash/pipeline/log-payment.conf"
+  pipeline.workers: 1

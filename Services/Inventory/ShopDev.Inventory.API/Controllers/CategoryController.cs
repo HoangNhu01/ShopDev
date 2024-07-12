@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopDev.Authentication.Domain.Users;
@@ -8,7 +9,6 @@ using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
 using ShopDev.UserRolePermission;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
-using System.Net;
 
 namespace ShopDev.Authentication.API.Controllers
 {
@@ -31,7 +31,7 @@ namespace ShopDev.Authentication.API.Controllers
 
         [HttpGet("find-all")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
-        [PermissionFilter(PermissionKeys.UserTableAccountManager)]
+        //[PermissionFilter(PermissionKeys.UserTableAccountManager)]
         public ApiResponse FindAll()
         {
             try
@@ -44,8 +44,8 @@ namespace ShopDev.Authentication.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ApiResponse<User>), (int)HttpStatusCode.OK)]
+        [HttpGet("find-by-id/{id}")]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter()]
         public ApiResponse FindById(int id)
         {

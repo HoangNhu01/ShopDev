@@ -1,0 +1,12 @@
+services:
+    cr-core:
+        image: cr-core
+        container_name: cr-core
+        build:
+          context: ../../FE/src
+          dockerfile: Dockerfile
+          args:
+            - PROJECT=core
+            - CONFIGURATION=devtest
+        ports:
+          - 4201:80

@@ -38,5 +38,7 @@ namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Implements
                 _dbContext.Categories.Find(id) ?? throw new UserFriendlyException(10000)
             );
         }
+
+        public 
     }
 }
