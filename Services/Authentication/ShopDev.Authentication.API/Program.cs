@@ -33,7 +33,7 @@ namespace ShopDev.Authentication.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
+            //builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
             builder.ConfigureServices();
             builder.ConfigureDataProtection();
 

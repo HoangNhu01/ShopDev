@@ -24,7 +24,7 @@
             <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
             <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
             <PackageReference Include="Serilog.Sinks.Network" Version="2.0.2.68" />
-            <PackageReference Include="Serilog.Sinks.RabbitMQ" Version="6.0.0" />
+            <PackageReference Include="Serilog.Sinks.RabbitMQ" Version="7.0.2" />
             <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
             <PackageReference Include="OpenIddict.AspNetCore" Version="5.4.0" />
             <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />

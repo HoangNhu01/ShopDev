@@ -80,6 +80,9 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.16
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
@@ -114,6 +117,9 @@ services:
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.17
     mem_limit: ${MEM_LIMIT}
     healthcheck:
       test:
@@ -139,8 +145,8 @@ services:
     ports:
       - ${LOGSTASH_PORT}:9600
       - 9601:8080
-    extra_hosts:
-      - "meeytest-rabbitmq.meeytest.svc.cluster.local:10.100.10.69"
+    # extra_hosts:
+    #   - "meeytest-rabbitmq.meeytest.svc.cluster.local:10.100.10.69"
     environment:
       - ELASTICSEARCH_HOSTS=http://es01:9200
       # - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/logstash/config/certs/ca/ca.crt
@@ -148,17 +154,20 @@ services:
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - CONFIG_RELOAD_AUTOMATIC=true
       # - ORACLE_JDBC=/usr/share/logstash/jdbc/ojdbc11.jar
-      # - xpack.monitoring.elasticsearch.hosts=http://es01:9200
-      # - XPACK_MONITORING_ENABLED=false
-      - RABBITMQ_HOST=meeytest-rabbitmq.meeytest.svc.cluster.local
-      - RABBITMQ_USER=meeybank
-      - RABBITMQ_PASSWORD=RdCkxhc3Qg
-      - RABBITMQ_PORT=5671
-      - RABBITMQ_VHOST=meeybank
-      - RABBITMQ_SSL_CER_PATH=/usr/share/logstash/certs/k8s-meey-ca.pfx
-      - RABBITMQ_SSL_CER_PASSWORD=
+      - xpack.monitoring.elasticsearch.hosts=http://es01:9200
+      - XPACK_MONITORING_ENABLED=false
+      - RABBITMQ_HOST=10.0.0.14
+      - RABBITMQ_USER=user
+      - RABBITMQ_PASSWORD=123@123abc
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_VHOST=/
+      # - RABBITMQ_SSL_CER_PATH=/usr/share/logstash/certs/k8s-meey-ca.pfx
+      # - RABBITMQ_SSL_CER_PASSWORD=
     # command: >
     #   bash -c '/usr/share/logstash/jdk/bin/keytool -importcert -file /usr/share/logstash/certs/k8s-meey-ca.crt -trustcacerts -storetype PKCS12'
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.18
 
 volumes:
   elastic-certs:
@@ -167,3 +176,15 @@ volumes:
     driver: local
   kibanadata:
     driver: local
+
+networks:
+  sd_network:
+      name: sd_sd_network
+      external: true
+
+# networks:
+#   sd_network:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 10.0.0.0/24

@@ -6,7 +6,7 @@
         public required string Username { get; set; }
         public required string Password { get; set; }
         public int Port { get; set; }
-        public string? VirtualHost { get; set; }
+        public required string VirtualHost { get; set; }
         public RabbitMqSsl? Ssl { get; set; }
     }
 

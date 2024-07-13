@@ -1,6 +1,3 @@
-using System.Net.Security;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,10 +9,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver.Core.Bindings;
 using RabbitMQ.Client;
 using Serilog;
+using Serilog.Core;
+using Serilog.Formatting.Json;
 using Serilog.Sinks.RabbitMQ;
-using Serilog.Sinks.RabbitMQ.Sinks.RabbitMQ;
 using ShopDev.Constants.Environments;
 using ShopDev.Constants.RabbitMQ;
 using ShopDev.RabbitMQ.Configs;
@@ -24,6 +23,10 @@ using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
 using StackExchange.Profiling.Storage;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Net.Security;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Channels;
 
 namespace ShopDev.WebAPIBase
 {
@@ -87,24 +90,32 @@ namespace ShopDev.WebAPIBase
             var rabbitMqConfig = builder
                 .Configuration.GetSection("RabbitMQ")
                 .Get<RabbitMqConfig>()!;
-            IConnection rabbitMqConnection = rabbitMqConfig.CreateConnection();
-            IModel model = rabbitMqConnection.CreateModel();
-
-            Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
-            model.QueueDeclare(
-                queueName,
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: queueArgs
-            );
-            model.ExchangeDeclare(
-                RabbitExchangeNames.Log,
-                ExchangeType.Direct,
-                durable: true,
-                autoDelete: false
-            );
-            model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+            using IConnection rabbitMqConnection = rabbitMqConfig.CreateConnection();
+            using IModel model = rabbitMqConnection.CreateModel();
+            try
+            {
+                //Kiểm tra queue và exchange còn tồn tại hay không
+                model.ExchangeDeclarePassive(RabbitExchangeNames.Log);
+                model.QueueDeclarePassive(queueName);
+            }
+            catch 
+            {
+                Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
+                model.QueueDeclare(
+                    queueName,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: queueArgs
+                );
+                model.ExchangeDeclare(
+                    RabbitExchangeNames.Log,
+                    ExchangeType.Direct,
+                    durable: true,
+                    autoDelete: false
+                );
+                model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+            }
 
             RabbitMQClientConfiguration configRabbitMqSerilog =
                 new()
@@ -138,14 +149,14 @@ namespace ShopDev.WebAPIBase
 
             var environment = builder.Environment.EnvironmentName;
             ConfigurationManager configurationManager = builder.Configuration;
-            var logger = new LoggerConfiguration()
+            Logger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
-                //.WriteTo.RabbitMQ((clientConfiguration, sinkConfiguration) =>
-                //{
-                //    clientConfiguration.From(configRabbitMqSerilog);
-                //    sinkConfiguration.TextFormatter = new JsonFormatter();
-                //})
+                .WriteTo.RabbitMQ((clientConfiguration, sinkConfiguration) =>
+                {
+                    clientConfiguration.From(configRabbitMqSerilog);
+                    sinkConfiguration.TextFormatter = new JsonFormatter();
+                })
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configurationManager)
                 .CreateLogger();
