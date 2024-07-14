@@ -102,6 +102,20 @@ services:
       sd_network:
         ipv4_address: 10.0.0.15
 
+  consul:
+    image: consul:1.13.4
+    container_name: dev-consul
+    ports:
+      - "8500:8500"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+      - CONSUL_ADVERTISE_ADDR=192.168.1.100
+    command: agent -dev -client=10.0.0.0
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.20
+
 configs:
   appsettings:
     file: ./configs/appsettings.${ASPNETCORE_ENVIRONMENT}.json
