@@ -54,7 +54,7 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
             modelBuilder
                 .Entity<UserRole>()
                 .HasOne(x => x.Role)
-                .WithMany()
+                .WithMany(x => x.UserRoles)
                 .HasForeignKey(e => e.RoleId);
 
             modelBuilder.Entity<UserRole>().HasOne<User>().WithMany().HasForeignKey(e => e.UserId);

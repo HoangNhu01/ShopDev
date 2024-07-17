@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.PermissionDto;
 using ShopDev.Authentication.ApplicationServices.Common;
@@ -6,8 +9,6 @@ using ShopDev.Constants.Role;
 using ShopDev.Constants.RolePermission;
 using ShopDev.Constants.Users;
 using ShopDev.InfrastructureBase.Exceptions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements
 {
@@ -122,28 +123,21 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                         Label = L(x.Value.LName),
                         Icon = x.Value.Icon
                     }),
-                _ => new List<PermissionDetailDto>(),
+                _ => [],
             };
         }
 
         public IEnumerable<PermissionInWebDto> FindByPermissionInWeb()
         {
-            var query = _dbContext
-                .Roles.Where(r => !r.Deleted)
+            return _dbContext
+                .Roles.Include(x => x.UserRoles)
                 .GroupBy(r => r.PermissionInWeb)
-                .Select(roles => new PermissionInWebDto
+                .Select(x => new PermissionInWebDto
                 {
-                    PermissionInWeb = roles.Key,
-                    TotalRole = roles.Select(o => o.Id).Count(),
-                    TotalUser = (
-                        from role in roles
-                        join userRole in _dbContext.UserRoles on role.Id equals userRole.RoleId
-                        join user in _dbContext.Users on userRole.UserId equals user.Id
-                        where !userRole.Deleted && !user.Deleted
-                        select userRole.UserId
-                    ).Count(),
+                    PermissionInWeb = x.Key,
+                    TotalRole = x.Select(o => o.Id).Count(),
+                    TotalUser = x.SelectMany(s => s.UserRoles).Count(),
                 });
-            return query;
         }
     }
 }

@@ -119,11 +119,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         public RoleDto Update(UpdateRolePermissionDto input)
         {
             _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
-            var role = _dbContext.Roles.FirstOrDefault(e => e.Id == input.Id && !e.Deleted);
-            if (role == null)
-            {
-                throw new UserFriendlyException(ErrorCode.RoleNotFound);
-            }
+            var role = _dbContext.Roles.FirstOrDefault(e => e.Id == input.Id && !e.Deleted) ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
             if (_dbContext.Roles.Any(s => s.Id != role.Id && s.Name == input.Name && !s.Deleted))
             {
                 throw new UserFriendlyException(ErrorCode.RoleNameExist);

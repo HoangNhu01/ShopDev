@@ -42,6 +42,7 @@ namespace ShopDev.Authentication.Domain.Users
         /// <see cref="PermissionInWebs"/>
         /// </summary>
         public int PermissionInWeb { get; set; }
+        public virtual List<UserRole> UserRoles { get; } = [];
 
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
