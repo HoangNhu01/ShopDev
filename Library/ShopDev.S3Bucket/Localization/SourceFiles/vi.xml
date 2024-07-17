@@ -13,6 +13,9 @@
 		<text name="error_s3_ReadMediaNotFound">Không tìm thấy tài nguyên Source/Bucket</text>
 		<text name="error_s3_ReadMediaBadRequest">Đọc media không hợp lệ</text>
 		<text name="error_s3_ReadMediaError">Lỗi đọc media</text>
+		<text name="error_s3_CreatBucketError">Lỗi tạo bucket</text>
+		<text name="error_s3_MoveFileError">Lỗi move file</text>
+		<text name="error_s3_MoveFileBadRequest">Move file không hợp lệ</text>
 
 	</texts>
 </localizationDictionary>

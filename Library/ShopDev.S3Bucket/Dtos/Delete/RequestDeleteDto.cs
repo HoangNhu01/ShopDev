@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ShopDev.S3Bucket.Dtos.Delete
+namespace CR.S3Bucket.Dtos.Delete
 {
     /// <summary>
     /// Request xóa file
@@ -9,8 +9,5 @@ namespace ShopDev.S3Bucket.Dtos.Delete
     {
         [JsonPropertyName("s3Key")]
         public string? S3Key { get; set; }
-
-        [JsonPropertyName("folderType")]
-        public string? FolderType { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ShopDev.S3Bucket.Dtos.Media
+﻿namespace CR.S3Bucket.Dtos.Media
 {
     public class S3StreamFile
     {

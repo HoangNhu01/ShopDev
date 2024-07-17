@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ShopDev.S3Bucket.Dtos.Move
+namespace CR.S3Bucket.Dtos.Move
 {
     public class RequestMoveDto
     {

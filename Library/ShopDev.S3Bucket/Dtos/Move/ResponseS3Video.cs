@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using ShopDev.S3Bucket.Dtos.Media;
+using CR.S3Bucket.Dtos.Media;
 
-namespace ShopDev.S3Bucket.Dtos.Move
+namespace CR.S3Bucket.Dtos.Move
 {
     public class ResponseS3Video : S3Video
     {

@@ -1,4 +1,4 @@
-﻿namespace ShopDev.S3Bucket.Constants
+﻿namespace CR.S3Bucket.Constants
 {
     /// <summary>
     /// Loại media

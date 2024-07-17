@@ -29,28 +29,35 @@ namespace ShopDev.ServiceDiscovery.HostedServices
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var registration = new AgentServiceRegistration
+            try
             {
-                ID = _config.ServiceId,
-                Name = _config.ServiceName,
-                Address = _config.ServiceHost,
-                Port = _config.ServicePort,
-                Tags = [_config.ServiceName]
-            };
+                var registration = new AgentServiceRegistration
+                {
+                    ID = _config.ServiceId,
+                    Name = _config.ServiceName,
+                    Address = _config.ServiceHost,
+                    Port = _config.ServicePort,
+                    Tags = [_config.ServiceName]
+                };
 
-            //var check = new AgentServiceCheck
-            //{
-            //    HTTP = _config.HealthCheckUrl,
-            //    Interval = TimeSpan.FromSeconds(_config.HealthCheckIntervalSeconds),
-            //    Timeout = TimeSpan.FromSeconds(_config.HealthCheckTimeoutSeconds)
-            //};
+                //var check = new AgentServiceCheck
+                //{
+                //    HTTP = _config.HealthCheckUrl,
+                //    Interval = TimeSpan.FromSeconds(_config.HealthCheckIntervalSeconds),
+                //    Timeout = TimeSpan.FromSeconds(_config.HealthCheckTimeoutSeconds)
+                //};
 
-            //registration.Checks = [check];
+                //registration.Checks = [check];
 
-            _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+                _logger.LogInformation($"Registering service with Consul: {registration.Name}");
 
-            await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
-            await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
+                await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
+                await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
+            }
+            catch
+            {
+                await Task.CompletedTask;
+            }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

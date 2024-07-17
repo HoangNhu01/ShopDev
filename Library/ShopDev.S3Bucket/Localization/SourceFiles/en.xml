@@ -12,5 +12,8 @@
 		<text name="error_s3_ReadMediaNotFound">Read source not found</text>
 		<text name="error_s3_ReadMediaBadRequest">Read source bad request</text>
 		<text name="error_s3_ReadMediaError">Read media error</text>
+		<text name="error_s3_CreatBucketError">Error creating bucket</text>
+		<text name="error_s3_MoveFileError">Error moving file</text>
+		<text name="error_s3_MoveFileBadRequest">Move file bad request</text>
 	</texts>
 </localizationDictionary>

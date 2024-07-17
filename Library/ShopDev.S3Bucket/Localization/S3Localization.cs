@@ -1,5 +1,6 @@
-﻿using ShopDev.ApplicationBase.Localization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using ShopDev.ApplicationBase.Localization;
+using ShopDev.S3Bucket.Localization;
 
 namespace ShopDev.S3Bucket.Localization
 {
@@ -8,7 +9,7 @@ namespace ShopDev.S3Bucket.Localization
         public S3Localization(IHttpContextAccessor httpContextAccessor)
             : base(httpContextAccessor)
         {
-            LoadDictionary("ShopDev.S3Bucket.Localization.SourceFiles");
+            LoadDictionary("CR.S3Bucket.Localization.SourceFiles");
         }
     }
 }

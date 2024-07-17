@@ -1,7 +1,7 @@
-﻿using ShopDev.ApplicationBase.Localization;
+﻿using Microsoft.AspNetCore.Http;
+using ShopDev.ApplicationBase.Localization;
 using ShopDev.S3Bucket.Constants;
 using ShopDev.S3Bucket.Localization;
-using Microsoft.AspNetCore.Http;
 
 namespace ShopDev.S3Bucket
 {

@@ -14,5 +14,8 @@ namespace ShopDev.S3Bucket.Constants
         public const int ReadMediaNotFound = 11007;
         public const int ReadMediaBadRequest = 11008;
         public const int ReadMediaError = 11009;
+        public const int CreatBucketError = 11010;
+        public const int MoveFileError = 11011;
+        public const int MoveFileBadRequest = 11012;
     }
 }

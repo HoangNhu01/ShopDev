@@ -16,5 +16,8 @@ namespace ShopDev.S3Bucket.Exceptions
 
         public S3BucketException(int errorCode, string? messageLocalize)
             : base(errorCode, messageLocalize) { }
+
+        public S3BucketException(int errorCode, params string[] listParam)
+            : base(errorCode, listParam) { }
     }
 }

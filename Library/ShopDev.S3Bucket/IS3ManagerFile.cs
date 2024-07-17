@@ -1,35 +1,44 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ShopDev.InfrastructureBase.Files;
-using ShopDev.S3Bucket.Dtos.Delete;
-using ShopDev.S3Bucket.Dtos.Media;
-using ShopDev.S3Bucket.Dtos.Move;
+using ShopDev.InfrastructureBase.Files.Dtos;
 
 namespace ShopDev.S3Bucket
 {
+    /// <summary>
+    /// Quản lý file s3
+    /// </summary>
+    public interface IS3ManagerFile : IManagerFile
+    {
         /// <summary>
-        /// Quản lý file s3
+        /// Đọc file
         /// </summary>
-        public interface IS3ManagerFile : IManagerFile
-        {
-                /// <summary>
-                /// API cho chức năng tải file lên hệ thống từ người dùng để lưu tạm
-                /// </summary>
-                /// <param name="files"></param>
-                /// <returns></returns>
-                Task<ResponseMoveDto> WriteFileAsync(params IFormFile[] files);
+        /// <param name="s3Key"></param>
+        /// <returns></returns>
+        Task<Stream> ReadAsync(string s3Key);
+        /// <summary>
+        /// Download file
+        /// </summary>
+        /// <param name="s3Key"></param>
+        /// <returns></returns>
+        Task<DownloadFileDto> DownloadAsync(string s3Key);
+        /// <summary>
+        /// Move file (chuyển từ tạm sang lưu thật)
+        /// </summary>
+        /// <param name="s3key"></param>
+        /// <returns></returns>
+        Task<List<ResponseUploadDto>> MoveAsync(params string[] s3key);
+        /// <summary>
+        /// Xóa file
+        /// </summary>
+        /// <param name="s3key"></param>
+        /// <returns></returns>
+        Task DeleteAsync(params string[] s3key);
 
-                /// <summary>
-                /// Api push stream file lên hệ thống, cho các chức năng sinh file và up file lên hệ thống
-                /// </summary>
-                /// <param name="files"></param>
-                /// <returns></returns>
-                Task<ResponseMoveDto> WriteStreamFileAsync(params S3StreamFile[] files);
-
-                /// <summary>
-                /// Chức năng xóa file trên hệ thống
-                /// </summary>
-                /// <param name="input"></param>
-                /// <returns></returns>
-                Task<ResponseContentDto> DeleteFileAsync(RequestDeleteDto input);
-        }
+        /// <summary>
+        /// Upload file thẳng bỏ qua move
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<List<ResponseUploadDto>> UploadFileAsync(params IFormFile[] input);
+    }
 }

@@ -8,6 +8,35 @@ namespace ShopDev.Utils.DataUtils
     {
         public const string SEPARATOR = ",";
 
+        private static readonly string[] VietnameseSigns = new string[]
+        {
+            "aAeEoOuUiIdDyY",
+            "áàạảãâấầậẩẫăắằặẳẵ",
+            "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ",
+            "éèẹẻẽêếềệểễ",
+            "ÉÈẸẺẼÊẾỀỆỂỄ",
+            "óòọỏõôốồộổỗơớờợởỡ",
+            "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ",
+            "úùụủũưứừựửữ",
+            "ÚÙỤỦŨƯỨỪỰỬỮ",
+            "íìịỉĩ",
+            "ÍÌỊỈĨ",
+            "đ",
+            "Đ",
+            "ýỳỵỷỹ",
+            "ÝỲỴỶỸ"
+        };
+
+        public static string RemoveSign4VietnameseString(string str)
+        {
+            for (int i = 1; i < VietnameseSigns.Length; i++)
+            {
+                for (int j = 0; j < VietnameseSigns[i].Length; j++)
+                    str = str.Replace(VietnameseSigns[i][j], VietnameseSigns[0][i - 1]);
+            }
+            return str;
+        }
+
         /// <summary>
         /// Che số điện thoại bằng dấu sao (038****291)
         /// </summary>
@@ -26,7 +55,7 @@ namespace ShopDev.Utils.DataUtils
                 return result;
             }
 
-            return string.Empty;
+            return "";
         }
 
         /// <summary>
@@ -45,7 +74,7 @@ namespace ShopDev.Utils.DataUtils
                 string hideText =
                     hideLen > 0 ? new string('*', hideLen) : new string('*', startIndex);
 
-                string result = string.Empty;
+                string result = "";
                 if (hideLen > 0)
                 {
                     result = email.Remove(startIndex, hideLen).Insert(startIndex, hideText);
@@ -57,7 +86,7 @@ namespace ShopDev.Utils.DataUtils
                 return result;
             }
 
-            return string.Empty;
+            return "";
         }
 
         /// <summary>
@@ -240,6 +269,60 @@ namespace ShopDev.Utils.DataUtils
                 }
             }
             return resultBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Tên tổ chức trong email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public static string GetOrganizationFromEmail(string email)
+        {
+            // Tách phần sau dấu @
+            string domain = email.Split('@')[1];
+
+            // Tách phần trước dấu . đầu tiên
+            string organization = domain.Split('.')[0];
+
+            return organization;
+        }
+
+        /// <summary>
+        /// Sinh chuỗi ngẫu nhiên từ độ dài cho trước
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GenerateRandomASCIIString(int length)
+        {
+            const string asciiCharacters =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/";
+            var random = new Random();
+            var result = new StringBuilder(length);
+
+            for (int i = 0; i < length; i++)
+            {
+                int randomIndex = random.Next(0, asciiCharacters.Length);
+                result.Append(asciiCharacters[randomIndex]);
+            }
+
+            return result.ToString();
+        }
+
+        public static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using ShopDev.Common.Filters;
-using ShopDev.WebAPIBase;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShopDev.Common.Filters;
+using ShopDev.S3Bucket;
+using ShopDev.Utils.Net.Request;
+using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Controllers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,10 +15,14 @@ namespace ShopDev.Authentication.API.Controllers
     //[Authorize]
     [Route("api/auth/value")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ValuesController : BaseController
     {
-        public ValuesController() { }
+        private readonly IS3ManagerFile _s3ManagerFile;
+        public ValuesController(IS3ManagerFile s3ManagerFile) 
+        {
+            _s3ManagerFile = s3ManagerFile;
+        }
 
         // GET: api/<ValuesController>
         [HttpGet]
@@ -34,6 +41,14 @@ namespace ShopDev.Authentication.API.Controllers
         public string Get(int id)
         {
             return "value";
+        }
+
+        // POST api/<ValuesController>
+        [HttpPost("upfile")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> Post(params IFormFile[] input)
+        {
+            return new(await _s3ManagerFile.UploadAsync(input));
         }
 
         // POST api/<ValuesController>

@@ -11,8 +11,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="IS3BucketName.cs" />
+	  <Compile Remove="S3BucketName.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" Version="3.7.308.3" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\ShopDev.ApplicationBase\ShopDev.ApplicationBase.csproj" />
 		<ProjectReference Include="..\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\ShopDev.Utils\ShopDev.Utils.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -2,13 +2,27 @@
 {
     public class S3Config
     {
-        public const string XClientSourceHeader = "X-Client-Source";
-        public const string XClientSourceValue = "meeybank";
-
-        public const string MediaPath = "/v1/media";
-        public const string MovePath = "/v1/media/move";
-
-        public string BaseUrl { get; set; } = null!;
+        /// <summary>
+        /// Tên bucket
+        /// </summary>
+        public const string BucketName = "sd-bucket";
+        /// <summary>
+        /// Url service mino
+        /// </summary>
+        public string ServiceUrl { get; set; } = null!;
+        /// <summary>
+        /// Url view file
+        /// </summary>
         public string ViewMediaUrl { get; set; } = null!;
+        /// <summary>
+        /// Tên người dùng
+        /// </summary>
+        public string Username { get; set; } = null!;
+        /// <summary>
+        /// Mật khẩu
+        /// </summary>
+        public string Password { get; set; } = null!;
+        public string AccessKey { get; set; } = null!;
+        public string SecretKey { get; set; } = null!;
     }
 }
