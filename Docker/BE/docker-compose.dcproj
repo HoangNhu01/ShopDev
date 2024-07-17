@@ -7,11 +7,13 @@
     <ProjectGuid>1b644e73-1613-4db1-a77c-023e4b3084ea</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="nginx\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include=".env" />
     <None Include="configs\appsettings.Development.json" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
-    <None Include="nginx\mb-api.conf" />
     <None Include="secrets\private_key.Development.pem" />
     <None Include="secrets\public_key.Development.pem" />
   </ItemGroup>

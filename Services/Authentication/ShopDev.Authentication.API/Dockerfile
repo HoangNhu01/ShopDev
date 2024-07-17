@@ -18,6 +18,8 @@ COPY ["Library/ShopDev.S3Bucket/ShopDev.S3Bucket.csproj", "Library/ShopDev.S3Buc
 COPY ["Library/ShopDev.InfrastructureBase/ShopDev.InfrastructureBase.csproj", "Library/ShopDev.InfrastructureBase/"]
 COPY ["Library/ShopDev.WebAPIBase/ShopDev.WebAPIBase.csproj", "Library/ShopDev.WebAPIBase/"]
 COPY ["Library/ShopDev.ConvertFile/ShopDev.ConvertFile.csproj", "Library/ShopDev.ConvertFile/"]
+COPY ["Library/ShopDev.RabbitMQ/ShopDev.RabbitMQ.csproj", "Library/ShopDev.RabbitMQ/"]
+COPY ["ShopDev.ServiceDiscovery/ShopDev.ServiceDiscovery.csproj", "ShopDev.ServiceDiscovery/"]
 COPY ["Services/Shared/ShopDev.UserRolePermission/ShopDev.UserRolePermission.csproj", "Services/Shared/ShopDev.UserRolePermission/"]
 COPY ["Services/Authentication/ShopDev.Authentication.ApplicationServices/ShopDev.Authentication.ApplicationServices.csproj", "Services/Authentication/ShopDev.Authentication.ApplicationServices/"]
 COPY ["Library/ShopDev.Notification/ShopDev.Notification.csproj", "Library/ShopDev.Notification/"]

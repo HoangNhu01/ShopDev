@@ -1,4 +1,3 @@
-using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
@@ -10,21 +9,21 @@ using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.ApplicationServices.Common.Localization;
-using ShopDev.Authentication.ApplicationServices.Middlewares;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Authorization;
 using ShopDev.Constants.Common;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
-using ShopDev.Constants.RabbitMQ;
 using ShopDev.IdentityServerBase.Middlewares;
 using ShopDev.IdentityServerBase.StartUp;
 using ShopDev.S3Bucket;
 using ShopDev.S3Bucket.Configs;
+using ShopDev.ServiceDiscovery.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
+using System.Threading.RateLimiting;
 
 namespace ShopDev.Authentication.API
 {
@@ -36,7 +35,6 @@ namespace ShopDev.Authentication.API
             //builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
             builder.ConfigureServices();
             builder.ConfigureDataProtection();
-
             builder
                 .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(c =>
@@ -59,7 +57,7 @@ namespace ShopDev.Authentication.API
             builder.ConfigureSwagger();
             builder.ConfigureAuthentication();
             builder.ConfigureCors();
-
+            builder.ServiceDiscovery();
             builder.Services.AddRateLimiter(options =>
             {
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

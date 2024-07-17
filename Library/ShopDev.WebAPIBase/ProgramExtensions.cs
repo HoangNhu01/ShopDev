@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver.Core.Bindings;
 using RabbitMQ.Client;
 using Serilog;
 using Serilog.Core;
@@ -26,7 +25,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Channels;
 
 namespace ShopDev.WebAPIBase
 {
@@ -98,7 +96,7 @@ namespace ShopDev.WebAPIBase
                 model.ExchangeDeclarePassive(RabbitExchangeNames.Log);
                 model.QueueDeclarePassive(queueName);
             }
-            catch 
+            catch
             {
                 Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
                 model.QueueDeclare(
@@ -123,7 +121,7 @@ namespace ShopDev.WebAPIBase
                     Username = rabbitMqConfig.Username,
                     Password = rabbitMqConfig.Password,
                     Port = rabbitMqConfig.Port,
-                    VHost = rabbitMqConfig.VirtualHost,
+                    VHost = rabbitMqConfig?.VirtualHost ?? "/",
                     DeliveryMode = RabbitMQDeliveryMode.Durable,
                     Exchange = RabbitExchangeNames.Log,
                     ExchangeType = ExchangeType.Direct,
@@ -152,11 +150,13 @@ namespace ShopDev.WebAPIBase
             Logger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
-                .WriteTo.RabbitMQ((clientConfiguration, sinkConfiguration) =>
-                {
-                    clientConfiguration.From(configRabbitMqSerilog);
-                    sinkConfiguration.TextFormatter = new JsonFormatter();
-                })
+                .WriteTo.RabbitMQ(
+                    (clientConfiguration, sinkConfiguration) =>
+                    {
+                        clientConfiguration.From(configRabbitMqSerilog);
+                        sinkConfiguration.TextFormatter = new JsonFormatter();
+                    }
+                )
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configurationManager)
                 .CreateLogger();
@@ -315,7 +315,7 @@ namespace ShopDev.WebAPIBase
                     AppContext.BaseDirectory,
                     $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"
                 );
-                if (File.Exists(xmlFile))
+                if (System.IO.File.Exists(xmlFile))
                 {
                     option.IncludeXmlComments(xmlFile);
                 }
@@ -329,7 +329,7 @@ namespace ShopDev.WebAPIBase
                 foreach (var assembly in projectDependencies)
                 {
                     var otherXml = Path.Combine(AppContext.BaseDirectory, $"{assembly}.xml");
-                    if (File.Exists(otherXml))
+                    if (System.IO.File.Exists(otherXml))
                     {
                         option.IncludeXmlComments(otherXml);
                     }
@@ -545,7 +545,7 @@ namespace ShopDev.WebAPIBase
             var protectKeyCer = builder
                 .Configuration.GetSection("IdentityServer:ProtectKeyCer")
                 .Value;
-            X509Certificate2 certificate = new(File.ReadAllBytes(protectKeyCer!));
+            X509Certificate2 certificate = new(System.IO.File.ReadAllBytes(protectKeyCer!));
             builder
                 .Services.AddDataProtection()
                 .SetApplicationName("ShopDev")
