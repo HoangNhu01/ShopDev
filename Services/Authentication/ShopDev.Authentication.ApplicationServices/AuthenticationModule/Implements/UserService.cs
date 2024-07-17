@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +12,11 @@ using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.SysVar;
 using ShopDev.Constants.Users;
 using ShopDev.InfrastructureBase.Exceptions;
-using ShopDev.InfrastructureBase.Files;
 using ShopDev.S3Bucket;
 using ShopDev.Utils.DataUtils;
 using ShopDev.Utils.Linq;
 using ShopDev.Utils.Security;
+using System.Text.Json;
 
 namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements
 {
@@ -402,12 +401,12 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(UpdateAvatar)}: userId = {userId}, s3Key = {s3Key}");
             var user =
-                FindEntity<User>(o => o.Id == userId)
+                await FindEntityAsync<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            //var returnValueS3Key = await _s3ManagerFile.MoveAsync((s3Key, MediaTypes.Image));
-            //var image = returnValueS3Key?.Images?.Find(c => c.S3KeyOld == s3Key);
-            //user.AvatarImageUri = image?.Uri;
-            //user.S3Key = image?.S3Key;
+            var returnValueS3Key = await _s3ManagerFile.MoveAsync(s3Key);
+            var image = returnValueS3Key?.Find(c => c.OldS3Key == s3Key);
+            user.AvatarImageUri = image?.Uri;
+            user.S3Key = image?.S3Key;
             _dbContext.SaveChanges();
             await Task.CompletedTask;
         }
