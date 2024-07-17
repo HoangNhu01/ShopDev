@@ -7,7 +7,7 @@ namespace ShopDev.S3Bucket
     /// <summary>
     /// Quản lý file s3
     /// </summary>
-    public interface IS3ManagerFile : IManagerFile
+    public interface IS3ManagerFileService : IManagerFile
     {
         /// <summary>
         /// Đọc file
