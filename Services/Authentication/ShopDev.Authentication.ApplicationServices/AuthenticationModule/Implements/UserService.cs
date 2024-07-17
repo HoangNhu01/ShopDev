@@ -277,7 +277,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _logger.LogInformation($"{nameof(Delete)}: id = {id}, userId = {userId}");
 
             var user =
-                _dbContext.Users.FirstOrDefault(u => u.Id == id && !u.Deleted)
+                _dbContext.Users.Find(id)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.Deleted = true;
             _dbContext.SaveChanges();
