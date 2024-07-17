@@ -88,7 +88,20 @@ namespace ShopDev.ApplicationBase
             }
             return entities.FirstOrDefault(expression);
         }
-
+        protected async Task<TEntity?> FindEntityAsync<TEntity>(
+            Expression<Func<TEntity, bool>> expression,
+            bool isTracking = false,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
+        )
+            where TEntity : class
+        {
+            IQueryable<TEntity> entities = _dbContext.Set<TEntity>();
+            if (isTracking)
+            {
+                entities.AsNoTracking();
+            }
+            return await entities.FirstOrDefaultAsync(expression);
+        }
         protected IQueryable<TResult> GetIQueryableResult<TResult, TEntity>(
             Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>>? predicate,

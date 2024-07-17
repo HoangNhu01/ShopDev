@@ -33,11 +33,11 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.U
         /// <summary>
         /// Avatar người dùng
         /// </summary>
-        private string? _avatarImageUrl;
-        public string? AvatarImageUrl
+        private string? _avatarImageS3key;
+        public string? AvatarImageS3key
         {
-            get => _avatarImageUrl;
-            set => _avatarImageUrl = value?.Trim();
+            get => _avatarImageS3key;
+            set => _avatarImageS3key = value?.Trim();
         }
 
         /// <summary>

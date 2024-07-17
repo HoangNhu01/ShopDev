@@ -68,7 +68,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// Set password cho user
         /// </summary>
         /// <param name="input"></param>
-        void SetPassword(SetPasswordUserDto input);
+        Task SetPassword(SetPasswordUserDto input);
 
         /// <summary>
         /// Thay đổi mật khẩu
@@ -86,7 +86,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// Lấy thông tin lần đăng nhập gần nhất + thiết bị đăng nhập
         /// </summary>
         /// <returns></returns>
-        PrivacyInfoDto GetPrivacyInfo();
+        Task<PrivacyInfoDto> GetPrivacyInfo();
 
         /// <summary>
         /// Cập nhật ảnh đại diện cho tài khoản người dùng

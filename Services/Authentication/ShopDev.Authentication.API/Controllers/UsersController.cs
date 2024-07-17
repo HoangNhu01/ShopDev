@@ -215,11 +215,11 @@ namespace ShopDev.Authentication.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("get-privacy-info")]
-        public ApiResponse GetPrivacyInfo()
+        public async Task<ApiResponse> GetPrivacyInfo()
         {
             try
             {
-                return new(_userService.GetPrivacyInfo());
+                return new(await _userService.GetPrivacyInfo());
             }
             catch (Exception ex)
             {

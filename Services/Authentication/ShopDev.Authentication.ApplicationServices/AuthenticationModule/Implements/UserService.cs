@@ -23,7 +23,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
 {
     public class UserService : AuthenticationServiceBase, IUserService
     {
-        private readonly IManagerFile _s3ManagerFile;
+        private readonly IS3ManagerFile _s3ManagerFile;
 
         public UserService(
             ILogger<UserService> logger,
@@ -140,6 +140,16 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var transaction = _dbContext.Database.BeginTransaction();
             var user = _mapper.Map<User>(input);
             user.UserType = UserTypes.SHOP;
+            if (!string.IsNullOrEmpty(input.AvatarImageS3key))
+            {
+                var responseUploads = await _s3ManagerFile.MoveAsync(input.AvatarImageS3key);
+                var responseUpload =
+                    responseUploads.Count == 1
+                        ? responseUploads[0]
+                        : responseUploads.Find(x => x.OldS3Key == input.AvatarImageS3key);
+                user.AvatarImageUri = responseUpload?.Uri;
+                user.S3Key = responseUpload?.S3Key;
+            }
             user.UserRoles.AddRange(
                 input.UserRoles.Select(x => new UserRole { RoleId = x.RoleId })
             );
@@ -199,7 +209,6 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                         predicate: x => x.Id == userId,
                         include: x => x.Include(x => x.UserRoles).ThenInclude(x => x.Role)
                     )
-                    .AsSplitQuery()
                     .FirstOrDefault() ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
         }
 
@@ -293,19 +302,19 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _dbContext.SaveChanges();
         }
 
-        public void SetPassword(SetPasswordUserDto input)
+        public async Task SetPassword(SetPasswordUserDto input)
         {
             _logger.LogInformation(
                 $"{nameof(SetPassword)}: input = {JsonSerializer.Serialize(input)}"
             );
 
             var user =
-                _dbContext.Users.FirstOrDefault(e => e.Id == input.Id && !e.Deleted)
+                await _dbContext.Users.FindAsync(input.Id)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
             user.Password = PasswordHasher.HashPassword(input.Password);
             user.IsPasswordTemp = input.IsPasswordTemp;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public void ChangePassword(ChangePasswordDto input)
@@ -371,12 +380,12 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             _dbContext.SaveChanges();
         }
 
-        public PrivacyInfoDto GetPrivacyInfo()
+        public async Task<PrivacyInfoDto> GetPrivacyInfo()
         {
             var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation($"{nameof(GetPrivacyInfo)}: userId = {userId}");
             var user =
-                FindEntity<User>(o => o.Id == userId)
+                await FindEntityAsync<User>(o => o.Id == userId)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
             return new()
