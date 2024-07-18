@@ -17,7 +17,7 @@ using ShopDev.Utils.Net.File;
 
 namespace ShopDev.S3Bucket
 {
-    public class S3ManagerFile : IS3ManagerFile
+    public class S3ManagerFileService : IS3ManagerFileService
     {
         private readonly ILogger _logger;
         private readonly S3Config _config;
@@ -25,7 +25,7 @@ namespace ShopDev.S3Bucket
 
         private readonly string BucketName = S3Config.BucketName;
 
-        public S3ManagerFile(ILogger<S3ManagerFile> logger, IOptions<S3Config> config)
+        public S3ManagerFileService(ILogger<S3ManagerFileService> logger, IOptions<S3Config> config)
         {
             _logger = logger;
             _config = config.Value;

@@ -10,6 +10,6 @@
         public int Status { set; get; }
         public string? ImageUri { set; get; }
         public string? S3key { set; get; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

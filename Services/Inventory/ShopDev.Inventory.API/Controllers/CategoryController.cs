@@ -49,7 +49,7 @@ namespace ShopDev.Inventory.API.Controllers
         {
             try
             {
-                return new();
+                return new(_categoryService.FindById(id));
             }
             catch (Exception ex)
             {

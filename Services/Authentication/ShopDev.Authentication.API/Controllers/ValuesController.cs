@@ -18,8 +18,8 @@ namespace ShopDev.Authentication.API.Controllers
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ValuesController : BaseController
     {
-        private readonly IS3ManagerFile _s3ManagerFile;
-        public ValuesController(IS3ManagerFile s3ManagerFile) 
+        private readonly IS3ManagerFileService _s3ManagerFile;
+        public ValuesController(IS3ManagerFileService s3ManagerFile) 
         {
             _s3ManagerFile = s3ManagerFile;
         }

@@ -11,7 +11,7 @@ namespace ShopDev.S3Bucket.Configs
             builder.Services.Configure<S3Config>(builder.Configuration.GetSection("S3Config"));
             builder.Services.AddSingleton<IS3Localization, S3Localization>();
             builder.Services.AddSingleton<IS3MapErrorCode, S3ManagerFileMapErrorCode>();
-            builder.Services.AddSingleton<IS3ManagerFile, S3ManagerFile>();
+            builder.Services.AddSingleton<IS3ManagerFileService, S3ManagerFileService>();
         }
     }
 }

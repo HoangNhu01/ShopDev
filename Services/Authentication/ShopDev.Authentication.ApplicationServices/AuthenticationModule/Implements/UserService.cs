@@ -22,13 +22,13 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
 {
     public class UserService : AuthenticationServiceBase, IUserService
     {
-        private readonly IS3ManagerFile _s3ManagerFile;
+        private readonly IS3ManagerFileService _s3ManagerFile;
 
         public UserService(
             ILogger<UserService> logger,
             IWebHostEnvironment environment,
             IHttpContextAccessor httpContext,
-            IS3ManagerFile s3ManagerFile
+            IS3ManagerFileService s3ManagerFile
         )
             : base(logger, httpContext)
         {

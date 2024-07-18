@@ -127,7 +127,7 @@ namespace ShopDev.Authentication.API
             builder.Services.AddScoped<IPermissionService, PermissionService>();
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<INotificationTokenService, NotificationTokenService>();
-            builder.Services.AddScoped<IS3ManagerFile, S3ManagerFile>();
+            builder.Services.AddScoped<IS3ManagerFileService, S3ManagerFileService>();
             builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
             var app = builder.Build();
