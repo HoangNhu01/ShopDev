@@ -48,6 +48,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         Title = input.Title,
                         Price = input.Price,
                         ShopId = input.ShopId,
+                        IsFeatured = false,
                         Variations =
                         [
                             .. input.Variations.Select(x => new Variation

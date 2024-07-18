@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ShopDev.Inventory.ApplicationServices.ShopModule.Dtos
@@ -17,5 +18,8 @@ namespace ShopDev.Inventory.ApplicationServices.ShopModule.Dtos
         [NotMapped]
         public List<ProductDetailDto> ProductDetails { get; set; } = [];
         public DateTime? CreatedDate { get; set; }
+        // Thuộc tính LazyLoader
+        [NotMapped]
+        protected ILazyLoader? LazyLoader { get; }
     }
 }

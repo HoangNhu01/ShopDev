@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Database;
 using ShopDev.Inventory.Domain.Products;
 
@@ -13,7 +14,7 @@ namespace ShopDev.Inventory.Domain.Shops
         Name = $"IX_{nameof(Shop)}",
         IsUnique = false
     )]
-    public class Shop
+    public class Shop : IFullAudited
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
