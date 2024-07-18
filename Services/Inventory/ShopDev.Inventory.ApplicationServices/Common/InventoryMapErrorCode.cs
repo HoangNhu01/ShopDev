@@ -2,7 +2,7 @@
 using ShopDev.Constants.ErrorCodes;
 using Microsoft.AspNetCore.Http;
 
-namespace ShopDev.Authentication.ApplicationServices.Common
+namespace ShopDev.Inventory.ApplicationServices.Common
 {
     public class InventoryMapErrorCode : MapErrorCodeBase<InventoryErrorCode>
     {

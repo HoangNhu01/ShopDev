@@ -28,7 +28,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// </summary>
         /// <param name="permissionInWeb"></param>
         /// <returns></returns>
-        IEnumerable<string> GetPermissionInWeb(int? permissionInWeb);
+        List<string> GetPermissionInWeb(int? permissionInWeb);
 
         /// <summary>
         /// Lấy permissionKey của người dùng bấtt kì
@@ -36,6 +36,6 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
         /// <param name="permissionInWeb"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        IEnumerable<string> GetPermissionInternalService(int? permissionInWeb, int userId);
+        List<string> GetPermissionInternalService(int? permissionInWeb, int userId);
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace ShopDev.Abstractions.EntitiesBase.Interfaces
 {
-    public interface IFullAudited : ICreatedBy, IModifiedBy, ISoftDelted { }
+    public interface IFullAudited : ICreatedBy, IModifiedBy, ISoftDeleted { }
 
-    public interface ISoftDelted
+    public interface ISoftDeleted
     {
         public DateTime? DeletedDate { get; set; }
         public bool Deleted { get; set; }

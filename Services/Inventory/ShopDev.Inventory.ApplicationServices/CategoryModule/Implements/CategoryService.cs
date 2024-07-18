@@ -1,10 +1,10 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
+using ShopDev.Inventory.ApplicationServices.Common;
+using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Implements
 {

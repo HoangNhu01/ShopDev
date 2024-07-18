@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.InfrastructureBase.Exceptions;
+using ShopDev.Inventory.ApplicationServices.Common;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Dtos;
 using System.Runtime.CompilerServices;

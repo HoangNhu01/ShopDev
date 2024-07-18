@@ -8,7 +8,7 @@ using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
 using System.Net;
 
-namespace ShopDev.Authentication.API.Controllers
+namespace ShopDev.Inventory.API.Controllers
 {
     //[Authorize]
     //[AuthorizeAdminUserTypeFilter]

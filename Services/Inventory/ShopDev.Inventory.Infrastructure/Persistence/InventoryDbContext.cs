@@ -9,7 +9,7 @@ using ShopDev.Inventory.Domain.Comments;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Domain.Shops;
 
-namespace ShopDev.Authentication.Infrastructure.Persistence
+namespace ShopDev.Inventory.Infrastructure.Persistence
 {
     public partial class InventoryDbContext : ApplicationDbContext
     {
@@ -119,7 +119,6 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
                         ownerNav.ToJson();
                     }
                 );
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

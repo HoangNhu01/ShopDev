@@ -1,10 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ShopDev.Authentication.Domain.SysVar;
-using ShopDev.Authentication.Domain.Users;
-using ShopDev.Constants.Users;
-using ShopDev.Utils.Security;
 
-namespace ShopDev.Authentication.Infrastructure.Persistence
+namespace ShopDev.Inventory.Infrastructure.Persistence
 {
     public static class InventoryDbContextExtensions
     {

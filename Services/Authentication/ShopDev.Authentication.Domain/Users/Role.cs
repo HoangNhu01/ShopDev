@@ -1,6 +1,6 @@
-﻿using ShopDev.Constants.Role;
+﻿using Microsoft.EntityFrameworkCore;
+using ShopDev.Constants.Role;
 using ShopDev.Constants.Users;
-using Microsoft.EntityFrameworkCore;
 using ShopDev.EntitiesBase.AuthorizationEntitiesAuthorizationEntities;
 
 namespace ShopDev.Authentication.Domain.Users
@@ -43,7 +43,7 @@ namespace ShopDev.Authentication.Domain.Users
         /// </summary>
         public int PermissionInWeb { get; set; }
         public virtual List<UserRole> UserRoles { get; } = [];
-
+        public virtual List<RolePermission> RolePermissions { get; } = [];
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }

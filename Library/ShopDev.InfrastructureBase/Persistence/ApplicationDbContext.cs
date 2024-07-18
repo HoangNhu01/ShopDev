@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using ShopDev.Utils.DataUtils;
 
 namespace ShopDev.InfrastructureBase.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public abstract class ApplicationDbContext : DbContext
     {
         protected readonly IHttpContextAccessor _httpContextAccessor = null!;
         protected readonly int? UserId = null;
@@ -28,7 +29,6 @@ namespace ShopDev.InfrastructureBase.Persistence
                 UserId = userId;
             }
         }
-
         private void CheckAudit()
         {
             ChangeTracker.DetectChanges();
@@ -60,7 +60,7 @@ namespace ShopDev.InfrastructureBase.Persistence
                     modifiedEntity.ModifiedBy = UserId;
                 }
                 if (
-                    entity is ISoftDelted softDeletedEntity
+                    entity is ISoftDeleted softDeletedEntity
                     && softDeletedEntity.Deleted
                     && softDeletedEntity.DeletedBy == null
                 )
@@ -100,14 +100,23 @@ namespace ShopDev.InfrastructureBase.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var entityTypes = modelBuilder.Model.GetEntityTypes();
-            foreach (var entity in entityTypes)
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                //var test = entity.ClrType;
-                //var test3 = entity.ClrType.IsAssignableTo(typeof(ICreatedBy));
-                //if (entity.ClrType.IsAssignableTo(typeof(ICreatedBy)))
-                //{
-                //}
+                if (typeof(ISoftDeleted).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var deletedProperty = Expression.Property(
+                        parameter,
+                        nameof(ISoftDeleted.Deleted)
+                    );
+                    var compareExpression = Expression.Equal(
+                        deletedProperty,
+                        Expression.Constant(false)
+                    );
+                    var lambda = Expression.Lambda(compareExpression, parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
             }
             base.OnModelCreating(modelBuilder);
         }

@@ -6,7 +6,7 @@ using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Domain.Shops;
 
-namespace ShopDev.Authentication.ApplicationServices.Common
+namespace ShopDev.Inventory.ApplicationServices.Common
 {
     public class MappingProfile : Profile
     {

@@ -121,7 +121,7 @@ namespace ShopDev.WebAPIBase
                     Username = rabbitMqConfig.Username,
                     Password = rabbitMqConfig.Password,
                     Port = rabbitMqConfig.Port,
-                    VHost = rabbitMqConfig?.VirtualHost ?? "/",
+                    VHost = rabbitMqConfig.VirtualHost ?? "/",
                     DeliveryMode = RabbitMQDeliveryMode.Durable,
                     Exchange = RabbitExchangeNames.Log,
                     ExchangeType = ExchangeType.Direct,

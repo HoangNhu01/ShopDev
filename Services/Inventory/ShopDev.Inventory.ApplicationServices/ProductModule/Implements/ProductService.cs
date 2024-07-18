@@ -1,18 +1,17 @@
-﻿using System.Text.Json;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
-using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
+using ShopDev.Inventory.ApplicationServices.Common;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
 using ShopDev.Utils.Linq;
+using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase;
-using ShopDev.Authentication.Infrastructure.Persistence;
+using ShopDev.Inventory.Infrastructure.Persistence;
 
-namespace ShopDev.Authentication.ApplicationServices.Common
+namespace ShopDev.Inventory.ApplicationServices.Common
 {
     public abstract class InventoryServiceBase : ServiceBase<InventoryDbContext>
     {

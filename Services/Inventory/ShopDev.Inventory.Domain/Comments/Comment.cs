@@ -14,7 +14,7 @@ namespace ShopDev.Inventory.Domain.Comments
         Name = $"IX_{nameof(Comment)}",
         IsUnique = false
     )]
-    public class Comment : ISoftDelted
+    public class Comment : ISoftDeleted
     {
         [Key]
         public Guid Id { get; set; }

@@ -6,7 +6,6 @@ using ShopDev.Authentication.Domain.SysVar;
 using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Role;
-using ShopDev.Constants.Users;
 using ShopDev.InfrastructureBase.Persistence;
 
 namespace ShopDev.Authentication.Infrastructure.Persistence
@@ -33,7 +32,6 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(DbSchemas.Default);
-           
             //modelBuilder
             //    .Entity<NotificationToken>()
             //    .HasOne(e => e.User)
@@ -45,11 +43,11 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
             //    .WithMany()
             //    .HasForeignKey(e => e.UserId);
 
-            //modelBuilder
-            //	.Entity<RolePermission>()
-            //	.HasOne(e => e.Role)
-            //	.WithMany(x => x.RolePermissions)
-            //	.HasForeignKey(e => e.RoleId);
+            modelBuilder
+                .Entity<RolePermission>()
+                .HasOne(e => e.Role)
+                .WithMany(x => x.RolePermissions)
+                .HasForeignKey(e => e.RoleId);
 
             modelBuilder
                 .Entity<UserRole>()
@@ -89,7 +87,6 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
             //    .WithMany()
             //    .HasForeignKey(e => e.CustomerId);
             modelBuilder.SeedData();
-            base.OnModelCreating(modelBuilder);
         }
     }
 }
