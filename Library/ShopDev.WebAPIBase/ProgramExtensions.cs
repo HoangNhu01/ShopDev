@@ -1,6 +1,7 @@
 using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using Elastic.CommonSchema;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,8 +56,34 @@ namespace ShopDev.WebAPIBase
 
         public static void ConfigureDistributedCacheRedis(this WebApplicationBuilder builder)
         {
-            string configStrings = builder.Configuration["RedisCache:Config"]!;
-            ConfigurationOptions configOptions = ConfigurationOptions.Parse(configStrings);
+            //string configStrings = builder.Configuration["RedisCache:Config"]!;
+            ConfigurationOptions configOptions =
+                new()
+                {
+                    ServiceName = "mymaster",
+                    Password = "123qwe",
+                    TieBreaker = "",
+                };
+            string? endpoint = builder.Configuration["RedisCache:RedisSentinel"];
+            if (!string.IsNullOrEmpty(endpoint))
+            {
+                configOptions.EndPoints.Add("127.0.0.1", 26379);
+            }
+            ConnectionMultiplexer sentinelConnection = ConnectionMultiplexer.SentinelConnect(
+                configOptions,
+                Console.Out
+            );
+            var muxer = sentinelConnection.GetSentinelMasterConnection(configOptions);
+            ConfigurationOptions masterConfig = new ConfigurationOptions
+            {
+                ServiceName = "mymaster",
+                CommandMap = CommandMap.Default
+            };
+            var redisMasterConnection = sentinelConnection.GetSentinelMasterConnection(
+                masterConfig,
+                Console.Out
+            );
+            var s = redisMasterConnection.GetDatabase();
             //configOptions.CheckCertificateRevocation = false;
             //configOptions.CertificateValidation += (sender, cert, chain, errors) =>
             //{
@@ -68,14 +95,11 @@ namespace ShopDev.WebAPIBase
             //    var cert = new X509Certificate2(path);
             //    return cert;
             //};
-
-            builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
-                ConnectionMultiplexer.Connect(configOptions)
-            );
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.ConfigurationOptions = configOptions;
-            });
+            builder.Services.AddSingleton<IConnectionMultiplexer>(_ => muxer);
+            //builder.Services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.ConfigurationOptions = configOptions;
+            //});
         }
 
         public static void ConfigureSession(this WebApplicationBuilder builder)
