@@ -59,6 +59,7 @@ namespace ShopDev.Authentication.API
             builder.ConfigureAuthentication();
             builder.ConfigureCors();
             builder.ServiceDiscovery();
+            builder.ConfigureDistributedCacheRedis();
             builder.Services.AddRateLimiter(options =>
             {
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

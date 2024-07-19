@@ -3,11 +3,10 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstra
     public interface INotificationTokenService
     {
         /// <summary>
-        /// Thêm mới authtoken khi đăng nhập
+        /// Thêm mới authtoken cho user hiện tại
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="fcmToken"></param>
         /// <param name="apnsToken"></param>
-        void AddNotificationToken(int userId, string? fcmToken, string? apnsToken);
+        Task AddNotificationToken(string? fcmToken, string? apnsToken);
     }
 }

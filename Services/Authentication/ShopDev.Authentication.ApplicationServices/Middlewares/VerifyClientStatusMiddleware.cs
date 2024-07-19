@@ -17,7 +17,7 @@ namespace ShopDev.Authentication.ApplicationServices.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var claim = context.User.FindFirst(UserClaimTypes.UserId);
+            var claim = context.User.FindFirst(ClaimTypes.UserId);
             var dbContext = context.RequestServices.GetRequiredService<AuthenticationDbContext>();
 
             if (claim is not null)

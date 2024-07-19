@@ -17,7 +17,7 @@ namespace ShopDev.WebAPIBase.Filters
             if (
                 cookie.Succeeded
                 && cookie.Principal.Claims.Any(e =>
-                    e.Type == UserClaimTypes.UserType && e.Value == UserTypes.SUPER_ADMIN.ToString()
+                    e.Type == ClaimTypes.UserType && e.Value == UserTypes.SUPER_ADMIN.ToString()
                 )
             )
             {

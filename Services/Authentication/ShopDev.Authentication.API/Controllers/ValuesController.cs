@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using ShopDev.S3Bucket;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Controllers;
+using StackExchange.Redis;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,9 +21,21 @@ namespace ShopDev.Authentication.API.Controllers
     public class ValuesController : BaseController
     {
         private readonly IS3ManagerFileService _s3ManagerFile;
-        public ValuesController(IS3ManagerFileService s3ManagerFile) 
+        private readonly IConfiguration _configuration;
+        private readonly IConnectionMultiplexer _redis;
+
+        public ValuesController(
+            ILogger<ValuesController> logger,
+            IConfiguration configuration,
+            IConnectionMultiplexer redis
+        //IMeeyPaySmsService smsService
+        )
+            : base(logger)
         {
-            _s3ManagerFile = s3ManagerFile;
+            _logger = logger;
+            //_smsService = smsService;
+            _configuration = configuration;
+            _redis = redis;
         }
 
         // GET: api/<ValuesController>
@@ -62,5 +76,18 @@ namespace ShopDev.Authentication.API.Controllers
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
         public void Delete(int id) { }
+
+        [HttpGet("test-cache")]
+        [AllowAnonymous]
+        public async Task<IActionResult> TestCache()
+        {
+            var db = _redis.GetDatabase();
+            var value = await db.StringGetAsync("name");
+            if (value.IsNullOrEmpty)
+            {
+                return NotFound();
+            }
+            return Ok(value.ToString());
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopDev.Authentication.Infrastructure.Persistence;
+using ShopDev.Inventory.Infrastructure.Persistence;
 
 #nullable disable
 

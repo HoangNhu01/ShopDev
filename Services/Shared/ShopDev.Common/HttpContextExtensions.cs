@@ -10,29 +10,61 @@ namespace ShopDev.Common
         public static int GetCurrentUserType(this IHttpContextAccessor httpContextAccessor)
         {
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
-            var claim = claims?.FindFirst(UserClaimTypes.UserType);
+            var claim = claims?.FindFirst(Constants.Users.ClaimTypes.UserType);
             return claim == null
-                ? throw new InvalidOperationException($"Claim {UserClaimTypes.UserType} not found.")
+                ? throw new InvalidOperationException(
+                    $"Claim {Constants.Users.ClaimTypes.UserType} not found."
+                )
                 : int.Parse(claim!.Value!);
+        }
+
+        private static Claim FindClaim(
+            this IHttpContextAccessor httpContextAccessor,
+            string claimType
+        )
+        {
+            var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
+            var claim =
+                claims?.FindFirst(claimType)
+                ?? throw new InvalidOperationException($"Claim \"{claimType}\" not found.");
+            return claim;
         }
 
         public static int GetCurrentUserId(this IHttpContextAccessor httpContextAccessor)
         {
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
             var claim =
-                (claims?.FindFirst(UserClaimTypes.UserId))
-                ?? throw new InvalidOperationException($"Claim {UserClaimTypes.UserId} not found.");
+                (claims?.FindFirst(Constants.Users.ClaimTypes.UserId))
+                ?? throw new InvalidOperationException(
+                    $"Claim {Constants.Users.ClaimTypes.UserId} not found."
+                );
             int userId = int.Parse(claim.Value);
             return userId;
+        }
+
+        public static string GetCurrentAuthorizationId(
+            this IHttpContextAccessor httpContextAccessor
+        )
+        {
+            var claim = httpContextAccessor.FindClaim(Constants.Users.ClaimTypes.AuthorizationId);
+            return claim.Value;
+        }
+
+        public static string GetCurrentSubject(this IHttpContextAccessor httpContextAccessor)
+        {
+            var claim = httpContextAccessor.FindClaim(
+                System.Security.Claims.ClaimTypes.NameIdentifier
+            );
+            return claim.Value;
         }
 
         public static int GetCurrentCustomerId(this IHttpContextAccessor httpContextAccessor)
         {
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
             var claim =
-                (claims?.FindFirst(UserClaimTypes.CustomerId))
+                (claims?.FindFirst(Constants.Users.ClaimTypes.CustomerId))
                 ?? throw new InvalidOperationException(
-                    $"Claim {UserClaimTypes.CustomerId} not found."
+                    $"Claim {Constants.Users.ClaimTypes.CustomerId} not found."
                 );
             int customerId = int.Parse(claim.Value);
             return customerId;
@@ -53,13 +85,16 @@ namespace ShopDev.Common
         )
         {
             string? senderIpv4 = httpContextAccessor
-                ?.HttpContext?.Connection?.RemoteIpAddress?.MapToIPv4()
+                ?.HttpContext
+                ?.Connection
+                ?.RemoteIpAddress
+                ?.MapToIPv4()
                 .ToString();
             if (
-                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
-                    "x-forwarded-for",
-                    out var forwardedIps
-                ) == true
+                httpContextAccessor
+                    ?.HttpContext
+                    ?.Request
+                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
             )
             {
                 senderIpv4 = forwardedIps.FirstOrDefault();
@@ -71,10 +106,10 @@ namespace ShopDev.Common
         {
             string? forwardedIpsStr = null;
             if (
-                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
-                    "x-forwarded-for",
-                    out var forwardedIps
-                ) == true
+                httpContextAccessor
+                    ?.HttpContext
+                    ?.Request
+                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
             )
             {
                 forwardedIpsStr = JsonSerializer.Serialize(forwardedIps.ToList());

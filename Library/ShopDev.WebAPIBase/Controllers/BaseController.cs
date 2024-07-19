@@ -9,5 +9,10 @@ namespace ShopDev.WebAPIBase.Controllers
     public class BaseController : ControllerBase
     {
         protected ILogger? _logger;
+
+        public BaseController(ILogger<BaseController> logger)
+        {
+            _logger = logger;
+        }
     }
 }

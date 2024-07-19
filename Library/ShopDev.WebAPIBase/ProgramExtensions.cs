@@ -1,3 +1,6 @@
+using System.Net.Security;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,10 +24,8 @@ using ShopDev.Utils.Security;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
 using StackExchange.Profiling.Storage;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Net.Security;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ShopDev.WebAPIBase
 {
@@ -52,19 +53,29 @@ namespace ShopDev.WebAPIBase
             services.AddHttpContextAccessor();
         }
 
-        public static void ConfigureDistributedCache(this WebApplicationBuilder builder)
+        public static void ConfigureDistributedCacheRedis(this WebApplicationBuilder builder)
         {
-            try
+            string configStrings = builder.Configuration["RedisCache:Config"]!;
+            ConfigurationOptions configOptions = ConfigurationOptions.Parse(configStrings);
+            //configOptions.CheckCertificateRevocation = false;
+            //configOptions.CertificateValidation += (sender, cert, chain, errors) =>
+            //{
+            //    return true;
+            //};
+            //configOptions.CertificateSelection += delegate
+            //{
+            //    var path = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["RedisCache:Ssl:CertPath"]!);
+            //    var cert = new X509Certificate2(path);
+            //    return cert;
+            //};
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(configOptions)
+            );
+            builder.Services.AddStackExchangeRedisCache(options =>
             {
-                builder.Services.AddStackExchangeRedisCache(options =>
-                {
-                    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-                });
-            }
-            catch
-            {
-                builder.Services.AddDistributedMemoryCache();
-            }
+                options.ConfigurationOptions = configOptions;
+            });
         }
 
         public static void ConfigureSession(this WebApplicationBuilder builder)

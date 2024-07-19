@@ -1,0 +1,53 @@
+version: '3.4'
+
+services:
+  redis-master:
+    image: redis:latest
+    container_name: redis-master
+    command: ["redis-server", "--requirepass", "123qwe", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-master-data:/data
+    networks:
+          sd_network:
+            ipv4_address: 10.0.0.4
+  redis-slave:
+    image: redis:latest
+    container_name: redis-slave
+    command: ["redis-server", "--slaveof", "redis-master", "6379", "--masterauth", "123qwe", "--requirepass", "123qwe", "--appendonly", "yes"]
+    ports:
+      - "6479:6379"
+    depends_on:
+      - redis-master
+    volumes:
+      - redis-slave-data:/data
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.5
+
+  redis-sentinel:
+    image: redis:latest
+    container_name: redis-sentinel
+    command:
+      - redis-sentinel
+      - /usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+      - redis-slave
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.6
+
+volumes:
+  redis-master-data:
+  redis-slave-data:
+
+networks:
+  sd_network:
+      name: sd_sd_network
+      external: true

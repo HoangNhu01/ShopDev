@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopDev.Authentication.Infrastructure.Persistence;
+using ShopDev.Inventory.Infrastructure.Persistence;
 
 #nullable disable
 

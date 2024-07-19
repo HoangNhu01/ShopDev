@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Web;
+using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,7 +15,6 @@ using ShopDev.Authentication.API.Extensions;
 using ShopDev.Authentication.API.Models;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.UserDto;
-using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.Authorization;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.Users;
@@ -36,6 +36,7 @@ namespace ShopDev.Authentication.API.Controllers
         private readonly LocalizationBase _localization;
         private readonly IOpenIddictScopeManager _scopeManager;
         private readonly IOpenIddictTokenManager _tokenManager;
+        private readonly IManagerTokenService _managerTokenService;
         private readonly ILogger<AuthorizationController> _logger;
 
         public AuthorizationController(
@@ -91,7 +92,7 @@ namespace ShopDev.Authentication.API.Controllers
                 );
             }
 
-            var userId = result.Principal!.GetClaim(UserClaimTypes.UserId);
+            var userId = result.Principal!.GetClaim(Constants.Users.ClaimTypes.UserId);
 
             var identity = new ClaimsIdentity(
                 TokenValidationParameters.DefaultAuthenticationType,
@@ -125,7 +126,7 @@ namespace ShopDev.Authentication.API.Controllers
 
                     identity
                         .SetClaim(Claims.Subject, userId)
-                        .SetClaim(UserClaimTypes.UserId, userId);
+                        .SetClaim(Constants.Users.ClaimTypes.UserId, userId);
                     identity.SetScopes(request.GetScopes());
                     identity.SetResources(
                         await _scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync()
@@ -266,7 +267,10 @@ namespace ShopDev.Authentication.API.Controllers
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity
                 .SetClaim(Claims.Subject, result.Principal!.GetClaim(Claims.Subject))
-                .SetClaim(UserClaimTypes.UserId, result.Principal!.GetClaim(UserClaimTypes.UserId))
+                .SetClaim(
+                    Constants.Users.ClaimTypes.UserId,
+                    result.Principal!.GetClaim(Constants.Users.ClaimTypes.UserId)
+                )
                 .SetClaim(Prompts.Consent, dto.Grant);
 
             var principal = new ClaimsPrincipal(new List<ClaimsIdentity> { new(identity) });
@@ -303,7 +307,9 @@ namespace ShopDev.Authentication.API.Controllers
                     var result = await HttpContext.AuthenticateAsync(
                         OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
                     );
-                    int userId = int.Parse(result.Principal!.GetClaim(UserClaimTypes.UserId)!);
+                    int userId = int.Parse(
+                        result.Principal!.GetClaim(Constants.Users.ClaimTypes.UserId)!
+                    );
 
                     var user =
                         _userServices.FindById(userId)
@@ -337,7 +343,7 @@ namespace ShopDev.Authentication.API.Controllers
                 {
                     var user = _userServices.ValidateAppUser(request.Username!, request.Password!);
                     _userServices.Login(user.Id);
-                    _authTokenService.AddNotificationToken(user.Id, _.FcmToken, _.ApnsToken);
+                    await _authTokenService.AddNotificationToken(_.FcmToken, _.ApnsToken);
                     SetClaims(identity, user);
                     // Set the list of scopes granted to the client application.
                     identity.SetScopes(
@@ -442,7 +448,9 @@ namespace ShopDev.Authentication.API.Controllers
                     // Retrieve the user profile corresponding to the refresh token.
                     var user =
                         _userServices.FindById(
-                            int.Parse(result.Principal!.GetClaim(UserClaimTypes.UserId)!)
+                            int.Parse(
+                                result.Principal!.GetClaim(Constants.Users.ClaimTypes.UserId)!
+                            )
                         ) ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
                     // Ensure the user is still allowed to sign in.
@@ -517,20 +525,16 @@ namespace ShopDev.Authentication.API.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("~/connect/logout"), IgnoreAntiforgeryToken, Produces("application/json")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromForm] bool? revokeAll = false)
         {
-            var authorizationId = HttpContext
-                .User.Claims.FirstOrDefault(c => c.Type == "oi_au_id")
-                ?.Value;
-            if (authorizationId == null)
+            if (revokeAll == false)
             {
-                return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                await _managerTokenService.RevokeAllToken();
             }
-
-            var tokens = _tokenManager.FindByAuthorizationIdAsync(authorizationId);
-            await foreach (var token in tokens)
+            else
             {
-                await _tokenManager.TryRevokeAsync(token);
+                // Remove tất cả token theo subject
+                _managerTokenService.RevokeAllTokenBySubject();
             }
             return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
@@ -543,8 +547,8 @@ namespace ShopDev.Authentication.API.Controllers
                 .SetClaim(Claims.Subject, user.Id.ToString())
                 .SetClaim(Claims.Issuer, $"{Request.Scheme}://{Request.Host.Value}")
                 .SetClaim(Claims.Name, user.FullName)
-                .SetClaim(UserClaimTypes.UserType, user.UserType)
-                .SetClaim(UserClaimTypes.UserId, user.Id);
+                .SetClaim(Constants.Users.ClaimTypes.UserType, user.UserType)
+                .SetClaim(Constants.Users.ClaimTypes.UserId, user.Id);
         }
 
         private static IEnumerable<string> GetDestinations(Claim claim)

@@ -15,14 +15,15 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         )
             : base(logger, httpContext) { }
 
-        public void AddNotificationToken(int userId, string? fcmToken, string? apnsToken)
+        public async Task AddNotificationToken(string? fcmToken, string? apnsToken)
         {
+            var userId = _httpContext.GetCurrentUserId();
             _logger.LogInformation(
                 $"{nameof(AddNotificationToken)}: userId = {userId}, fcmToken = {fcmToken}, apnsToken = {apnsToken}"
             );
-            var transaction = _dbContext.Database.BeginTransaction();
-            _dbContext.NotificationTokens.Where(x => x.UserId == userId).ExecuteDelete();
-            _dbContext.Add<NotificationToken>(
+            var transaction = await _dbContext.Database.BeginTransactionAsync();
+            await _dbContext.NotificationTokens.Where(x => x.UserId == userId).ExecuteDeleteAsync();
+            await _dbContext.AddAsync<NotificationToken>(
                 new()
                 {
                     FcmToken = fcmToken,
@@ -30,8 +31,8 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                     UserId = userId,
                 }
             );
-            _dbContext.SaveChanges();
-            transaction.Commit();
+            await _dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
         }
     }
 }

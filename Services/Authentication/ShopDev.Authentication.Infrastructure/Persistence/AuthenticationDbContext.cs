@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using ShopDev.Authentication.Domain.AuthToken;
 using ShopDev.Authentication.Domain.Otps;
 using ShopDev.Authentication.Domain.SysVar;
@@ -19,6 +20,8 @@ namespace ShopDev.Authentication.Infrastructure.Persistence
         public DbSet<SysVar> SysVars { get; set; }
         public DbSet<NotificationToken> NotificationTokens { get; set; }
         public DbSet<AuthOtp> AuthOtps { get; set; }
+        public DbSet<OpenIddictEntityFrameworkCoreAuthorization> OpenIddictAuthorizations { get; set; }
+        public DbSet<OpenIddictEntityFrameworkCoreToken> OpenIddictTokens { get; set; }
 
         public AuthenticationDbContext()
             : base() { }
