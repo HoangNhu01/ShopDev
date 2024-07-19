@@ -12,6 +12,7 @@ services:
     networks:
           sd_network:
             ipv4_address: 10.0.0.4
+
   redis-slave:
     image: redis:latest
     container_name: redis-slave
@@ -29,9 +30,7 @@ services:
   redis-sentinel:
     image: redis:latest
     container_name: redis-sentinel
-    command:
-      - redis-sentinel
-      - /usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     depends_on:
       - redis-master
       - redis-slave

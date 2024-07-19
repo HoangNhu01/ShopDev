@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Entities;
 using RabbitMQ.Client;
 using Serilog;
 using Serilog.Core;
@@ -60,30 +61,31 @@ namespace ShopDev.WebAPIBase
             ConfigurationOptions configOptions =
                 new()
                 {
+                    CommandMap = CommandMap.Sentinel,
                     ServiceName = "mymaster",
                     Password = "123qwe",
                     TieBreaker = "",
+                    AbortOnConnectFail = false,
+                    AllowAdmin = false,
                 };
             string? endpoint = builder.Configuration["RedisCache:RedisSentinel"];
             if (!string.IsNullOrEmpty(endpoint))
             {
                 configOptions.EndPoints.Add("127.0.0.1", 26379);
             }
+
             ConnectionMultiplexer sentinelConnection = ConnectionMultiplexer.SentinelConnect(
-                configOptions,
-                Console.Out
+                configOptions
             );
-            var muxer = sentinelConnection.GetSentinelMasterConnection(configOptions);
-            ConfigurationOptions masterConfig = new ConfigurationOptions
+            var masterEndPoint = sentinelConnection
+                .GetServer(configOptions.EndPoints[0])
+                .SentinelGetMasterAddressByName("mymaster");
+            var masterConfig = new ConfigurationOptions
             {
-                ServiceName = "mymaster",
-                CommandMap = CommandMap.Default
+                EndPoints = { masterEndPoint },
+                Password = "123qwe",
+                AbortOnConnectFail = false
             };
-            var redisMasterConnection = sentinelConnection.GetSentinelMasterConnection(
-                masterConfig,
-                Console.Out
-            );
-            var s = redisMasterConnection.GetDatabase();
             //configOptions.CheckCertificateRevocation = false;
             //configOptions.CertificateValidation += (sender, cert, chain, errors) =>
             //{
@@ -95,7 +97,7 @@ namespace ShopDev.WebAPIBase
             //    var cert = new X509Certificate2(path);
             //    return cert;
             //};
-            builder.Services.AddSingleton<IConnectionMultiplexer>(_ => muxer);
+            builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(masterConfig));
             //builder.Services.AddStackExchangeRedisCache(options =>
             //{
             //    options.ConfigurationOptions = configOptions;
@@ -455,18 +457,27 @@ namespace ShopDev.WebAPIBase
         {
             List<string> projectDependencyNames =
             [
-                .. Assembly.GetEntryAssembly()?.CustomAttributes
-                                                                        .SelectMany(c => c.ConstructorArguments.Select(ca => ca.Value?.ToString()))
-                                                                        .Where(o => o != null)
-                                                                        .ToList(),
-                .. Assembly.GetExecutingAssembly().CustomAttributes
-                                                                        .SelectMany(c => c.ConstructorArguments.Select(ca => ca.Value?.ToString()))
-                                                                        .Where(o => o != null)
-                                                                        .ToList(),
-                .. Assembly.GetCallingAssembly().CustomAttributes
-                                                                        .SelectMany(c => c.ConstructorArguments.Select(ca => ca.Value?.ToString()))
-                                                                        .Where(o => o != null)
-                                                                        .ToList(),
+                .. Assembly
+                    .GetEntryAssembly()
+                    ?.CustomAttributes.SelectMany(c =>
+                        c.ConstructorArguments.Select(ca => ca.Value?.ToString())
+                    )
+                    .Where(o => o != null)
+                    .ToList(),
+                .. Assembly
+                    .GetExecutingAssembly()
+                    .CustomAttributes.SelectMany(c =>
+                        c.ConstructorArguments.Select(ca => ca.Value?.ToString())
+                    )
+                    .Where(o => o != null)
+                    .ToList(),
+                .. Assembly
+                    .GetCallingAssembly()
+                    .CustomAttributes.SelectMany(c =>
+                        c.ConstructorArguments.Select(ca => ca.Value?.ToString())
+                    )
+                    .Where(o => o != null)
+                    .ToList(),
             ];
             List<Type> autoMapProfiles = new();
 
