@@ -34,6 +34,7 @@ namespace ShopDev.Inventory.API
             builder.ConfigureDataProtection();
 
             builder.Services.AddControllers();
+            builder.Services.AddGrpc();
             builder
                 .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
