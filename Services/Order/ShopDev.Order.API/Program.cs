@@ -42,6 +42,8 @@ namespace ShopDev.Order.API
             builder.ConfigureAuthentication();
             builder.ConfigureCors();
             builder.ConfigureRabbitMQ();
+            builder.ConfigureDistributedCacheRedis();
+
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, OrderMapErrorCode>();
             builder.Services.AddScoped<ICartService, CartService>();

@@ -30,7 +30,7 @@ namespace ShopDev.Inventory.ApplicationServices.ShopModule.Implements
         public void Create(ShopCreateDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
-           // int userId = _httpContext.GetCurrentUserId();
+            // int userId = _httpContext.GetCurrentUserId();
             _dbContext.Shops.Add(
                 new()
                 {

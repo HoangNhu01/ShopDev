@@ -43,7 +43,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Dtos
 
     public class SpuDetailDto
     {
-        public required string Id { get; set; }
+        public int Id { get; set; }
         public List<int> Index { get; set; } = [];
         public double Price { get; set; }
         public int Stock { get; set; }

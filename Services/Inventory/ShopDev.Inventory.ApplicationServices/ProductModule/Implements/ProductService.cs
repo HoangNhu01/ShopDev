@@ -160,7 +160,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 [
                     .. product.Spus.Select(x => new SpuDetailDto
                     {
-                        Id = x.Id.ToString(),
+                        Id = x.Id,
                         Index = x.Index,
                         Price = x.Price,
                         Stock = x.Stock

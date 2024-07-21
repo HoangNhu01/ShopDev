@@ -57,51 +57,26 @@ namespace ShopDev.WebAPIBase
 
         public static void ConfigureDistributedCacheRedis(this WebApplicationBuilder builder)
         {
-            //string configStrings = builder.Configuration["RedisCache:Config"]!;
-            ConfigurationOptions configOptions =
-                new()
-                {
-                    CommandMap = CommandMap.Sentinel,
-                    ServiceName = "mymaster",
-                    Password = "123qwe",
-                    TieBreaker = "",
-                    AbortOnConnectFail = false,
-                    AllowAdmin = false,
-                };
-            string? endpoint = builder.Configuration["RedisCache:RedisSentinel"];
-            if (!string.IsNullOrEmpty(endpoint))
+            string configStrings = builder.Configuration["RedisCache:Config"]!;
+            ConfigurationOptions configOptions = ConfigurationOptions.Parse(configStrings);
+            configOptions.CheckCertificateRevocation = false;
+            configOptions.CertificateValidation += (sender, cert, chain, errors) =>
             {
-                configOptions.EndPoints.Add("127.0.0.1", 26379);
-            }
-
-            ConnectionMultiplexer sentinelConnection = ConnectionMultiplexer.SentinelConnect(
-                configOptions
-            );
-            var masterEndPoint = sentinelConnection
-                .GetServer(configOptions.EndPoints[0])
-                .SentinelGetMasterAddressByName("mymaster");
-            var masterConfig = new ConfigurationOptions
-            {
-                EndPoints = { masterEndPoint },
-                Password = "123qwe",
-                AbortOnConnectFail = false
+                return true;
             };
-            //configOptions.CheckCertificateRevocation = false;
-            //configOptions.CertificateValidation += (sender, cert, chain, errors) =>
-            //{
-            //    return true;
-            //};
-            //configOptions.CertificateSelection += delegate
-            //{
-            //    var path = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["RedisCache:Ssl:CertPath"]!);
-            //    var cert = new X509Certificate2(path);
-            //    return cert;
-            //};
-            builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(masterConfig));
-            //builder.Services.AddStackExchangeRedisCache(options =>
-            //{
-            //    options.ConfigurationOptions = configOptions;
-            //});
+            configOptions.CertificateSelection += delegate
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["RedisCache:Ssl:CertPath"]!);
+                var cert = new X509Certificate2(path);
+                return cert;
+            };
+            builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(configOptions)
+            );
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.ConfigurationOptions = configOptions;
+            });
         }
 
         public static void ConfigureSession(this WebApplicationBuilder builder)
