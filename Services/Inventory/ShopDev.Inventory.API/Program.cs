@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.ApplicationServices.Common;
@@ -7,6 +8,7 @@ using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
+using ShopDev.Inventory.API.gRPCServices;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
 using ShopDev.Inventory.ApplicationServices.Common;
@@ -50,7 +52,10 @@ namespace ShopDev.Inventory.API
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, InventoryMapErrorCode>();
             builder.Services.AddSingleton<ExtensionsDbContext>();
-            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<
+                IProductService,
+                ApplicationServices.ProductModule.Implements.ProductService
+            >();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
@@ -84,7 +89,7 @@ namespace ShopDev.Inventory.API
                 ?? throw new InvalidOperationException(
                     "Không tìm thấy connection string \"InventoryDb\" trong appsettings.json"
                 );
-
+            Console.WriteLine(inventoryConnectionString);
             builder.Services.AddDbContextPool<InventoryDbContext>(
                 options =>
                 {
@@ -105,6 +110,15 @@ namespace ShopDev.Inventory.API
                 },
                 poolSize: 128
             );
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                var port = int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "5002");
+                Console.WriteLine("PORT:" + port);
+                options.ListenAnyIP(port, o => o.Protocols = HttpProtocols.Http1);
+
+                // ADDED THIS LINE to fix the problem
+                options.ListenAnyIP(port + 100, o => o.Protocols = HttpProtocols.Http2);
+            });
             var app = builder.Build();
             //using (var scope = app.Services.CreateScope())
             //{
@@ -121,7 +135,7 @@ namespace ShopDev.Inventory.API
             if (EnvironmentNames.Productions.Contains(app.Environment.EnvironmentName))
             {
                 app.UseHttpsRedirection();
-                //app.UpdateMigrations<AuthenticationDbContext>();
+                app.UpdateMigrations<InventoryDbContext>();
             }
             app.UseCors(ProgramExtensions.CorsPolicy);
             app.UseForwardedHeaders();
@@ -131,6 +145,7 @@ namespace ShopDev.Inventory.API
             app.UseAuthorization();
             //app.UseCheckAuthorizationToken();
             //app.UseCheckUser();
+            app.MapGrpcService<gRPCServices.ProductService>();
             app.MapControllers();
             app.MapHealthChecks("/health");
             app.Run();

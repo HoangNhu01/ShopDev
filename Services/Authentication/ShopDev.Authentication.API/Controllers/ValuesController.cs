@@ -81,8 +81,8 @@ namespace ShopDev.Authentication.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TestCache()
         {
-            var db = _redis.GetDatabase();
-            var value = await db.StringGetAsync("name");
+            var db = _redis.GetDatabase().Database;
+            var value = await db("name");
             if (value.IsNullOrEmpty)
             {
                 return NotFound();

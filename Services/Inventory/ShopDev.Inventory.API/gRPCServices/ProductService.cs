@@ -1,10 +1,8 @@
 ﻿using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
-using ShopDev.ApplicationBase;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Inventory.API.Protos;
-using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Persistence;
 
@@ -28,29 +26,52 @@ namespace ShopDev.Inventory.API.gRPCServices
         {
             var product =
                 await _dbContext
-                    .Set<Product>()
+                    .Set<Domain.Products.Product>()
                     .AsNoTracking()
                     .Include(x => x.Spus.Where(x => x.Id == request.SpuId))
                     .FirstOrDefaultAsync(x => x.Id == request.Id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            if (product.Spus.Count > 0 && product.Spus[0].Stock < request.Quantity)
+            {
+                throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            }
+            if (product.Spus.Count == 0)
+            {
+                throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            }
+            if (product.Variations.Count != product.Spus[0].Index.Count)
+            {
+                throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            }
             ProductResponse productResponse =
                 new()
                 {
-                    Id = product.Id,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Name = product.Name,
-                    ShopId = product.ShopId,
-                    ThumbUri = product.ThumbUri,
-                    Title = product.Title
+                    Product = new()
+                    {
+                        Id = product.Id,
+                        Price = product.Price,
+                        Name = product.Name,
+                        ShopId = product.ShopId,
+                        ThumbUri = product.ThumbUri,
+                        Title = product.Title,
+                        Quantity = request.Quantity,
+                    }
                 };
-            foreach (var item in product.Spus)
-            {
-                if(item.Index.Count > 0)
-                {
-
-                }
-            }
+            productResponse.Product.Spus.AddRange(
+                product
+                    .Spus[0]
+                    .Index.Select(
+                        (x, index) =>
+                        {
+                            string opt = product.Variations[index].Options[x];
+                            return new Protos.Spu
+                            {
+                                Options = opt,
+                                Name = product.Variations[index].Name
+                            };
+                        }
+                    )
+            );
             return productResponse;
         }
     }

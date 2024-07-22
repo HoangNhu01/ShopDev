@@ -39,6 +39,31 @@ services:
       sd_network:
         ipv4_address: 10.0.0.11
 
+  sd.inventory.api:
+    image: sd.inventory.api
+    container_name: sd.inventory
+    profiles:
+      - donotstart
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    build:
+      context: ../../
+      dockerfile: Services/Inventory/ShopDev.Inventory.API/Dockerfile
+    ports:
+      - 5002:8080
+      - 5102:8180
+    configs:
+      - source: appsettings
+        target: /app/appsettings.${ASPNETCORE_ENVIRONMENT}.json
+    secrets:
+      - source: public_key
+        target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+      - source: private_key
+        target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.11
+
   minio:
     image: quay.io/minio/minio
     container_name: minio-manager

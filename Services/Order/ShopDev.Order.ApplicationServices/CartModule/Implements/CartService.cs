@@ -9,5 +9,10 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
     {
         public CartService(ILogger<CartService> logger, IHttpContextAccessor httpContext)
             : base(logger, httpContext) { }
+
+        public Task AddToCart(int id, string languageId, int clientQuantity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

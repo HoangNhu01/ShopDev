@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
@@ -11,22 +12,17 @@ using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
 using ShopDev.Utils.Linq;
-using System.Text.Json;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {
     public class ProductService : InventoryServiceBase, IProductService
     {
-        private readonly ExtensionsDbContext _extensionsDbContext;
-
         public ProductService(
             ILogger<ProductService> logger,
-            IHttpContextAccessor httpContext,
-            ExtensionsDbContext extensionsDbContext
+            IHttpContextAccessor httpContext
         )
             : base(logger, httpContext)
         {
-            _extensionsDbContext = extensionsDbContext;
         }
 
         public void Create(ProductCreateDto input)
@@ -125,6 +121,14 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         x.Price = y.Price;
                         x.Stock = y.Stock;
                     }
+                );
+                product.Spus.AddRange(
+                    input.Spus.Select(x => new Spu
+                    {
+                        Index = x.Index,
+                        Price = x.Price,
+                        Stock = x.Stock
+                    })
                 );
             }
             _dbContext.SaveChanges();
@@ -233,7 +237,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                             input.CategoryNames == null
                             || x.Categories.Any(s => input.CategoryNames.Contains(s.Category.Name))
                         )
-                    //include: x => x.Include(x => x.Shop).Include(x => x.Categories).ThenInclude(x => x.Category)
+                //include: x => x.Include(x => x.Shop).Include(x => x.Categories).ThenInclude(x => x.Category)
                 ) ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             var result = new PagingResult<ProductDetailDto>
             {
