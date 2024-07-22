@@ -1,4 +1,6 @@
 using AutoMapper;
+using ShopDev.Order.ApplicationServices.CartModule.Dtos;
+using ShopDev.Order.ApplicationServices.Protos;
 
 namespace ShopDev.Order.ApplicationServices.Common
 {
@@ -6,7 +8,8 @@ namespace ShopDev.Order.ApplicationServices.Common
     {
         public MappingProfile()
         {
-            //CreateMap<VariationUpdateDto, Variation>().ReverseMap();
+            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<Spu, SpuDto>().ReverseMap();
         }
     }
 }

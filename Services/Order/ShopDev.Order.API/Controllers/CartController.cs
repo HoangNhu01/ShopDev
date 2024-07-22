@@ -35,14 +35,14 @@ namespace ShopDev.Order.API.Controllers
             }
         }
 
-        [HttpGet("find-by-id/{id}")]
+        [HttpGet("view-cart")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter()]
-        public ApiResponse FindById(int id)
+        public async Task<ApiResponse> ViewCart()
         {
             try
             {
-                return new();
+                return new(await _cartService.ViewCart());
             }
             catch (Exception ex)
             {

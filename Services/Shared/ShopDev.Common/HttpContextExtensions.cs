@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using ShopDev.Constants.Users;
@@ -7,6 +8,23 @@ namespace ShopDev.Common
 {
     public static class HttpContextExtensions
     {
+        public static string GetLocalIPAddress()
+        {
+            string hostName = Dns.GetHostName();
+            IPAddress[] addresses = Dns.GetHostAddresses(hostName);
+
+            foreach (IPAddress address in addresses)
+            {
+                // Filter for IPv4 addresses
+                if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    return address.ToString();
+                }
+            }
+
+            return string.Empty;
+        }
+
         public static int GetCurrentUserType(this IHttpContextAccessor httpContextAccessor)
         {
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
@@ -85,16 +103,13 @@ namespace ShopDev.Common
         )
         {
             string? senderIpv4 = httpContextAccessor
-                ?.HttpContext
-                ?.Connection
-                ?.RemoteIpAddress
-                ?.MapToIPv4()
+                ?.HttpContext?.Connection?.RemoteIpAddress?.MapToIPv4()
                 .ToString();
             if (
-                httpContextAccessor
-                    ?.HttpContext
-                    ?.Request
-                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
+                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
+                    "x-forwarded-for",
+                    out var forwardedIps
+                ) == true
             )
             {
                 senderIpv4 = forwardedIps.FirstOrDefault();
@@ -106,10 +121,10 @@ namespace ShopDev.Common
         {
             string? forwardedIpsStr = null;
             if (
-                httpContextAccessor
-                    ?.HttpContext
-                    ?.Request
-                    .Headers.TryGetValue("x-forwarded-for", out var forwardedIps) == true
+                httpContextAccessor?.HttpContext?.Request.Headers.TryGetValue(
+                    "x-forwarded-for",
+                    out var forwardedIps
+                ) == true
             )
             {
                 forwardedIpsStr = JsonSerializer.Serialize(forwardedIps.ToList());

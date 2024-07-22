@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Text.Json;
-using DocumentFormat.OpenXml.Office2010.Excel;
+﻿using System.Text.Json;
+using AutoMapper;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ShopDev.Constants.ErrorCodes;
+using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Dtos;
 using ShopDev.Order.ApplicationServices.Common;
@@ -34,11 +35,10 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
             string cartKey = $"cart:{ipAdd}";
             string cartJson = await redisDb.StringGetAsync(cartKey);
-            List<Product> cartItems = [];
-            if (!string.IsNullOrEmpty(cartJson))
-            {
-                cartItems = JsonSerializer.Deserialize<List<Product>>(cartJson) ?? [];
-            }
+            List<ProductDto>? cartItems = !string.IsNullOrEmpty(cartJson)
+                ? JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
+                : [];
+
             // Lấy từ trong cache ra giỏ hàng
             // Gọi gRPC qua Inventory để lấy thông tin sản phẩm
             GrpcChannel grpcChannel = GrpcChannel.ForAddress("http://localhost:5102/");
@@ -52,18 +52,35 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
                 }
             );
             // Cập nhật nếu thêm sản phẩm đã có trong giỏ hàng
-            int quantity = input.Quantity;
-            Product? cartItem = cartItems.Find(x =>
-                x.Id == input.Id && x.Spus.Any(s => s.SpuId == input.SpuId)
+            ProductDto? cartItem = cartItems?.Find(x =>
+                x.Id == input.Id && x.Spus.Exists(s => s.SpuId == input.SpuId)
             );
             if (cartItem is not null)
             {
-                quantity += cartItem.Quantity;
-                cartItems.Remove(cartItem);
+                cartItem.Quantity += input.Quantity;
             }
-            cartItems.Add(productResponse.Product);
+            else
+            {
+                cartItems?.Add(_mapper.Map<ProductDto>(productResponse.Product));
+            }
             string cartJsonConvert = JsonSerializer.Serialize(cartItems);
             var result = await redisDb.StringSetAsync(cartKey, cartJsonConvert);
+        }
+
+        public async Task<List<ProductDto>> ViewCart()
+        {
+            var useClaims = _httpContext.HttpContext?.User.Identity?.Name;
+            var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
+            string cartKey = $"cart:{ipAdd}";
+
+            IDatabase redisDb = _connectionMultiplexer.GetDatabase();
+            string cartJson = await redisDb.StringGetAsync(cartKey);
+
+            List<ProductDto>? cartItems = !string.IsNullOrEmpty(cartJson)
+                ? JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
+                    ?? throw new UserFriendlyException(OrderErrorCode.ProductNotFound)
+                : [];
+            return cartItems;
         }
     }
 }

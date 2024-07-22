@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ShopDev.Order.ApplicationServices.Common
 {
-    public class OrderMapErrorCode : MapErrorCodeBase<InventoryErrorCode>
+    public class OrderMapErrorCode : MapErrorCodeBase<OrderErrorCode>
     {
         public OrderMapErrorCode(
             LocalizationBase localization,

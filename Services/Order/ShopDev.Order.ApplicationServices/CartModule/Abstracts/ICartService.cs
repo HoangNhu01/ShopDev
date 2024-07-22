@@ -5,5 +5,6 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Abstract
     public interface ICartService
     {
         Task AddToCart(CartUpdateDto input);
+        Task<List<ProductDto>> ViewCart();
     }
 }
