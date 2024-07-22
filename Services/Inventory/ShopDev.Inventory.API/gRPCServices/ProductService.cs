@@ -31,6 +31,7 @@ namespace ShopDev.Inventory.API.gRPCServices
                     .Include(x => x.Spus.Where(x => x.Id == request.SpuId))
                     .FirstOrDefaultAsync(x => x.Id == request.Id)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            // Nếu số lượng trong kho bé hơn
             if (product.Spus.Count > 0 && product.Spus[0].Stock < request.Quantity)
             {
                 throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
@@ -67,7 +68,8 @@ namespace ShopDev.Inventory.API.gRPCServices
                             return new Protos.Spu
                             {
                                 Options = opt,
-                                Name = product.Variations[index].Name
+                                Name = product.Variations[index].Name,
+                                SpuId = product.Spus[0].Id
                             };
                         }
                     )

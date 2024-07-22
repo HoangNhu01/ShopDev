@@ -81,13 +81,13 @@ namespace ShopDev.Authentication.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> TestCache()
         {
-            var db = _redis.GetDatabase().Database;
-            var value = await db("name");
-            if (value.IsNullOrEmpty)
-            {
-                return NotFound();
-            }
-            return Ok(value.ToString());
+            //var db = _redis.GetDatabase().Database;
+            //var value = await db("name");
+            //if (value.IsNullOrEmpty)
+            //{
+            //    return NotFound();
+            //}
+            return Ok();
         }
     }
 }

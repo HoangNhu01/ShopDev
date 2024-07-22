@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
+using ShopDev.Order.ApplicationServices.CartModule.Dtos;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
 
@@ -67,10 +68,11 @@ namespace ShopDev.Order.API.Controllers
         [HttpPut("update")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserUpdate)]
-        public ApiResponse Update()
+        public async Task<ApiResponse> Update(CartUpdateDto input)
         {
             try
             {
+                await _cartService.AddToCart(input);
                 return new();
             }
             catch (Exception ex)
