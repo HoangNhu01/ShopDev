@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.EntitiesBase.AuthorizationEntities;
+using ShopDev.EntitiesBase.Base;
 using ShopDev.Utils.DataUtils;
 
 namespace ShopDev.InfrastructureBase.Persistence
@@ -29,6 +30,7 @@ namespace ShopDev.InfrastructureBase.Persistence
                 UserId = userId;
             }
         }
+
         private void CheckAudit()
         {
             ChangeTracker.DetectChanges();
@@ -96,6 +98,25 @@ namespace ShopDev.InfrastructureBase.Persistence
         {
             CheckAudit();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public Task<int> SaveChangesOutBoxAsync(CancellationToken cancellationToken = default)
+        {
+            var added = ChangeTracker
+                .Entries<Entity>()
+                .Where(t => t.State == EntityState.Added)
+                .Select(t => t.Entity)
+                .AsParallel();
+
+            added.ForAll(entity =>
+            {
+                if (entity is ICreatedBy createdEntity && createdEntity.CreatedBy == null)
+                {
+                    createdEntity.CreatedDate = DateTimeUtils.GetDate();
+                    createdEntity.CreatedBy = UserId;
+                }
+            });
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
