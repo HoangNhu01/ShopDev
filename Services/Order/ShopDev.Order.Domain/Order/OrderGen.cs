@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Database;
+using ShopDev.EntitiesBase.Base;
 using ShopDev.Order.Domain.Shipment;
 
 namespace ShopDev.Order.Domain.Order
@@ -17,9 +18,8 @@ namespace ShopDev.Order.Domain.Order
         Name = $"IX_{nameof(OrderGen)}",
         IsUnique = false
     )]
-    public class OrderGen : IFullAudited
+    public class OrderGen : Entity<Guid>, IFullAudited
     {
-        public Guid Id { set; get; }
         public DateTime OrderDate { set; get; }
         public int UserId { set; get; }
         public required string ShipName { set; get; }
@@ -27,10 +27,12 @@ namespace ShopDev.Order.Domain.Order
         public required string ShipEmail { set; get; }
         public required string ShipPhoneNumber { set; get; }
         public double TotalPrice { set; get; }
+
         /// <summary>
         /// Trạng thái đơn hàng
         /// </summary>
         public int Status { set; get; }
+
         /// <summary>
         /// Trạng thái thanh toán
         /// </summary>

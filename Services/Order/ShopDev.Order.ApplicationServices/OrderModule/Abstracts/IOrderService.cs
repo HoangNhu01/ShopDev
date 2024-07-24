@@ -4,7 +4,7 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Abstracts
 {
     public interface IOrderService
     {
-        void Create(OrderCreateDto request);
+        Task Create(OrderCreateDto request);
         OrderDetailDto FindById(int id);
     }
 }

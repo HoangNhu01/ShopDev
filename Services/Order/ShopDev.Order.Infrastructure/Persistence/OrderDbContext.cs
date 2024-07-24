@@ -45,6 +45,8 @@ namespace ShopDev.Order.Infrastructure.Persistence
                     }
                 );
             modelBuilder
+                .Entity<OrderGen>().HasKey(x => x.Id);
+            modelBuilder
                 .Entity<OrderGen>()
                 .HasMany(x => x.OrderDetails)
                 .WithOne(x => x.Order)

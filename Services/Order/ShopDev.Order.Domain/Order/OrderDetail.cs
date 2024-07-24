@@ -24,7 +24,7 @@ namespace ShopDev.Order.Domain.Order
         public int ProductId { set; get; }
         public int SpuId { set; get; }
         public virtual OrderGen Order { get; } = null!;
-        public Product Product { get; } = null!;
+        public Product Product { get; set; } = null!;
         public int StockStatus { get; set; }
         #region audit
         public DateTime? CreatedDate { get; set; }

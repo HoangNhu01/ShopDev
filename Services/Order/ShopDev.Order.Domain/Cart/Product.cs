@@ -31,6 +31,7 @@ namespace ShopDev.Order.Domain.Products
     public class Spu
     {
         //[BsonElement("variation_name")]
+        public int SpuId { get; set; }
         public required string Name { get; set; }
 
         //[BsonElement("variation_options")]

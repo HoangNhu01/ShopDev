@@ -1,10 +1,12 @@
 using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
-using ShopDev.EntitiesBase.AuthorizationEntities;
 using ShopDev.EntitiesBase.Base;
+using ShopDev.InfrastructureBase.Persistence.OutBox;
 using ShopDev.Utils.DataUtils;
 
 namespace ShopDev.InfrastructureBase.Persistence
@@ -13,6 +15,7 @@ namespace ShopDev.InfrastructureBase.Persistence
     {
         protected readonly IHttpContextAccessor _httpContextAccessor = null!;
         protected readonly int? UserId = null;
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         public ApplicationDbContext() { }
 
@@ -100,20 +103,36 @@ namespace ShopDev.InfrastructureBase.Persistence
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
-        public Task<int> SaveChangesOutBoxAsync(CancellationToken cancellationToken = default)
+        public Task<int> SaveChangesOutBoxAsync<TEntity>(
+            CancellationToken cancellationToken = default
+        )
+            where TEntity : class
         {
+            JsonSerializerOptions options =
+                new() { WriteIndented = true, PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                };
             var added = ChangeTracker
-                .Entries<Entity>()
+                .Entries<TEntity>()
                 .Where(t => t.State == EntityState.Added)
                 .Select(t => t.Entity)
                 .AsParallel();
 
-            added.ForAll(entity =>
+            added.ForAll(async entity =>
             {
                 if (entity is ICreatedBy createdEntity && createdEntity.CreatedBy == null)
                 {
-                    createdEntity.CreatedDate = DateTimeUtils.GetDate();
-                    createdEntity.CreatedBy = UserId;
+                   await base.Set<OutboxMessage>()
+                        .AddAsync(
+                            new OutboxMessage
+                            {
+                                Id = Guid.NewGuid(),
+                                OccurredOnUtc = DateTimeUtils.GetDate(),
+                                Event =
+                                    $"{createdEntity.GetType().Name}_{Enum.GetName(typeof(EntityState), EntityState.Added)}",
+                                Content = JsonSerializer.Serialize(content, options)
+                            }
+                        );
                 }
             });
             return base.SaveChangesAsync(cancellationToken);

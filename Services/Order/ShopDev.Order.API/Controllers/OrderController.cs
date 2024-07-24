@@ -56,11 +56,11 @@ namespace ShopDev.Order.API.Controllers
         [HttpPost("add")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter()]
-        public ApiResponse Create(OrderCreateDto input)
+        public async Task<ApiResponse> Create(OrderCreateDto input)
         {
             try
             {
-                _orderService.Create(input);
+                await _orderService.Create(input);
                 return new();
             }
             catch (Exception ex)
