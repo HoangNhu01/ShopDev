@@ -67,6 +67,29 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             var result = await redisDb.StringSetAsync(cartKey, cartJsonConvert);
         }
 
+        public async Task RemoveFromCart(CartUpdateDto input)
+        {
+            var useClaims = _httpContext.HttpContext?.User?.Identity?.Name;
+            var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
+            string cartKey = $"cart:{ipAdd}";
+            IDatabase redisDb = _connectionMultiplexer.GetDatabase();
+            string cartJson = await redisDb.StringGetAsync(cartKey);
+
+            var cartItems =
+                JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
+                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            ProductDto product =
+                cartItems.Find(x => x.Id == input.Id && x.Spus.Exists(s => s.SpuId == input.SpuId))
+                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            if (product.Quantity == 0)
+            {
+                cartItems.Remove(product);
+            }
+            product.Quantity -= input.Quantity;
+            string cartJsonConvert = JsonSerializer.Serialize(cartItems);
+            await redisDb.StringSetAsync(cartKey, cartJsonConvert);
+        }
+
         public async Task<List<ProductDto>> ViewCart()
         {
             var useClaims = _httpContext.HttpContext?.User.Identity?.Name;

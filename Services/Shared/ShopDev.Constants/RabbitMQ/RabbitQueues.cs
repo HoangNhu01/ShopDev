@@ -2,7 +2,7 @@ namespace ShopDev.Constants.RabbitMQ
 {
     public static class RabbitQueues
     {
-        public const string InvestOrderActive = "invest.order.active";
+        public const string UpdateStock = "inventory.stock.update";
 
         public const string LogAuth = "log.auth";
         public const string LogCore = "log.core";

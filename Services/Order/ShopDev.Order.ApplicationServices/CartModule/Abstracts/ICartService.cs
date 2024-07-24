@@ -6,5 +6,6 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Abstract
     {
         Task AddToCart(CartUpdateDto input);
         Task<List<ProductDto>> ViewCart();
+        Task RemoveFromCart(CartUpdateDto input);
     }
 }
