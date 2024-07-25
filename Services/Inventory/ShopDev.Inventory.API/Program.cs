@@ -60,6 +60,7 @@ namespace ShopDev.Inventory.API
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
             builder.Services.AddSingleton<IUpdateStockConsumer, UpdateStockConsumer>();
+            builder.Services.AddHostedService<ConsumerHostedService>();
 
             string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
@@ -110,7 +111,6 @@ namespace ShopDev.Inventory.API
                 },
                 poolSize: 128
             );
-            builder.Services.AddHostedService<ConsumerHostedService>();
 
             builder.WebHost.ConfigureKestrel(options =>
             {

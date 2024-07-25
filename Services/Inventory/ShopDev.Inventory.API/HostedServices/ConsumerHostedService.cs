@@ -13,7 +13,8 @@ namespace ShopDev.Inventory.API.HostedServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _updateStockConsumer.ReadMessages();
+             _updateStockConsumer.ReadMessages();
+            await Task.CompletedTask;
         }
     }
 }

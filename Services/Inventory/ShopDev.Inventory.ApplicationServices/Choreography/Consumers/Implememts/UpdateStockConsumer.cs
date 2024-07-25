@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using Hangfire;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -13,9 +15,11 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
 {
     public class UpdateStockConsumer : ConsumerService, IUpdateStockConsumer
     {
-        public UpdateStockConsumer(IOptions<RabbitMqConfig> config)
+        private readonly ILogger<UpdateStockConsumer> _logger;
+        public UpdateStockConsumer(IOptions<RabbitMqConfig> config, ILogger<UpdateStockConsumer> logger)
             : base(config, RabbitQueues.UpdateStock)
         {
+            _logger = logger;
             _connection = CreateConnection();
             _model = _connection.CreateModel();
             Dictionary<string, object> queueArgs =
@@ -40,17 +44,27 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
             _model.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
         }
 
-        protected override async Task ReceiveMessage(object sender, BasicDeliverEventArgs basic)
+        protected override void ReceiveMessage(object sender, BasicDeliverEventArgs basic)
         {
-            var body = basic.Body.ToArray();
-            Console.WriteLine("123qwe");
-            var obj = JsonSerializer.Deserialize<UpdateStockMessageDto>(body);
-            if (obj is not null)
+            try
             {
-                //BackgroundJob.Enqueue<IOrderService>(x => x.BackgroundCreateOrderPayment(obj, null));
+                var body = basic.Body.ToArray();
+                var obj = JsonSerializer.Deserialize<List<UpdateStockMessageDto>>(body);
+                if (obj is not null)
+                {
+                    //BackgroundJob.Enqueue<IOrderService>(x => x.BackgroundCreateOrderPayment(obj, null));
+                }
+                _model.BasicAck(basic.DeliveryTag, false);
             }
-            await Task.CompletedTask;
-            _model.BasicAck(basic.DeliveryTag, false);
+            catch
+            {
+                _logger.LogError($"{nameof(ReceiveMessage)}: Error processing message");
+
+                // Optionally requeue the message for retry
+                // Set requeue to false if you want to handle it as a dead-letter
+                _model.BasicNack(basic.DeliveryTag, false, requeue: false);
+            }
+            
         }
     }
 }

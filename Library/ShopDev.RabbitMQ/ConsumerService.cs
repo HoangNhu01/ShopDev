@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -26,17 +27,17 @@ namespace ShopDev.RabbitMQ
                 _connection.Close();
         }
 
-        public async Task ReadMessages()
+        public void ReadMessages()
         {
-            var consumer = new AsyncEventingBasicConsumer(_model);
-            consumer.Received += async (sender, basic) =>
+            AsyncEventingBasicConsumer consumer = new(_model);
+            consumer.Received += async (model, ea) =>
             {
-                await ReceiveMessage(sender, basic);
+                ReceiveMessage(model, ea);
+                await Task.CompletedTask;
             };
             _model.BasicConsume(_queueName, false, consumer);
-            await Task.CompletedTask;
         }
 
-        protected abstract Task ReceiveMessage(object sender, BasicDeliverEventArgs basic);
+        protected abstract void ReceiveMessage(object sender, BasicDeliverEventArgs basic);
     }
 }
