@@ -18,5 +18,8 @@
     <ProjectReference Include="..\ShopDev.EntitiesBase\ShopDev.EntitiesBase.csproj" />
     <ProjectReference Include="..\ShopDev.Utils\ShopDev.Utils.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistence\Interceptors\" />
+  </ItemGroup>
 
 </Project>

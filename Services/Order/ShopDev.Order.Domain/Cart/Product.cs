@@ -4,11 +4,8 @@ namespace ShopDev.Order.Domain.Products
 {
     public class Product
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [MaxLength(100)]
         //[BsonElement("name")]
         public required string Name { get; set; }
 
@@ -20,7 +17,7 @@ namespace ShopDev.Order.Domain.Products
         public int Quantity { set; get; }
         public double Price { set; get; }
         public int ShopId { get; set; }
-
+        public int SpuId { get; set; }
         [Unicode(false)]
         public required string ThumbUri { get; set; }
 
@@ -31,7 +28,6 @@ namespace ShopDev.Order.Domain.Products
     public class Spu
     {
         //[BsonElement("variation_name")]
-        public int SpuId { get; set; }
         public required string Name { get; set; }
 
         //[BsonElement("variation_options")]

@@ -23,7 +23,7 @@ namespace ShopDev.RabbitMQ.Configs
                     UserName = config.Username,
                     Password = config.Password,
                     HostName = config.HostName,
-                    Port = config.Port,
+                    Port = config.Port
                 };
             //VH to define app service
             if (!string.IsNullOrWhiteSpace(config.VirtualHost))
@@ -33,7 +33,7 @@ namespace ShopDev.RabbitMQ.Configs
             //Config SSL
             if (!string.IsNullOrWhiteSpace(config.Ssl?.CertPath))
             {
-                connection.Ssl.ServerName = config.Ssl!.ServerName;
+                //connection.Ssl.ServerName = config.Ssl!.ServerName;
                 connection.Ssl.Enabled = true;
                 connection.Ssl.CertPath = Path.Combine(
                     Directory.GetCurrentDirectory(),

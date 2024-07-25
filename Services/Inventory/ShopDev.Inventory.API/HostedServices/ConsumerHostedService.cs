@@ -1,6 +1,6 @@
 using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Abstracts;
 
-namespace MB.Invest.API.HostedServices
+namespace ShopDev.Inventory.API.HostedServices
 {
     public class ConsumerHostedService : BackgroundService
     {

@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.ApplicationBase.Localization;
-using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.ApplicationServices.Common.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
-using ShopDev.Inventory.API.gRPCServices;
+using ShopDev.Inventory.API.HostedServices;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
+using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Abstracts;
+using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememts;
 using ShopDev.Inventory.ApplicationServices.Common;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
-using ShopDev.Inventory.ApplicationServices.ProductModule.Implements;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Implements;
 using ShopDev.Inventory.Infrastructure.Extensions;
@@ -59,6 +59,7 @@ namespace ShopDev.Inventory.API
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
+            builder.Services.AddSingleton<IUpdateStockConsumer, UpdateStockConsumer>();
 
             string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
@@ -89,7 +90,6 @@ namespace ShopDev.Inventory.API
                 ?? throw new InvalidOperationException(
                     "Không tìm thấy connection string \"InventoryDb\" trong appsettings.json"
                 );
-            Console.WriteLine(inventoryConnectionString);
             builder.Services.AddDbContextPool<InventoryDbContext>(
                 options =>
                 {
@@ -110,6 +110,8 @@ namespace ShopDev.Inventory.API
                 },
                 poolSize: 128
             );
+            builder.Services.AddHostedService<ConsumerHostedService>();
+
             builder.WebHost.ConfigureKestrel(options =>
             {
                 var port = int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "5002");

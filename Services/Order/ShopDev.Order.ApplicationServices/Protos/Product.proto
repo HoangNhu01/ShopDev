@@ -26,12 +26,12 @@ message Product {
     double price = 5;
     int32 shopId = 6;
     string thumbUri = 7;
-    repeated Spu spus = 8;
+    int32 spuId = 8;
+    repeated Spu spus = 9;
 }
 
 // The Spu message
 message Spu {
-    int32 spuId = 1;
     string name = 2;
     string options = 3;
 }

@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="k8s-meey-ca.Development.crt" />
       <None Remove="protect_key_certificate.Development.pfx" />
     </ItemGroup>
   

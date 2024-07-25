@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Hangfire;
+using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Core.Configuration;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
@@ -7,6 +10,8 @@ using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Implements;
+using ShopDev.Order.ApplicationServices.Choreography.Producers.Abstracts;
+using ShopDev.Order.ApplicationServices.Choreography.Producers.Implememts;
 using ShopDev.Order.ApplicationServices.Common;
 using ShopDev.Order.ApplicationServices.Common.Localization;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
@@ -49,6 +54,7 @@ namespace ShopDev.Order.API
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddSingleton<LocalizationBase, OrderLocalization>();
+            builder.Services.AddSingleton<IUpdateStockProducer, UpdateStockProducer>();
 
             string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
@@ -100,6 +106,8 @@ namespace ShopDev.Order.API
                 },
                 poolSize: 128
             );
+            builder.ConfigureHangfire(orderConnectionString, DbSchemas.SDOrder);
+
             var app = builder.Build();
             //using (var scope = app.Services.CreateScope())
             //{
@@ -113,6 +121,19 @@ namespace ShopDev.Order.API
                 app.UseSwaggerConfig("api/order/swagger");
             }
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+                RecurringJob.AddOrUpdate(
+                    nameof(orderService.ExecuteUpdateStock),
+                    () => orderService.ExecuteUpdateStock(null),
+                    "*/30 * * * * *",
+                    new RecurringJobOptions
+                    {
+                        TimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"),
+                    }
+                );
+            }
             if (EnvironmentNames.Productions.Contains(app.Environment.EnvironmentName))
             {
                 app.UseHttpsRedirection();
@@ -124,6 +145,11 @@ namespace ShopDev.Order.API
             app.UseRequestLocalizationCustom();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard(
+                "/api/order/hangfire"
+            //,
+            //new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } }
+            );
             //app.UseCheckAuthorizationToken();
             //app.UseCheckUser();
             app.MapControllers();

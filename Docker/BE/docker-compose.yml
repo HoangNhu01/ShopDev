@@ -108,7 +108,7 @@ services:
       - ./rabbitmq/log/:/var/log/rabbitmq/
     environment:
       RABBITMQ_DEFAULT_USER: "user"
-      RABBITMQ_DEFAULT_PASS: "123@123abc"
+      RABBITMQ_DEFAULT_PASS: "123qwe"
     networks:
       sd_network:
         ipv4_address: 10.0.0.14

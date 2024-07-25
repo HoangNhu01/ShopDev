@@ -1,4 +1,5 @@
-﻿using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
+﻿using Hangfire.Server;
+using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
 
 namespace ShopDev.Order.ApplicationServices.OrderModule.Abstracts
 {
@@ -6,5 +7,6 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Abstracts
     {
         Task Create(OrderCreateDto request);
         OrderDetailDto FindById(int id);
+        Task ExecuteUpdateStock(PerformContext? context);
     }
 }

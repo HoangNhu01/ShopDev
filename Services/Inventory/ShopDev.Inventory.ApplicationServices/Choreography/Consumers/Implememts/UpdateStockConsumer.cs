@@ -28,7 +28,7 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
-                arguments: queueArgs
+                arguments: null
             );
             _model.ExchangeDeclare(
                 RabbitExchangeNames.InventoryDirect,
@@ -36,12 +36,14 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 durable: true,
                 autoDelete: false
             );
-            _model.QueueBind(_queueName, RabbitExchangeNames.InventoryDirect, "Update-Stock");
+            _model.QueueBind(_queueName, RabbitExchangeNames.InventoryDirect, string.Empty);
+            _model.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
         }
 
         protected override async Task ReceiveMessage(object sender, BasicDeliverEventArgs basic)
         {
             var body = basic.Body.ToArray();
+            Console.WriteLine("123qwe");
             var obj = JsonSerializer.Deserialize<UpdateStockMessageDto>(body);
             if (obj is not null)
             {

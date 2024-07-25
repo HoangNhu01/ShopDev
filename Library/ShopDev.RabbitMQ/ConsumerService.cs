@@ -1,8 +1,8 @@
-using ShopDev.RabbitMQ.Configs;
-using ShopDev.RabbitMQ.Interfaces;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using ShopDev.RabbitMQ.Configs;
+using ShopDev.RabbitMQ.Interfaces;
 
 namespace ShopDev.RabbitMQ
 {
@@ -29,7 +29,10 @@ namespace ShopDev.RabbitMQ
         public async Task ReadMessages()
         {
             var consumer = new AsyncEventingBasicConsumer(_model);
-            consumer.Received += ReceiveMessage;
+            consumer.Received += async (sender, basic) =>
+            {
+                await ReceiveMessage(sender, basic);
+            };
             _model.BasicConsume(_queueName, false, consumer);
             await Task.CompletedTask;
         }

@@ -1,5 +1,6 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Options;
+using ShopDev.Constants.RabbitMQ;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Abstracts;
 using ShopDev.RabbitMQ;
 using ShopDev.RabbitMQ.Configs;
@@ -23,6 +24,8 @@ namespace ShopDev.Order.ApplicationServices.Choreography.Producers.Implememts
             where TEntity : class
         {
             var body = JsonSerializer.SerializeToUtf8Bytes(entity);
+            //Kiểm tra queue và exchange còn tồn tại hay không
+            _model.ExchangeDeclarePassive(RabbitExchangeNames.InventoryDirect);
             _model.BasicPublish(exchangeName, bindingKey, true, null, body);
         }
     }

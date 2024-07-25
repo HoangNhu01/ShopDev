@@ -1,4 +1,7 @@
+using System.Threading.RateLimiting;
 using CR.S3Bucket;
+using Hangfire;
+using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
@@ -24,7 +27,6 @@ using ShopDev.ServiceDiscovery.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
-using System.Threading.RateLimiting;
 
 namespace ShopDev.Authentication.API
 {
@@ -132,7 +134,20 @@ namespace ShopDev.Authentication.API
             builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
             var app = builder.Build();
-
+            using (var scope = app.Services.CreateScope())
+            {
+                var managerTokenService =
+                    scope.ServiceProvider.GetRequiredService<IManagerTokenService>();
+                RecurringJob.AddOrUpdate(
+                    nameof(managerTokenService.PruneTokenByThreshold),
+                    () => managerTokenService.PruneTokenByThreshold(),
+                    Cron.Daily(0, 0),
+                    new RecurringJobOptions
+                    {
+                        TimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
+                    }
+                );
+            }
             // Configure the HTTP request pipeline.
             if (EnvironmentNames.DevelopEnv.Any(x => x == app.Environment.EnvironmentName))
             {

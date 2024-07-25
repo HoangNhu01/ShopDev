@@ -103,39 +103,33 @@ namespace ShopDev.InfrastructureBase.Persistence
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
-        public Task<int> SaveChangesOutBoxAsync<TEntity>(
+        public async Task<int> SaveChangesOutBoxAsync<TEntity>(
             CancellationToken cancellationToken = default
         )
             where TEntity : class
         {
             JsonSerializerOptions options =
-                new() { WriteIndented = true, PropertyNameCaseInsensitive = true,
+                new()
+                {
+                    WriteIndented = true,
+                    PropertyNameCaseInsensitive = true,
                     ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 };
-            var added = ChangeTracker
-                .Entries<TEntity>()
-                .Where(t => t.State == EntityState.Added)
-                .Select(t => t.Entity)
-                .AsParallel();
+            var added = ChangeTracker.Entries<TEntity>().Select(t => t.Entity).ToList();
 
-            added.ForAll(async entity =>
-            {
-                if (entity is ICreatedBy createdEntity && createdEntity.CreatedBy == null)
-                {
-                   await base.Set<OutboxMessage>()
-                        .AddAsync(
-                            new OutboxMessage
-                            {
-                                Id = Guid.NewGuid(),
-                                OccurredOnUtc = DateTimeUtils.GetDate(),
-                                Event =
-                                    $"{createdEntity.GetType().Name}_{Enum.GetName(typeof(EntityState), EntityState.Added)}",
-                                Content = JsonSerializer.Serialize(content, options)
-                            }
-                        );
-                }
-            });
-            return base.SaveChangesAsync(cancellationToken);
+            await base.Set<OutboxMessage>()
+                .AddAsync(
+                    new OutboxMessage
+                    {
+                        Id = Guid.NewGuid(),
+                        OccurredOnUtc = DateTimeUtils.GetDate(),
+                        Event =
+                            $"{typeof(TEntity).Name}_{Enum.GetName(typeof(EntityState), EntityState.Added)}",
+                        Content = JsonSerializer.Serialize(added, options)
+                    },
+                    cancellationToken
+                );
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

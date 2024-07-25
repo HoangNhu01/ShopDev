@@ -9,7 +9,6 @@ namespace ShopDev.Order.Domain.Order
     [Table(nameof(OrderDetail), Schema = DbSchemas.SDOrder)]
     [Index(
         nameof(ProductId),
-        nameof(SpuId),
         nameof(Deleted),
         AllDescending = true,
         Name = $"IX_{nameof(OrderDetail)}",
@@ -22,7 +21,6 @@ namespace ShopDev.Order.Domain.Order
         public int Id { get; set; }
         public Guid OrderId { set; get; }
         public int ProductId { set; get; }
-        public int SpuId { set; get; }
         public virtual OrderGen Order { get; } = null!;
         public Product Product { get; set; } = null!;
         public int StockStatus { get; set; }

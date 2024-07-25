@@ -16,6 +16,7 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Dtos
         public int Quantity { set; get; }
         public double Price { set; get; }
         public int ShopId { get; set; }
+        public int SpuId { get; set; }
 
         [Unicode(false)]
         public required string ThumbUri { get; set; }
@@ -26,7 +27,6 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Dtos
 
     public class SpuDto
     {
-        public int SpuId { get; set; }
         //[BsonElement("variation_name")]
         public required string Name { get; set; }
 

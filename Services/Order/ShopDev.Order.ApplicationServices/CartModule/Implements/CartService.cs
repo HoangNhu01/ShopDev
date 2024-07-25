@@ -53,7 +53,7 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             );
             // Cập nhật nếu thêm sản phẩm đã có trong giỏ hàng
             ProductDto? cartItem = cartItems?.Find(x =>
-                x.Id == input.Id && x.Spus.Exists(s => s.SpuId == input.SpuId)
+                x.Id == input.Id && x.SpuId == input.SpuId
             );
             if (cartItem is not null)
             {
@@ -79,7 +79,7 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
                 JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             ProductDto product =
-                cartItems.Find(x => x.Id == input.Id && x.Spus.Exists(s => s.SpuId == input.SpuId))
+                cartItems.Find(x => x.Id == input.Id && x.SpuId == input.SpuId)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
             if (product.Quantity == 0)
             {
