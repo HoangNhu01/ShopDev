@@ -1,15 +1,16 @@
 ﻿using System.Text.Json;
-using AutoMapper;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Dtos;
 using ShopDev.Order.ApplicationServices.Common;
-using ShopDev.Order.ApplicationServices.Protos;
+using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
+using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
 using StackExchange.Redis;
 using static ShopDev.Order.ApplicationServices.Protos.ProductProto;
 
@@ -18,15 +19,18 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
     public class CartService : OrderServiceBase, ICartService
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
+        private readonly IOrderService _orderService;
 
         public CartService(
             ILogger<CartService> logger,
             IHttpContextAccessor httpContext,
-            IConnectionMultiplexer connectionMultiplexer
+            IConnectionMultiplexer connectionMultiplexer,
+            IOrderService orderService
         )
             : base(logger, httpContext)
         {
             _connectionMultiplexer = connectionMultiplexer;
+            _orderService = orderService;
         }
 
         public async Task AddToCart(CartUpdateDto input)
@@ -34,7 +38,7 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             IDatabase redisDb = _connectionMultiplexer.GetDatabase();
             var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
             string cartKey = $"cart:{ipAdd}";
-            string cartJson = await redisDb.StringGetAsync(cartKey);
+            string? cartJson = await redisDb.StringGetAsync(cartKey);
             List<ProductDto>? cartItems = !string.IsNullOrEmpty(cartJson)
                 ? JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
                 : [];
@@ -52,9 +56,7 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
                 }
             );
             // Cập nhật nếu thêm sản phẩm đã có trong giỏ hàng
-            ProductDto? cartItem = cartItems?.Find(x =>
-                x.Id == input.Id && x.SpuId == input.SpuId
-            );
+            ProductDto? cartItem = cartItems?.Find(x => x.Id == input.Id && x.SpuId == input.SpuId);
             if (cartItem is not null)
             {
                 cartItem.Quantity += input.Quantity;
@@ -73,8 +75,9 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
             string cartKey = $"cart:{ipAdd}";
             IDatabase redisDb = _connectionMultiplexer.GetDatabase();
-            string cartJson = await redisDb.StringGetAsync(cartKey);
-
+            string? cartJson = await redisDb.StringGetAsync(cartKey);
+            if (string.IsNullOrWhiteSpace(cartJson))
+                return;
             var cartItems =
                 JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
                 ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
@@ -97,13 +100,39 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Implements
             string cartKey = $"cart:{ipAdd}";
 
             IDatabase redisDb = _connectionMultiplexer.GetDatabase();
-            string cartJson = await redisDb.StringGetAsync(cartKey);
+            string? cartJson = await redisDb.StringGetAsync(cartKey);
 
-            List<ProductDto>? cartItems = !string.IsNullOrEmpty(cartJson)
+            var cartItems = !string.IsNullOrEmpty(cartJson)
                 ? JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
                     ?? throw new UserFriendlyException(OrderErrorCode.ProductNotFound)
                 : [];
             return cartItems;
+        }
+
+        public async Task CheckOutCart(OrderCreateDto input)
+        {
+            var ipAdd = _httpContext.GetCurrentRemoteIpAddress();
+            string cartKey = $"cart:{ipAdd}";
+
+            IDatabase redisDb = _connectionMultiplexer.GetDatabase();
+            string? cartJson = await redisDb.StringGetAsync(cartKey);
+            var cartItems = !string.IsNullOrEmpty(cartJson)
+                ? JsonSerializer.Deserialize<List<ProductDto>>(cartJson)
+                    ?? throw new UserFriendlyException(OrderErrorCode.ProductNotFound)
+                : [];
+            foreach (var item in input.CartItems)
+            {
+                var cart = cartItems.Find(x => x.Id == item.Id);
+                if (cart is not null)
+                {
+                    cartItems.Remove(cart);
+                }
+            }
+            if (input.CartItems.Count == 0)
+            {
+                input.CartItems = cartItems;
+            }
+            await _orderService.Create(input);
         }
     }
 }

@@ -15,8 +15,10 @@ using ShopDev.Order.ApplicationServices.Choreography.Producers.Implememts;
 using ShopDev.Order.ApplicationServices.Common;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
 using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
+using ShopDev.Order.Domain.Order;
 using ShopDev.Order.Domain.Products;
 using ShopDev.Order.Infrastructure.Persistence;
+using ShopDev.Utils.DataUtils;
 
 namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
 {
@@ -40,34 +42,42 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
         public async Task Create(OrderCreateDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
-            List<OutboxMessage> messages = await _dbContext
-                .Set<OutboxMessage>()
-                .Where(m => !m.ProcessedOnUtc.HasValue)
-                .Take(20)
-                .ToListAsync();
-
             var order = await _dbContext.Orders.AddAsync(
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    ShipAddress = "123",
-                    ShipEmail = "asd@gmail.com",
-                    ShipName = "admin",
-                    ShipPhoneNumber = "01234412233",
-                    OrderDate = DateTime.Now,
+                    ShipAddress = input.ShipAddress,
+                    ShipEmail = input.ShipEmail,
+                    ShipName = input.ShipName,
+                    ShipPhoneNumber = input.ShipPhoneNumber,
+                    OrderDate = DateTimeUtils.GetDate(),
                 }
             );
-            order.Entity.OrderDetails.Add(
-                new()
+            order.Entity.OrderDetails.AddRange(
+                input.CartItems.Select(x => new OrderDetail
                 {
-                    ProductId = 1,
-                    Product = new Product()
+                    ProductId = x.Id,
+                    Product = new()
                     {
-                        Name = "Quần áo",
-                        ThumbUri = "123",
-                        Title = "Quần áo"
-                    },
-                }
+                        Id = x.Id,
+                        OrderId = order.Entity.Id,
+                        Name = x.Name,
+                        ThumbUri = x.ThumbUri,
+                        Title = x.Title,
+                        Price = x.Price,
+                        Quantity = x.Quantity,
+                        ShopId = x.ShopId,
+                        SpuId = x.SpuId,
+                        Spus =
+                        [
+                            .. x.Spus.Select(e => new Spu 
+                            {
+                                Name = e.Name, 
+                                Options = e.Options 
+                            })
+                        ]
+                    }
+                })
             );
             await _dbContext.SaveChangesOutBoxAsync<Product>();
         }
@@ -76,6 +86,7 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
         [HangfireLogEverything]
         public async Task ExecuteUpdateStock(PerformContext? context)
         {
+            _logger.LogInformation($"{nameof(ExecuteUpdateStock)}");
             List<OutboxMessage> messages = await _dbContext
                 .Set<OutboxMessage>()
                 .Where(m => !m.ProcessedOnUtc.HasValue)
@@ -95,7 +106,7 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
                     _updateStockProducer.PublishMessage(
                         updateStocks,
                         exchangeName: RabbitExchangeNames.InventoryDirect,
-                        bindingKey: string.Empty
+                        bindingKey: "update_stock"
                     );
 
                     outboxMessage.ProcessedOnUtc = DateTime.UtcNow;

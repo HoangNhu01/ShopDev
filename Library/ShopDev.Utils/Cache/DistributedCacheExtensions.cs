@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using StackExchange.Redis;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace MB.Utils.Cache
 {
@@ -135,7 +136,11 @@ namespace MB.Utils.Cache
         /// <param name="cache"></param>
         /// <param name="connection"></param>
         /// <param name="pattern"></param>
-        public static void RemoveByPattern(this IDistributedCache cache, ConnectionMultiplexer connection, string pattern)
+        public static void RemoveByPattern(
+            this IDistributedCache cache,
+            ConnectionMultiplexer connection,
+            string pattern
+        )
         {
             var endPoints = connection.GetEndPoints();
             IServer? server = null;
@@ -159,7 +164,11 @@ namespace MB.Utils.Cache
             var keys = server.Keys(pattern: pattern);
             foreach (var key in keys)
             {
-                cache.Remove(key);
+                if (string.IsNullOrEmpty(key))
+                {
+                    continue;
+                }
+                cache.Remove(key!);
             }
         }
 
@@ -169,13 +178,17 @@ namespace MB.Utils.Cache
         /// <param name="cache"></param>
         /// <param name="connection"></param>
         /// <param name="pattern"></param>
-        public static async Task RemoveByPatternAsync(this IDistributedCache cache, ConnectionMultiplexer connection, string pattern)
+        public static async Task RemoveByPatternAsync(
+            this IDistributedCache cache,
+            ConnectionMultiplexer connection,
+            string pattern
+        )
         {
             var endPoints = connection.GetEndPoints();
             IServer? server = null;
             foreach (var endPoint in endPoints)
             {
-                var dnsEndPoint = endPoint as System.Net.DnsEndPoint;
+                DnsEndPoint? dnsEndPoint = endPoint as DnsEndPoint;
                 if (dnsEndPoint == null)
                 {
                     continue;
@@ -193,7 +206,11 @@ namespace MB.Utils.Cache
             var keys = server.KeysAsync(pattern: pattern);
             await foreach (var key in keys)
             {
-                await cache.RemoveAsync(key);
+                if (string.IsNullOrEmpty(key))
+                {
+                    continue;
+                }
+                await cache.RemoveAsync(key!);
             }
         }
     }

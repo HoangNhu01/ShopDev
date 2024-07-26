@@ -8,15 +8,21 @@ using RabbitMQ.Client.Events;
 using ShopDev.Constants.RabbitMQ;
 using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Abstracts;
 using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Dtos;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.RabbitMQ;
 using ShopDev.RabbitMQ.Configs;
+using ShopDev.RabbitMQ.Interfaces;
 
 namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememts
 {
     public class UpdateStockConsumer : ConsumerService, IUpdateStockConsumer
     {
         private readonly ILogger<UpdateStockConsumer> _logger;
-        public UpdateStockConsumer(IOptions<RabbitMqConfig> config, ILogger<UpdateStockConsumer> logger)
+
+        public UpdateStockConsumer(
+            IOptions<RabbitMqConfig> config,
+            ILogger<UpdateStockConsumer> logger
+        )
             : base(config, RabbitQueues.UpdateStock)
         {
             _logger = logger;
@@ -32,7 +38,7 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
-                arguments: null
+                arguments: queueArgs
             );
             _model.ExchangeDeclare(
                 RabbitExchangeNames.InventoryDirect,
@@ -40,7 +46,7 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 durable: true,
                 autoDelete: false
             );
-            _model.QueueBind(_queueName, RabbitExchangeNames.InventoryDirect, string.Empty);
+            _model.QueueBind(_queueName, RabbitExchangeNames.InventoryDirect, "update_stock");
             _model.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
         }
 
@@ -52,7 +58,7 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 var obj = JsonSerializer.Deserialize<List<UpdateStockMessageDto>>(body);
                 if (obj is not null)
                 {
-                    //BackgroundJob.Enqueue<IOrderService>(x => x.BackgroundCreateOrderPayment(obj, null));
+                    BackgroundJob.Enqueue<IProductService>(x => x.UpdateStockEvent(null, obj));
                 }
                 _model.BasicAck(basic.DeliveryTag, false);
             }
@@ -64,7 +70,6 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememt
                 // Set requeue to false if you want to handle it as a dead-letter
                 _model.BasicNack(basic.DeliveryTag, false, requeue: false);
             }
-            
         }
     }
 }

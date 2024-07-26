@@ -5,6 +5,7 @@ namespace ShopDev.Order.Domain.Products
     public class Product
     {
         public int Id { get; set; }
+        public Guid OrderId { get; set; }
 
         //[BsonElement("name")]
         public required string Name { get; set; }
@@ -18,6 +19,7 @@ namespace ShopDev.Order.Domain.Products
         public double Price { set; get; }
         public int ShopId { get; set; }
         public int SpuId { get; set; }
+
         [Unicode(false)]
         public required string ThumbUri { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.ApplicationBase.Localization;
@@ -12,6 +13,8 @@ using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Implements;
 using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Abstracts;
 using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Implememts;
+using ShopDev.Inventory.ApplicationServices.Choreography.Producers.Abstracts;
+using ShopDev.Inventory.ApplicationServices.Choreography.Producers.Implememts;
 using ShopDev.Inventory.ApplicationServices.Common;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ShopModule.Abstracts;
@@ -59,6 +62,9 @@ namespace ShopDev.Inventory.API
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddSingleton<LocalizationBase, InventoryLocalization>();
+            //Producer
+            builder.Services.AddSingleton<IUpdateOrderProducer, UpdateOrderProducer>();
+            //Consumer
             builder.Services.AddSingleton<IUpdateStockConsumer, UpdateStockConsumer>();
             builder.Services.AddHostedService<ConsumerHostedService>();
 
@@ -111,6 +117,7 @@ namespace ShopDev.Inventory.API
                 },
                 poolSize: 128
             );
+            builder.ConfigureHangfire(inventoryConnectionString, DbSchemas.SDInventory);
 
             builder.WebHost.ConfigureKestrel(options =>
             {
@@ -145,6 +152,11 @@ namespace ShopDev.Inventory.API
             app.UseRequestLocalizationCustom();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard(
+                "/api/inventory/hangfire"
+            //,
+            //new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } }
+            );
             //app.UseCheckAuthorizationToken();
             //app.UseCheckUser();
             app.MapGrpcService<gRPCServices.ProductService>();

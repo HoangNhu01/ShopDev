@@ -27,7 +27,8 @@ namespace ShopDev.Authentication.API.Controllers
         public ValuesController(
             ILogger<ValuesController> logger,
             IConfiguration configuration,
-            IConnectionMultiplexer redis
+            IConnectionMultiplexer redis,
+            IS3ManagerFileService s3ManagerFile
         //IMeeyPaySmsService smsService
         )
             : base(logger)
@@ -36,6 +37,7 @@ namespace ShopDev.Authentication.API.Controllers
             //_smsService = smsService;
             _configuration = configuration;
             _redis = redis;
+            _s3ManagerFile = s3ManagerFile;
         }
 
         // GET: api/<ValuesController>
@@ -77,17 +79,17 @@ namespace ShopDev.Authentication.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id) { }
 
-        [HttpGet("test-cache")]
-        [AllowAnonymous]
-        public async Task<IActionResult> TestCache()
-        {
-            //var db = _redis.GetDatabase().Database;
-            //var value = await db("name");
-            //if (value.IsNullOrEmpty)
-            //{
-            //    return NotFound();
-            //}
-            return Ok();
-        }
+        //[HttpGet("test-cache")]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> TestCache()
+        //{
+        //    //var db = _redis.GetDatabase().Database;
+        //    //var value = await db("name");
+        //    //if (value.IsNullOrEmpty)
+        //    //{
+        //    //    return NotFound();
+        //    //}
+        //    return Ok();
+        //}
     }
 }

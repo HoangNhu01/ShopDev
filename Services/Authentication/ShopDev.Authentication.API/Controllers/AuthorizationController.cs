@@ -47,7 +47,8 @@ namespace ShopDev.Authentication.API.Controllers
             ILogger<AuthorizationController> logger,
             IMapErrorCode mapErrorCode,
             IOpenIddictScopeManager scopeManager,
-            LocalizationBase localization
+            LocalizationBase localization,
+            IManagerTokenService managerTokenService
         )
             : base(applicationManager)
         {
@@ -58,6 +59,7 @@ namespace ShopDev.Authentication.API.Controllers
             _mapErrorCode = mapErrorCode;
             _localization = localization;
             _scopeManager = scopeManager;
+            _managerTokenService = managerTokenService;
         }
 
         /// <summary>

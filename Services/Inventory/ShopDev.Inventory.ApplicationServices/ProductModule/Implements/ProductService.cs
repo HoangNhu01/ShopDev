@@ -1,28 +1,47 @@
-﻿using System.Text.Json;
+﻿using System.Linq;
+using System.Text.Json;
+using AutoMapper;
+using Hangfire;
+using Hangfire.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
+using ShopDev.ApplicationBase.Localization;
 using ShopDev.Constants.ErrorCodes;
+using ShopDev.Constants.RabbitMQ;
 using ShopDev.InfrastructureBase.Exceptions;
+using ShopDev.InfrastructureBase.Hangfire.Attributes;
+using ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Dtos;
+using ShopDev.Inventory.ApplicationServices.Choreography.Producers.Abstracts;
+using ShopDev.Inventory.ApplicationServices.Choreography.Producers.Dtos;
 using ShopDev.Inventory.ApplicationServices.Common;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
 using ShopDev.Inventory.Infrastructure.Extensions;
+using ShopDev.Inventory.Infrastructure.Persistence;
+using ShopDev.Utils.Hangfire;
 using ShopDev.Utils.Linq;
 
 namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 {
     public class ProductService : InventoryServiceBase, IProductService
     {
+        private readonly IUpdateOrderProducer _updateOrderProducer;
+
         public ProductService(
             ILogger<ProductService> logger,
-            IHttpContextAccessor httpContext
+            IHttpContextAccessor httpContext,
+            InventoryDbContext dbContext,
+            LocalizationBase localizationBase,
+            IMapper mapper,
+            IUpdateOrderProducer updateOrderProducer
         )
-            : base(logger, httpContext)
+            : base(logger, httpContext, dbContext, localizationBase, mapper)
         {
+            _updateOrderProducer = updateOrderProducer;
         }
 
         public void Create(ProductCreateDto input)
@@ -80,6 +99,67 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                 )
                 .Entity;
             _dbContext.SaveChanges();
+        }
+
+        [AutomaticRetry(Attempts = 5, DelaysInSeconds = [10, 20, 20, 30, 60])]
+        [HangfireLogEverything]
+        public async Task UpdateStockEvent(
+            PerformContext? context,
+            List<UpdateStockMessageDto> input
+        )
+        {
+            _logger.LogInformation(
+                $"{nameof(UpdateStockEvent)}: input = {JsonSerializer.Serialize(input)}"
+            );
+            var updateStock = input.ToDictionary(e => e.SpuId);
+            var spu = GetEntities<Spu>(expression: x => updateStock.Keys.Contains(x.Id)).ToList();
+            Guid orderId = input[0].OrderId;
+            spu.ForEach(s =>
+            {
+                var item = updateStock[s.Id];
+                if (s.Stock + item.Quantity >= 0)
+                {
+                    s.Stock += updateStock[s.Id].Quantity;
+                }
+            });
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                ex.Entries.Single().Reload();
+                var entities = ex.Entries.Select(x => x.Entity);
+                foreach (var item in entities)
+                {
+                    if (item is Spu spuEntry)
+                    {
+                        var update = updateStock[spuEntry.Id];
+                        if (spuEntry.Stock + update.Quantity >= 0)
+                        {
+                            spuEntry.Stock += updateStock[spuEntry.Id].Quantity;
+                        }
+                    }
+                }
+                await _dbContext.SaveChangesAsync();
+            }
+            finally
+            {
+                int retryCount = HangfireUltils.GetRetryCount(context!.BackgroundJob.Id);
+                if (retryCount == 5)
+                {
+                    _updateOrderProducer.PublishMessage(
+                        new UpdateOrderMessageDto()
+                        {
+                            Message = "Quá trình xử lý đơn đã xảy ra vấn đề!!",
+                            MessageType = 1,
+                            OrderId = orderId,
+                        },
+                        exchangeName: RabbitExchangeNames.InventoryDirect,
+                        bindingKey: "update_order"
+                    );
+                }
+            }
         }
 
         public void Update(ProductUpdateDto input)

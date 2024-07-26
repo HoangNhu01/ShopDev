@@ -19,5 +19,9 @@ namespace ShopDev.Order.ApplicationServices.Choreography.Producers.Dtos
         /// Số lượng
         /// </summary>
         public int Quantity { get; set; }
+        /// <summary>
+        /// Id đơn hàng
+        /// </summary>
+        public Guid OrderId { get; set; }
     }
 }

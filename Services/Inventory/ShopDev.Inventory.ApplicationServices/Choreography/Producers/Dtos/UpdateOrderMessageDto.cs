@@ -1,9 +1,9 @@
-namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Dtos
+namespace ShopDev.Inventory.ApplicationServices.Choreography.Producers.Dtos
 {
     /// <summary>
     /// Message đẩy vào queue sang inventory cập nhật kho hàng
     /// </summary>
-    public class UpdateStockMessageDto
+    public class UpdateOrderMessageDto
     {
         /// <summary>
         /// Id sản phẩm
@@ -19,7 +19,9 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Consumers.Dtos
         /// Số lượng
         /// </summary>
         public int Quantity { get; set; }
+        /// <summary>
+        /// Id đơn hàng
+        /// </summary>
         public Guid OrderId { get; set; }
-
     }
 }

@@ -1,7 +1,8 @@
-using ShopDev.RabbitMQ.Configs;
-using ShopDev.RabbitMQ.Interfaces;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using ShopDev.RabbitMQ.Configs;
+using ShopDev.RabbitMQ.Interfaces;
 
 namespace ShopDev.RabbitMQ
 {
@@ -18,6 +19,12 @@ namespace ShopDev.RabbitMQ
             string exchangeName,
             string bindingKey
         )
-            where TEntity : class { }
+            where TEntity : class
+        {
+            var body = JsonSerializer.SerializeToUtf8Bytes(entity);
+            //Kiểm tra queue và exchange còn tồn tại hay không
+            _model.ExchangeDeclarePassive(exchangeName);
+            _model.BasicPublish(exchangeName, bindingKey, true, null, body);
+        }
     }
 }
