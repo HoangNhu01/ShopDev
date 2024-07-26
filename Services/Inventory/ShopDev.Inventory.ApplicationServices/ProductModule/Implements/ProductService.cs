@@ -113,10 +113,11 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             );
             var updateStock = input.ToDictionary(e => e.SpuId);
             var spu = GetEntities<Spu>(expression: x => updateStock.Keys.Contains(x.Id)).ToList();
-            Guid orderId = input[0].OrderId;
+            Guid orderId = Guid.Empty;
             spu.ForEach(s =>
             {
                 var item = updateStock[s.Id];
+                orderId = item.OrderId;
                 if (s.Stock + item.Quantity >= 0)
                 {
                     s.Stock += updateStock[s.Id].Quantity;
