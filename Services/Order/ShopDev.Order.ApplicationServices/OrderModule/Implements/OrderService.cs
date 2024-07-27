@@ -3,6 +3,7 @@ using AutoMapper;
 using Hangfire;
 using Hangfire.Server;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Localization;
@@ -70,11 +71,7 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
                         SpuId = x.SpuId,
                         Spus =
                         [
-                            .. x.Spus.Select(e => new Spu 
-                            {
-                                Name = e.Name, 
-                                Options = e.Options 
-                            })
+                            .. x.Spus.Select(e => new Spu { Name = e.Name, Options = e.Options })
                         ]
                     }
                 })
@@ -82,37 +79,62 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
             await _dbContext.SaveChangesOutBoxAsync<Product>();
         }
 
-        [AutomaticRetry(Attempts = 3, DelaysInSeconds = [10, 20, 20])]
+        [AutomaticRetry(Attempts = 0)]
         [HangfireLogEverything]
         public async Task ExecuteUpdateStock(PerformContext? context)
         {
             _logger.LogInformation($"{nameof(ExecuteUpdateStock)}");
-            List<OutboxMessage> messages = await _dbContext
-                .Set<OutboxMessage>()
-                .Where(m => !m.ProcessedOnUtc.HasValue)
-                .Take(20)
-                .ToListAsync();
-            if (messages.Count == 0)
+            var executionStrategy = _dbContext.Database.CreateExecutionStrategy();
+            await executionStrategy.ExecuteAsync(async () =>
             {
-                return;
-            }
-            messages
-                .AsParallel()
-                .ForAll(outboxMessage =>
+                var transaction = _dbContext.Database.BeginTransaction();
+                List<OutboxMessage> messages = await _dbContext
+                    .Set<OutboxMessage>()
+                    .FromSqlRaw(
+                        @"
+                            UPDATE TOP (@count) [sd_order].[OutboxMessage]
+                            SET IsLock = 1
+                            OUTPUT INSERTED.*
+                            WHERE ProcessedOnUtc is null and IsLock = @isLock
+                        ",
+                        new SqlParameter("@count", 20),
+                        new SqlParameter("@isLock", false)
+                    )
+                    .ToListAsync();
+                if (messages.Count == 0)
                 {
-                    var updateStocks = JsonSerializer.Deserialize<List<UpdateStockMessageDto>>(
-                        outboxMessage.Content
-                    );
-                    _updateStockProducer.PublishMessage(
-                        updateStocks,
-                        exchangeName: RabbitExchangeNames.InventoryDirect,
-                        bindingKey: "update_stock"
-                    );
+                    BackgroundJob.Delete(context!.BackgroundJob.Id);
+                    return;
+                }
+                messages
+                    .AsParallel()
+                    .ForAll(outboxMessage =>
+                    {
+                        var outbox = _dbContext.Attach(outboxMessage).Entity;
+                        try
+                        {
+                            var updateStocks = JsonSerializer.Deserialize<
+                                List<UpdateStockMessageDto>
+                            >(outbox.Content);
+                            _updateStockProducer.PublishMessage(
+                                updateStocks,
+                                exchangeName: RabbitExchangeNames.InventoryDirect,
+                                bindingKey: "update_stock"
+                            );
 
-                    outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
-                });
-
-            await _dbContext.SaveChangesAsync();
+                            outbox.ProcessedOnUtc = DateTime.UtcNow;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogInformation(
+                                $"{nameof(ExecuteUpdateStock)}: error = {ex.Message} "
+                            );
+                            outbox.Error = ex.Message;
+                        }
+                    });
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            });
         }
 
         public OrderDetailDto FindById(int id)

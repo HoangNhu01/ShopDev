@@ -125,7 +125,8 @@ namespace ShopDev.InfrastructureBase.Persistence
                         OccurredOnUtc = DateTimeUtils.GetDate(),
                         Event =
                             $"{typeof(TEntity).Name}_{Enum.GetName(typeof(EntityState), EntityState.Added)}",
-                        Content = JsonSerializer.Serialize(added, options)
+                        Content = JsonSerializer.Serialize(added, options),
+                        IsLock = false
                     },
                     cancellationToken
                 );

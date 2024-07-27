@@ -15,5 +15,6 @@ namespace ShopDev.InfrastructureBase.Persistence.OutBox
         public DateTime OccurredOnUtc { get; set; }
         public DateTime? ProcessedOnUtc { get; set; }
         public string? Error { get; set; }
+        public bool IsLock { get; set; }
     }
 }
