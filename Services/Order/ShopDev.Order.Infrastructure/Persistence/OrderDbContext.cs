@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.Constants.Database;
+using ShopDev.Constants.Domain.Order.OrderGen;
 using ShopDev.InfrastructureBase.Persistence;
 using ShopDev.Order.Domain.Order;
 using ShopDev.Order.Domain.Shipment;
@@ -44,8 +45,7 @@ namespace ShopDev.Order.Infrastructure.Persistence
                         ownerNav.ToJson();
                     }
                 );
-            modelBuilder
-                .Entity<OrderGen>().HasKey(x => x.Id);
+            modelBuilder.Entity<OrderGen>().HasKey(x => x.Id);
             modelBuilder
                 .Entity<OrderGen>()
                 .HasMany(x => x.OrderDetails)
@@ -59,6 +59,7 @@ namespace ShopDev.Order.Infrastructure.Persistence
             modelBuilder.Entity<OrderGen>(entity =>
             {
                 entity.Property(e => e.Id).HasDefaultValue(Guid.NewGuid());
+                entity.Property(e => e.Status).HasDefaultValue(OrderStatuses.Confirmed);
             });
         }
     }

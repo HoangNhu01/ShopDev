@@ -15,7 +15,7 @@ using ShopDev.Authentication.API.Extensions;
 using ShopDev.Authentication.API.Models;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.UserDto;
-using ShopDev.Constants.Authorization;
+using ShopDev.Constants.Domain.Auth.Authorization;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.Users;
 using ShopDev.IdentityServerBase.Constants;

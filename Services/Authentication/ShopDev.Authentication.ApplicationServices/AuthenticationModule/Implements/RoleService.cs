@@ -6,8 +6,8 @@ using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.RoleDto;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Domain.Users;
+using ShopDev.Constants.Domain.Auth.Role;
 using ShopDev.Constants.ErrorCodes;
-using ShopDev.Constants.Role;
 using ShopDev.InfrastructureBase.Exceptions;
 
 namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShopDev.Constants.Role;
+using ShopDev.Constants.Domain.Auth.Role;
 using ShopDev.Constants.Users;
 using ShopDev.EntitiesBase.AuthorizationEntitiesAuthorizationEntities;
 
@@ -34,7 +34,7 @@ namespace ShopDev.Authentication.Domain.Users
         /// <summary>
         /// Trạng thái A/D
         /// </summary>
-        /// <see cref="Constants.Role.RoleStatus"/>
+        /// <see cref="Constants.Domain.Auth.Role.RoleStatus"/>
         public int Status { get; set; }
 
         /// <summary>

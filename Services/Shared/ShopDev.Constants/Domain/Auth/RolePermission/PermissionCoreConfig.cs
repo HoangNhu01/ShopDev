@@ -1,4 +1,6 @@
-﻿using ShopDev.Constants.RolePermission.Constant;
+﻿using ShopDev.Constants.Domain.Auth.RolePermission;
+using ShopDev.Constants.Domain.Auth.RolePermission.Constant;
+using ShopDev.Constants.RolePermission.Constant;
 
 namespace ShopDev.Constants.RolePermission
 {

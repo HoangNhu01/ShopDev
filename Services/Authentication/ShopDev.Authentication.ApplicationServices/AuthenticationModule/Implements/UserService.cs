@@ -39,7 +39,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             _logger.LogInformation($"{nameof(ValidateAdmin)}: username = {username}");
             var user =
-                FindEntity<User>(u => u.Username == username, isTracking: true)
+                FindEntity<User>(u => u.Username == username, isNotTracking: true)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
 
             if (user.UserType != UserTypes.SHOP && user.UserType != UserTypes.SUPER_ADMIN)
@@ -61,7 +61,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
         {
             _logger.LogInformation($"{nameof(ValidateAppUser)}: username = {username}");
             var user =
-                FindEntity<User>(u => u.Username == username, isTracking: true)
+                FindEntity<User>(u => u.Username == username, isNotTracking: true)
                 ?? throw new UserFriendlyException(ErrorCode.UsernameOrPasswordIncorrect);
 
             if (!PasswordHasher.VerifyPassword(password, user.Password))
@@ -262,7 +262,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             var user =
                 FindEntity<User>(
                     x => x.Id == input.Id,
-                    isTracking: true,
+                    isNotTracking: true,
                     include: x => x.Include(x => x.UserRoles).ThenInclude(x => x.Role)
                 ) ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
             user.FullName = input.FullName;

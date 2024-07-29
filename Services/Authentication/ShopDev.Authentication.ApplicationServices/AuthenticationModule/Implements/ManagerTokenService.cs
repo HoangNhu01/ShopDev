@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hangfire;
 using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
-using MB.Utils.Cache;
+using ShopDev.Utils.Cache;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;

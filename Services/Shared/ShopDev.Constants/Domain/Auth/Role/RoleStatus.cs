@@ -1,4 +1,4 @@
-﻿namespace ShopDev.Constants.Role
+﻿namespace ShopDev.Constants.Domain.Auth.Role
 {
     public static class RoleStatus
     {

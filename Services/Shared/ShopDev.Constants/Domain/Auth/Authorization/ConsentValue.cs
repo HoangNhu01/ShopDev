@@ -1,4 +1,4 @@
-﻿namespace ShopDev.Constants.Authorization
+﻿namespace ShopDev.Constants.Domain.Auth.Authorization
 {
     /// <summary>
     /// Chấp thuận Consent

@@ -1,4 +1,4 @@
-namespace ShopDev.Constants.RolePermission.Constant
+namespace ShopDev.Constants.Domain.Auth.RolePermission.Constant
 {
     public static class PermissionConfigTypes
     {

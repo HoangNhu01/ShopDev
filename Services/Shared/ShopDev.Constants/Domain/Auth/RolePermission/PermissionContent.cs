@@ -1,4 +1,4 @@
-namespace ShopDev.Constants.RolePermission
+namespace ShopDev.Constants.Domain.Auth.RolePermission
 {
     public class PermissionContent
     {

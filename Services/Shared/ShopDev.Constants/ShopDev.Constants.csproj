@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\..\Library\ShopDev.EntitiesBase\ShopDev.EntitiesBase.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\Inventory\" />
+  </ItemGroup>
+
 </Project>

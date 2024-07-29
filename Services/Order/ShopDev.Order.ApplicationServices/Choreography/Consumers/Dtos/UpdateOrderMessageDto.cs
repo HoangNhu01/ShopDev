@@ -1,4 +1,6 @@
-namespace ShopDev.Inventory.ApplicationServices.Choreography.Producers.Dtos
+using Microsoft.EntityFrameworkCore;
+
+namespace ShopDev.Order.ApplicationServices.Choreography.Consumers.Dtos
 {
     /// <summary>
     /// Message đẩy vào queue sang inventory cập nhật kho hàng
@@ -10,6 +12,6 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Producers.Dtos
         /// </summary>
         public Guid OrderId { get; set; }
         public int EventType { get; set; }
-        public string? Message { get; set; }
+        public required string Message { get; set; }
     }
 }

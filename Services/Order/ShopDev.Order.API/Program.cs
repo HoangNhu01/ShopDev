@@ -1,15 +1,16 @@
 ﻿using Hangfire;
-using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver.Core.Configuration;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
+using ShopDev.Order.API.HostedServices;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Implements;
+using ShopDev.Order.ApplicationServices.Choreography.Consumers.Abstracts;
+using ShopDev.Order.ApplicationServices.Choreography.Consumers.Implememts;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Abstracts;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Implememts;
 using ShopDev.Order.ApplicationServices.Common;
@@ -55,7 +56,8 @@ namespace ShopDev.Order.API
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddSingleton<LocalizationBase, OrderLocalization>();
             builder.Services.AddSingleton<IUpdateStockProducer, UpdateStockProducer>();
-
+            builder.Services.AddSingleton<IUpdateOrderConsumer, UpdateOrderConsumer>();
+            builder.Services.AddHostedService<ConsumerHostedService>();
             string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
                 ?? throw new InvalidOperationException(

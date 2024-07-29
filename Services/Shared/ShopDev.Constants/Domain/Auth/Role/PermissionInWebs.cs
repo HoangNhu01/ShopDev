@@ -1,4 +1,4 @@
-﻿namespace ShopDev.Constants.Role
+﻿namespace ShopDev.Constants.Domain.Auth.Role
 {
     /// <summary>
     /// Quyền thuộc web nào

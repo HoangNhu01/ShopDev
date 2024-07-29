@@ -1,4 +1,4 @@
-﻿namespace ShopDev.Constants.Authorization
+﻿namespace ShopDev.Constants.Domain.Auth.Authorization
 {
     public static class AuthenticationPath
     {

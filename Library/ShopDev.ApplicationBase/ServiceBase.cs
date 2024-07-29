@@ -76,13 +76,13 @@ namespace ShopDev.ApplicationBase
 
         protected TEntity? FindEntity<TEntity>(
             Expression<Func<TEntity, bool>> expression,
-            bool isTracking = false,
+            bool isNotTracking = false,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
         )
             where TEntity : class
         {
             IQueryable<TEntity> entities = _dbContext.Set<TEntity>();
-            if (isTracking)
+            if (isNotTracking)
             {
                 entities.AsNoTracking();
             }
@@ -90,13 +90,13 @@ namespace ShopDev.ApplicationBase
         }
         protected async Task<TEntity?> FindEntityAsync<TEntity>(
             Expression<Func<TEntity, bool>> expression,
-            bool isTracking = false,
+            bool isNotTracking = false,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
         )
             where TEntity : class
         {
             IQueryable<TEntity> entities = _dbContext.Set<TEntity>();
-            if (isTracking)
+            if (isNotTracking)
             {
                 entities.AsNoTracking();
             }

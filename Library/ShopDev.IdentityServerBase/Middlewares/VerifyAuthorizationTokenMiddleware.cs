@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using MB.Utils.Cache;
+using ShopDev.Utils.Cache;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
