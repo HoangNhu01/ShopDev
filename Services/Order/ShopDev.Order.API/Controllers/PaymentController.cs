@@ -1,11 +1,13 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.RolePermission.Constant;
+using ShopDev.Order.API.Models;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
 using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
+using ShopDev.PaymentTool.Interfaces;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
-using System.Net;
 
 namespace ShopDev.Order.API.Controllers
 {
@@ -13,89 +15,25 @@ namespace ShopDev.Order.API.Controllers
     //[AuthorizeAdminUserTypeFilter]
     [Route("api/order/payment")]
     [ApiController]
-    public class PaymentController : ApiControllerBase
+    public class PaymentController : Controller
     {
-        private readonly IOrderService _orderService;
+        private readonly IPaymentToolService _paymentToolService;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(ILogger<PaymentController> logger, IOrderService orderService)
-            : base(logger)
+        public PaymentController(
+            ILogger<PaymentController> logger,
+            IPaymentToolService paymentToolService
+        )
         {
-            _orderService = orderService;
+            _logger = logger;
+            _paymentToolService = paymentToolService;
         }
 
-        [HttpGet("find-all")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
-        //[PermissionFilter(PermissionKeys.UserTableAccountManager)]
-        public ApiResponse FindAll()
-        {
-            try
-            {
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        [HttpGet("find-by-id/{id}")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
+        [HttpPost("confirm-bill")]
         //[PermissionFilter()]
-        public ApiResponse FindById(int id)
+        public IActionResult ConfirmBill()
         {
-            try
-            {
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        [HttpPost("add")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
-        //[PermissionFilter()]
-        public async Task<ApiResponse> Create(OrderCreateDto input)
-        {
-            try
-            {
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        [HttpPut("update")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
-        //[PermissionFilter(PermissionKeys.UserUpdate)]
-        public ApiResponse Update()
-        {
-            try
-            {
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        [HttpPut("delete/{id}")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
-        [PermissionFilter(PermissionKeys.UserButtonAccountManagerDelete)]
-        public ApiResponse Delete(int id)
-        {
-            try
-            {
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return View(new ConfirmBillModel { Message = "Thành công", IsSuccess = true });
         }
     }
 }

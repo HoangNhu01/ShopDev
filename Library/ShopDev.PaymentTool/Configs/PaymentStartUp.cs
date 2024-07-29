@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using ShopDev.PaymentTool.Interfaces;
 
@@ -11,7 +11,7 @@ namespace ShopDev.PaymentTool.Configs
             builder.Services.Configure<PaymentConfig>(
                 builder.Configuration.GetSection("PaymentConfig")
             );
-            builder.Services.AddScoped<IPaymentVnpService, PaymentVnpService>();
+            builder.Services.AddScoped<IPaymentToolService, PaymentToolService>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Text;
 using ShopDev.PaymentTool.Interfaces;
 using ShopDev.Utils.PaymentTool;
@@ -6,21 +6,28 @@ using ShopDev.Utils.Security;
 
 namespace ShopDev.PaymentTool
 {
-    public class PaymentVnpService : IPaymentVnpService
+    public class PaymentToolService : IPaymentToolService
     {
         private SortedList<string, string> _requestData;
         private SortedList<string, string> _responseData;
 
-        public PaymentVnpService()
+        public PaymentToolService()
         {
             PayCompare compare = new();
             _requestData = new(compare);
             _responseData = new(compare);
         }
 
-        public void AddResponseData(string key, string value)
+        public void AddResponseData(string key, string? value)
         {
-            _responseData.Add(key, value);
+            if (!string.IsNullOrEmpty(value))
+                _responseData.Add(key, value);
+        }
+
+        public void AddRequestData(string key, string? value)
+        {
+            if (!string.IsNullOrEmpty(value))
+                _requestData.Add(key, value);
         }
 
         /// <summary>

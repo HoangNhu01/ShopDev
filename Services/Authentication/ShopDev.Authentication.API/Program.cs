@@ -168,7 +168,7 @@ namespace ShopDev.Authentication.API
             app.UseRequestLocalizationCustom();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCheckAuthorizationToken();
+            app.VerifyAuthorizationToken();
             //app.UseCheckUser();
             app.MapControllers();
             app.MapHealthChecks("/health");

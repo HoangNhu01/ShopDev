@@ -2,9 +2,9 @@
 {
     public class PaymentConfig
     {
-        public string? Url { get; set; }
-        public string? ReturnUrl { get; set; }
-        public string? TmnCode { get; set; }
-        public string? HashSecret { get; set; }
+        public required string Url { get; set; }
+        public required string ReturnUrl { get; set; }
+        public required string TmnCode { get; set; }
+        public required string HashSecret { get; set; }
     }
 }

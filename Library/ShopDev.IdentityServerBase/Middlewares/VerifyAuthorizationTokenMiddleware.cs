@@ -94,7 +94,7 @@ namespace ShopDev.IdentityServerBase.Middlewares
 
     public static class VerifyAuthorizationTokenMiddlewareExtensions
     {
-        public static IApplicationBuilder UseCheckAuthorizationToken(
+        public static IApplicationBuilder VerifyAuthorizationToken(
             this IApplicationBuilder builder
         )
         {

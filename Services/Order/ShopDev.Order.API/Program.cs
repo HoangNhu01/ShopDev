@@ -1,4 +1,4 @@
-﻿using Hangfire;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.ApplicationBase.Localization;
@@ -51,7 +51,6 @@ namespace ShopDev.Order.API
             builder.ConfigureRabbitMQ();
             builder.ConfigureDistributedCacheRedis();
             builder.ConfigurePaymentTool();
-
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, OrderMapErrorCode>();
             builder.Services.AddScoped<ICartService, CartService>();
