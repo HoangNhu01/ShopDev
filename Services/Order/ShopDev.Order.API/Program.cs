@@ -1,15 +1,16 @@
-﻿using Hangfire;
-using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver.Core.Configuration;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Environments;
+using ShopDev.Order.API.HostedServices;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Implements;
+using ShopDev.Order.ApplicationServices.Choreography.Consumers.Abstracts;
+using ShopDev.Order.ApplicationServices.Choreography.Consumers.Implememts;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Abstracts;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Implememts;
 using ShopDev.Order.ApplicationServices.Common;
@@ -17,6 +18,7 @@ using ShopDev.Order.ApplicationServices.Common.Localization;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
 using ShopDev.Order.ApplicationServices.OrderModule.Implements;
 using ShopDev.Order.Infrastructure.Persistence;
+using ShopDev.PaymentTool.Configs;
 using ShopDev.RabbitMQ.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
@@ -48,14 +50,15 @@ namespace ShopDev.Order.API
             builder.ConfigureCors();
             builder.ConfigureRabbitMQ();
             builder.ConfigureDistributedCacheRedis();
-
+            builder.ConfigurePaymentTool();
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, OrderMapErrorCode>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddSingleton<LocalizationBase, OrderLocalization>();
             builder.Services.AddSingleton<IUpdateStockProducer, UpdateStockProducer>();
-
+            builder.Services.AddSingleton<IUpdateOrderConsumer, UpdateOrderConsumer>();
+            builder.Services.AddHostedService<ConsumerHostedService>();
             string authConnectionString =
                 builder.Configuration.GetConnectionString("Default")
                 ?? throw new InvalidOperationException(

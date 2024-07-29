@@ -19,6 +19,23 @@ namespace ShopDev.Utils.Security
             return Convert.ToHexString(bytes);
         }
 
+        public static string HmacSHA512(string key, string inputData)
+        {
+            var hash = new StringBuilder();
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
+            using (var hmac = new HMACSHA512(keyBytes))
+            {
+                byte[] hashValue = hmac.ComputeHash(inputBytes);
+                foreach (var theByte in hashValue)
+                {
+                    hash.Append(theByte.ToString("x2"));
+                }
+            }
+
+            return hash.ToString();
+        }
+
         /// <summary>
         /// Tính toán hash MD5
         /// </summary>
@@ -226,6 +243,12 @@ namespace ShopDev.Utils.Security
                 HashAlgorithmName.SHA256,
                 RSASignaturePadding.Pkcs1
             );
+        }
+
+        public static bool ValidateSignature(string inputHash, string secretKey, string rspRaw)
+        {
+            string myChecksum = HmacSHA512(secretKey, rspRaw);
+            return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

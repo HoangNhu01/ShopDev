@@ -6,8 +6,8 @@ using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.Permi
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.PermissionDtos;
 using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Domain.Users;
+using ShopDev.Constants.Domain.Auth.Role;
 using ShopDev.Constants.ErrorCodes;
-using ShopDev.Constants.Role;
 using ShopDev.Constants.RolePermission;
 using ShopDev.Constants.Users;
 using ShopDev.InfrastructureBase.Exceptions;

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
 
-namespace MB.Utils.Cache
+namespace ShopDev.Utils.Cache
 {
     public static class DistributedCacheExtensions
     {
@@ -143,6 +143,7 @@ namespace MB.Utils.Cache
         )
         {
             var endPoints = connection.GetEndPoints();
+            var database = connection.GetDatabase();
             IServer? server = null;
             foreach (var endPoint in endPoints)
             {
@@ -211,6 +212,61 @@ namespace MB.Utils.Cache
                     continue;
                 }
                 await cache.RemoveAsync(key!);
+            }
+        }
+
+        /// <summary>
+        /// Tạo khóa phân tán
+        /// </summary>
+        /// <param name="database">database Redis</param>
+        /// <param name="lockKey">Định danh khóa</param>
+        /// <param name="lockValue">Giá trị khóa</param>
+        /// <param name="expiration">Thời gian hết hạn</param>
+        /// <returns></returns>
+        public static async Task<bool> AcquireLockAsync(
+            this IDatabase database,
+            string lockKey,
+            string lockValue,
+            TimeSpan expiration
+        )
+        {
+            /*
+              - Khi StringSetAsync được gọi với When.NotExists, Redis sẽ kiểm tra xem khóa (lockKey) đã tồn tại hay chưa.
+               + Nếu khóa chưa tồn tại, Redis sẽ thiết lập giá trị của khóa thành lockValue và thiết lập thời gian hết hạn của khóa.
+               + Nếu khóa đã tồn tại, Redis sẽ không thay đổi giá trị hiện tại và trả về false.
+            */
+            return await database.StringSetAsync(lockKey, lockValue, expiration, When.NotExists);
+        }
+
+        /// <summary>
+        /// Tháo khóa
+        /// </summary>
+        /// <param name="database"></param>
+        /// <param name="lockKey"></param>
+        /// <param name="lockValue"></param>
+        /// <returns></returns>
+        public static async Task<bool> ReleaseLockAsync(
+            this IDatabase database,
+            string lockKey,
+            string lockValue
+        )
+        {
+            string luaScript =
+                @"
+            if redis.call('get', KEYS[1]) == ARGV[1] then
+                return redis.call('del', KEYS[1])
+            else
+                return 0
+            end";
+            try
+            {
+                int result = (int)
+                    await database.ScriptEvaluateAsync(luaScript, [lockKey], [lockValue]);
+                return result == 1;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

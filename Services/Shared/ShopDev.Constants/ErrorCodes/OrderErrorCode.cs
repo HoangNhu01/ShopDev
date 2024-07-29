@@ -7,5 +7,7 @@
 
         public const int ProductNotFound = 10000;
         public const int VariationIsDuplicate = 10001;
+
+        public const int OrderNotFound = 10002;
     }
 }

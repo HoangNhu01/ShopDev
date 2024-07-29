@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using MB.Utils.Cache;
+using ShopDev.Utils.Cache;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -94,7 +94,7 @@ namespace ShopDev.IdentityServerBase.Middlewares
 
     public static class VerifyAuthorizationTokenMiddlewareExtensions
     {
-        public static IApplicationBuilder UseCheckAuthorizationToken(
+        public static IApplicationBuilder VerifyAuthorizationToken(
             this IApplicationBuilder builder
         )
         {

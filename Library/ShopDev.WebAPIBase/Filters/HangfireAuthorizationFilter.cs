@@ -1,8 +1,8 @@
-﻿using ShopDev.Constants.Authorization;
-using ShopDev.Constants.Users;
+﻿using ShopDev.Constants.Users;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ShopDev.Constants.Domain.Auth.Authorization;
 
 namespace ShopDev.WebAPIBase.Filters
 {

@@ -6,7 +6,7 @@ using ShopDev.Authentication.Domain.Otps;
 using ShopDev.Authentication.Domain.SysVar;
 using ShopDev.Authentication.Domain.Users;
 using ShopDev.Constants.Database;
-using ShopDev.Constants.Role;
+using ShopDev.Constants.Domain.Auth.Role;
 using ShopDev.InfrastructureBase.Persistence;
 
 namespace ShopDev.Authentication.Infrastructure.Persistence

@@ -9,7 +9,7 @@ namespace ShopDev.Inventory.ApplicationServices.Choreography.Producers.Dtos
         /// Id đơn hàng
         /// </summary>
         public Guid OrderId { get; set; }
-        public int MessageType { get; set; }
-        public required string Message { get; set; }
+        public int EventType { get; set; }
+        public string? Message { get; set; }
     }
 }

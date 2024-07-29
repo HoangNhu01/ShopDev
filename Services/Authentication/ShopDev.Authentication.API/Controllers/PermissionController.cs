@@ -5,7 +5,7 @@ using ShopDev.ApplicationBase.Common.Validations;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Authentication.ApplicationServices.AuthenticationModule.Dtos.PermissionDto;
 using ShopDev.Common.Filters;
-using ShopDev.Constants.Role;
+using ShopDev.Constants.Domain.Auth.Role;
 using ShopDev.Constants.RolePermission.Constant;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;

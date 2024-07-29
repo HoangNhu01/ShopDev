@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Server;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
 using ShopDev.ApplicationBase.Localization;
+using ShopDev.Constants.Domain.Order.OrderGen;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.RabbitMQ;
 using ShopDev.InfrastructureBase.Exceptions;
@@ -20,7 +20,6 @@ using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Inventory.Domain.Categories;
 using ShopDev.Inventory.Domain.Products;
-using ShopDev.Inventory.Infrastructure.Extensions;
 using ShopDev.Inventory.Infrastructure.Persistence;
 using ShopDev.Utils.Hangfire;
 using ShopDev.Utils.Linq;
@@ -123,8 +122,11 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                     s.Stock += updateStock[s.Id].Quantity;
                 }
             });
+            string? message = null;
+            int eventType = default;
             try
             {
+                eventType = OrderStatuses.Confirmed;
                 await _dbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
@@ -142,18 +144,27 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         }
                     }
                 }
-                await _dbContext.SaveChangesAsync();
-            }
-            finally
-            {
-                int retryCount = HangfireUltils.GetRetryCount(context!.BackgroundJob.Id);
-                if (retryCount == 5)
+                try
+                {
+                    eventType = OrderStatuses.Confirmed;
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch
+                {
+                    int retryCount = HangfireUltils.GetRetryCount(context!.BackgroundJob.Id);
+                    if (retryCount == 5)
+                    {
+                        eventType = OrderStatuses.Canceled;
+                        message = L("error_OrderProcessProblemOccurs");
+                    }
+                }
+                finally
                 {
                     _updateOrderProducer.PublishMessage(
                         new UpdateOrderMessageDto()
                         {
-                            Message = "Quá trình xử lý đơn đã xảy ra vấn đề!!",
-                            MessageType = 1,
+                            Message = message,
+                            EventType = eventType,
                             OrderId = orderId,
                         },
                         exchangeName: RabbitExchangeNames.InventoryDirect,
@@ -165,7 +176,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 
         public void Update(ProductUpdateDto input)
         {
-            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
             HashSet<string> checkDuplicate = [];
             if (input.Variations.Exists(x => !checkDuplicate.Add(x.Name)))
             {
@@ -271,9 +282,7 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
 
         public PagingResult<ProductDetailDto> FindAll(ProductFilterDto input)
         {
-            _logger.LogInformation(
-                $"{nameof(FindById)}: input = {JsonSerializer.Serialize(input)}"
-            );
+            _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
             var product =
                 GetIQueryableResult<ProductDetailDto, Product>(
                     selector: x =>
