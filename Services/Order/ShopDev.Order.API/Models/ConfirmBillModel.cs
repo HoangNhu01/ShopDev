@@ -3,6 +3,6 @@
     public class ConfirmBillModel
     {
         public bool IsSuccess { get; set; }
-        public required string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

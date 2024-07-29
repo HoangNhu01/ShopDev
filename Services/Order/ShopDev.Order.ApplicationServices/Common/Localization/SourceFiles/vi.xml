@@ -5,5 +5,9 @@
 		<text name="error_VariationIsDuplicate">Không thể phân phối loại sản phẩm giống nhau</text>
 		<text name="error_OrderProcessProblemOccurs">Quá trình xử lý đơn đã xảy ra vấn đề</text>
 		<text name="error_OrderNotFound">Không tìm thấy đơn hàng</text>
+
+		<text name="error_TransactionError">Có lỗi xảy ra trong quá trình xử lý hóa đơn {0} | Mã giao dịch: {1} | Mã lỗi: {2}</text>
+		<text name="success_TransactionConfirm">Thanh toán thành công hóa đơn hóa đơn {0} | Mã giao dịch: {1}</text>
+
 	</texts>
 </localizationDictionary>
