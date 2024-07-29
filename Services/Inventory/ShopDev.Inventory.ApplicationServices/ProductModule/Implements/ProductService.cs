@@ -142,23 +142,27 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
                         }
                     }
                 }
-                await _dbContext.SaveChangesAsync();
-            }
-            finally
-            {
-                int retryCount = HangfireUltils.GetRetryCount(context!.BackgroundJob.Id);
-                if (retryCount == 5)
+                try
                 {
-                    _updateOrderProducer.PublishMessage(
-                        new UpdateOrderMessageDto()
-                        {
-                            Message = "Quá trình xử lý đơn đã xảy ra vấn đề!!",
-                            MessageType = 1,
-                            OrderId = orderId,
-                        },
-                        exchangeName: RabbitExchangeNames.InventoryDirect,
-                        bindingKey: "update_order"
-                    );
+                    await _dbContext.SaveChangesAsync();
+
+                }
+                catch
+                {
+                    int retryCount = HangfireUltils.GetRetryCount(context!.BackgroundJob.Id);
+                    if (retryCount == 5)
+                    {
+                        _updateOrderProducer.PublishMessage(
+                            new UpdateOrderMessageDto()
+                            {
+                                Message = "Quá trình xử lý đơn đã xảy ra vấn đề!!",
+                                MessageType = EntityState.Deleted,
+                                OrderId = orderId,
+                            },
+                            exchangeName: RabbitExchangeNames.InventoryDirect,
+                            bindingKey: "update_order"
+                        );
+                    }
                 }
             }
         }
