@@ -18,6 +18,7 @@ using ShopDev.Order.ApplicationServices.Common.Localization;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
 using ShopDev.Order.ApplicationServices.OrderModule.Implements;
 using ShopDev.Order.Infrastructure.Persistence;
+using ShopDev.PaymentTool.Configs;
 using ShopDev.RabbitMQ.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
@@ -49,6 +50,7 @@ namespace ShopDev.Order.API
             builder.ConfigureCors();
             builder.ConfigureRabbitMQ();
             builder.ConfigureDistributedCacheRedis();
+            builder.ConfigurePaymentTool();
 
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, OrderMapErrorCode>();

@@ -60,8 +60,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Library\ShopDev.IdentityServerBase\ShopDev.IdentityServerBase.csproj" />
 	  <ProjectReference Include="..\..\..\Library\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
+	  <ProjectReference Include="..\..\..\Library\ShopDev.ServiceDiscovery\ShopDev.ServiceDiscovery.csproj" />
 	  <ProjectReference Include="..\..\..\Library\ShopDev.WebAPIBase\ShopDev.WebAPIBase.csproj" />
-	  <ProjectReference Include="..\..\..\ShopDev.ServiceDiscovery\ShopDev.ServiceDiscovery.csproj" />
 	  <ProjectReference Include="..\..\Shared\ShopDev.Constants\ShopDev.Constants.csproj" />
 	  <ProjectReference Include="..\..\Shared\ShopDev.UserRolePermission\ShopDev.UserRolePermission.csproj" />
 	</ItemGroup>
