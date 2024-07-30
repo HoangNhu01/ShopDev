@@ -1,7 +1,9 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using ShopDev.ApplicationBase.Common;
 using ShopDev.Common.Filters;
 using ShopDev.Constants.RolePermission.Constant;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
 using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
 using ShopDev.Utils.Net.Request;
@@ -24,13 +26,13 @@ namespace ShopDev.Order.API.Controllers
         }
 
         [HttpGet("find-all")]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<PagingResult<OrderDto>>), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserTableAccountManager)]
-        public ApiResponse FindAll()
+        public ApiResponse FindAll(OrderFilterDto input)
         {
             try
             {
-                return new();
+                return new(_orderService.FindAll(input));
             }
             catch (Exception ex)
             {
@@ -41,11 +43,11 @@ namespace ShopDev.Order.API.Controllers
         [HttpGet("find-by-id/{id}")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter()]
-        public ApiResponse FindById(int id)
+        public async Task<ApiResponse> FindById(Guid id)
         {
             try
             {
-                return new();
+                return new(await _orderService.FindById(id));
             }
             catch (Exception ex)
             {

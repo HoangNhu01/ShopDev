@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Server;
@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ShopDev.ApplicationBase.Common;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.RabbitMQ;
 using ShopDev.InfrastructureBase.Exceptions;
 using ShopDev.InfrastructureBase.Hangfire.Attributes;
 using ShopDev.InfrastructureBase.Persistence.OutBox;
+using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
+using ShopDev.Order.ApplicationServices.CartModule.Dtos;
 using ShopDev.Order.ApplicationServices.Choreography.Consumers.Dtos;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Abstracts;
 using ShopDev.Order.ApplicationServices.Choreography.Producers.Dtos;
@@ -23,6 +26,7 @@ using ShopDev.Order.Domain.Products;
 using ShopDev.Order.Infrastructure.Persistence;
 using ShopDev.Utils.Cache;
 using ShopDev.Utils.DataUtils;
+using ShopDev.Utils.Linq;
 using StackExchange.Redis;
 
 namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
@@ -144,10 +148,15 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
             });
         }
 
-        public OrderDetailDto FindById(int id)
+        public async Task<OrderDto> FindById(Guid id)
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
-            return new();
+            var order =
+                await FindEntityAsync<OrderGen>(
+                    s => s.Id == id,
+                    include: x => x.Include(s => s.OrderDetails)
+                ) ?? throw new UserFriendlyException(OrderErrorCode.OrderNotFound);
+            return _mapper.Map<OrderDto>(order);
         }
 
         [AutomaticRetry(Attempts = 5, DelaysInSeconds = [10, 20, 20, 30, 60])]
@@ -181,6 +190,70 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
             {
                 throw new UserFriendlyException(ErrorCode.InternalServerError);
             }
+        }
+
+        public PagingResult<OrderDto> FindAll(OrderFilterDto input)
+        {
+            _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
+            var orderQuery =
+                GetIQueryableResult<OrderDto, OrderGen>(
+                    selector: x =>
+                        new()
+                        {
+                            ShipAddress = x.ShipAddress,
+                            Id = x.Id,
+                            ShipName = x.ShipName,
+                            OrderDate = x.OrderDate,
+                            ShipEmail = x.ShipEmail,
+                            ShipPhoneNumber = x.ShipPhoneNumber,
+                            PaymentStatus = x.PaymentStatus,
+                            Status = x.Status,
+                            TotalPrice = x.TotalPrice,
+                            UserId = x.UserId,
+                            OrderDetails = x.OrderDetails.Select(s => new OrderDetailDto
+                            {
+                                Id = s.Id,
+                                StockStatus = s.StockStatus,
+                                ProductId = s.ProductId,
+                            })
+                                .ToList(),
+                        },
+                    predicate: x =>
+                        (
+                            string.IsNullOrEmpty(input.ShipPhoneNumber)
+                            || x.ShipPhoneNumber.Contains(input.ShipPhoneNumber)
+                        )
+                        && (
+                            string.IsNullOrEmpty(input.ShipAddress)
+                            || x.ShipAddress.Contains(input.ShipAddress)
+                        )
+                        && (!input.Status.HasValue || x.Status == input.Status.Value)
+                        && (
+                            !input.PaymentStatus.HasValue
+                            || x.PaymentStatus == input.PaymentStatus.Value
+                        )
+                        && (
+                            string.IsNullOrEmpty(input.ShipEmail)
+                            || x.ShipEmail.Contains(input.ShipEmail)
+                        )
+                        && (
+                            string.IsNullOrEmpty(input.ShipName)
+                            || x.ShipName.Contains(input.ShipName)
+                        )
+                //include: x => x.Include(x => x.Shop).Include(x => x.Categories).ThenInclude(x => x.Category)
+                ) ?? throw new UserFriendlyException(OrderErrorCode.OrderNotFound);
+            var result = new PagingResult<OrderDto>
+            {
+                // đếm tổng trước khi phân trang
+                TotalItems = orderQuery.Count()
+            };
+            orderQuery = orderQuery.OrderDynamic(input.Sort);
+            if (input.PageSize != -1)
+            {
+                orderQuery = orderQuery.Skip(input.GetSkip()).Take(input.PageSize);
+            }
+            result.Items = orderQuery;
+            return result;
         }
     }
 }
