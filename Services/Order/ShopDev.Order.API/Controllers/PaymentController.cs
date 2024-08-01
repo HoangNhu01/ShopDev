@@ -148,29 +148,24 @@ namespace ShopDev.Order.API.Controllers
         }
 
         //[Authorize]
-        [HttpGet("refund")]
-        public async Task<IActionResult> RefundTransaction(
-            string transactionId,
-            double amount,
-            double transactionDate,
-            double transactionNo
-        )
+        [HttpPost("refund")]
+        public async Task<IActionResult> RefundTransaction([FromBody] RefundRequestModel request)
         {
             var vnp_Version = "2.1.0";
             var vnp_Command = "refund";
-            var vnp_TransactionType = 03; // 02 for refund
+            var vnp_TransactionType = "02"; // 02 for refund
             var vnp_RequestId = Guid.NewGuid().ToString(); // Unique request ID
-            var vnp_CreateDate = DateTime.UtcNow.ToString("yyyyMMddHHmmss"); // Format the create date
+            var vnp_CreateDate = DateTime.Now.ToString("yyyyMMddHHmmss"); // Format the create date
             var ip = _httpContext.GetCurrentRemoteIpAddress();
-            var vnp_Amount = ((long)(amount * 100)).ToString(); // VNPay expects the amount in cents
+            var vnp_Amount = ((request.Amount * 100)).ToString(); // VNPay expects the amount in cents
 
             // Construct the sign data
             var signData =
                 $"{vnp_RequestId}|{vnp_Version}"
                 + $"|{vnp_Command}|{_config.TmnCode}"
-                + $"|{vnp_TransactionType}|{transactionId}"
-                + $"|{vnp_Amount}|{transactionNo}|{transactionDate}|{"1"}"
-                + $"|{vnp_CreateDate}|{ip}|{transactionId}";
+                + $"|{vnp_TransactionType}|{request.TransactionId}"
+                + $"|{vnp_Amount}|{string.Empty}|{vnp_CreateDate}|{"DrinkShop"}"
+                + $"|{vnp_CreateDate}|{ip}|{string.Empty}";
 
             // Generate the checksum
             string vnp_SecureHash = CryptographyUtils.HmacSHA512(_config.HashSecret, signData);
@@ -183,12 +178,12 @@ namespace ShopDev.Order.API.Controllers
                 vnp_Command,
                 vnp_TmnCode = _config.TmnCode,
                 vnp_TransactionType,
-                vnp_TxnRef = transactionId,
+                vnp_TxnRef = request.TransactionId,
                 vnp_Amount,
-                vnp_OrderInfo = transactionId,
-                vnp_TransactionNo = transactionNo,
-                vnp_TransactionDate = transactionDate,
-                vnp_CreateBy = "1",
+                vnp_OrderInfo = string.Empty,
+                vnp_TransactionNo = string.Empty,
+                vnp_TransactionDate = vnp_CreateDate,
+                vnp_CreateBy = "DrinkShop",
                 vnp_CreateDate,
                 vnp_IpAddr = ip,
                 vnp_SecureHash
