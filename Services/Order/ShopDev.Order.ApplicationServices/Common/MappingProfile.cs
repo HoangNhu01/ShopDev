@@ -14,6 +14,7 @@ namespace ShopDev.Order.ApplicationServices.Common
             CreateMap<Spu, SpuDto>().ReverseMap();
             CreateMap<OrderGen, OrderDto>().ReverseMap();
             CreateMap<Domain.Products.Product, ProductDto>().ReverseMap();
+            CreateMap<Domain.Products.Product, CartItemDto>().ReverseMap();
             CreateMap<Domain.Products.Spu, SpuDto>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
         }

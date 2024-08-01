@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using ShopDev.Order.ApplicationServices.CartModule.Abstract;
 using ShopDev.Order.ApplicationServices.CartModule.Dtos;
@@ -81,13 +81,14 @@ namespace ShopDev.Order.API.Controllers
             }
         }
 
-        [HttpPut("delete/{id}")]
+        [HttpDelete("delete")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserButtonAccountManagerDelete)]
-        public ApiResponse Delete(int id)
+        public async Task<ApiResponse> Delete(CartUpdateDto input)
         {
             try
             {
+                await _cartService.RemoveFromCart(input);
                 return new();
             }
             catch (Exception ex)

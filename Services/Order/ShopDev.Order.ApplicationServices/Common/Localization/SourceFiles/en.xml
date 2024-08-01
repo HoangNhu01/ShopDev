@@ -7,5 +7,6 @@
 		<text name="error_OrderNotFound">Order is not found</text>
 		<text name="error_TransactionError">Some error occur in transaction process {0} | TranId: {1} | Error Code: {2}</text>
 		<text name="success_TransactionConfirm">Payment Successfully {0} | TranId: {1}</text>
-	</texts>
+    <text name="error_ProductIsNotEnough">Product is not enough</text>
+  </texts>
 </localizationDictionary>

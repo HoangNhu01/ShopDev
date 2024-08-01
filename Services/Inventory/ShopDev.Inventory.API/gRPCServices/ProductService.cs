@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.InfrastructureBase.Exceptions;
@@ -55,7 +55,8 @@ namespace ShopDev.Inventory.API.gRPCServices
                         ShopId = product.ShopId,
                         ThumbUri = product.ThumbUri,
                         Title = product.Title,
-                        Quantity = request.Quantity,
+                        Quantity = product.Spus[0].Stock,
+                        SpuId = product.Spus[0].Id,
                     }
                 };
             productResponse.Product.Spus.AddRange(
@@ -69,7 +70,6 @@ namespace ShopDev.Inventory.API.gRPCServices
                             {
                                 Options = opt,
                                 Name = product.Variations[index].Name,
-                                SpuId = product.Spus[0].Id
                             };
                         }
                     )

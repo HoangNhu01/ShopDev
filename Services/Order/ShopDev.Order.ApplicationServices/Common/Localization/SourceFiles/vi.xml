@@ -8,6 +8,6 @@
 
 		<text name="error_TransactionError">Có lỗi xảy ra trong quá trình xử lý hóa đơn {0} | Mã giao dịch: {1} | Mã lỗi: {2}</text>
 		<text name="success_TransactionConfirm">Thanh toán thành công hóa đơn hóa đơn {0} | Mã giao dịch: {1}</text>
-
+		<text name="error_ProductIsNotEnough">Số lượng sản phẩm đã vượt qua giới hạn</text>
 	</texts>
 </localizationDictionary>

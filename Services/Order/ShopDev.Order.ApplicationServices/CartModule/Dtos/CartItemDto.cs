@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopDev.Order.ApplicationServices.CartModule.Dtos
 {
-    public class ProductDto
+    public class CartItemDto
     {
         public int Id { get; set; }
 
@@ -18,14 +18,13 @@ namespace ShopDev.Order.ApplicationServices.CartModule.Dtos
         public int ShopId { get; set; }
         public int SpuId { get; set; }
 
-        [Unicode(false)]
         public required string ThumbUri { get; set; }
 
         //[BsonElement("stock")]
-        public List<SpuDto> Spus { get; set; } = [];
+        public List<CartDetailDto> Spus { get; set; } = [];
     }
 
-    public class SpuDto
+    public class CartDetailDto
     {
         //[BsonElement("variation_name")]
         public required string Name { get; set; }

@@ -1,4 +1,4 @@
-﻿using ShopDev.ApplicationBase.Common.Validations;
+using ShopDev.ApplicationBase.Common.Validations;
 using ShopDev.Order.ApplicationServices.CartModule.Dtos;
 
 namespace ShopDev.Order.ApplicationServices.OrderModule.Dtos
@@ -21,6 +21,6 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Dtos
         public int PaymentStatus { get; set; }
 
         public double TotalPrice { get; set; }
-        public List<ProductDto> CartItems { get; set; } = [];
+        public List<CartItemDto> CartItems { get; set; } = [];
     }
 }

@@ -1,5 +1,3 @@
-using ShopDev.Order.ApplicationServices.CartModule.Dtos;
-
 namespace ShopDev.Order.ApplicationServices.OrderModule.Dtos
 {
     public class OrderDto

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ShopDev.ApplicationBase.Common;
 using ShopDev.ApplicationBase.Localization;
+using ShopDev.Constants.Domain.Order.OrderGen;
 using ShopDev.Constants.ErrorCodes;
 using ShopDev.Constants.RabbitMQ;
 using ShopDev.InfrastructureBase.Exceptions;
@@ -82,7 +83,11 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
                         SpuId = x.SpuId,
                         Spus =
                         [
-                            .. x.Spus.Select(e => new Spu { Name = e.Name, Options = e.Options })
+                            .. x.Spus.Select(e => new Spu
+                            {
+                                Name = e.Name,
+                                Options = e.Options
+                            })
                         ]
                     }
                 })
@@ -163,11 +168,11 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
         [HangfireLogEverything]
         public async Task UpdateOrderEvent(PerformContext? context, UpdateOrderMessageDto input)
         {
-            var lockKey = $"order-lock-key-{input.OrderId}";
-            var lockValue = Guid.NewGuid().ToString();
-            var lockExpiration = TimeSpan.FromSeconds(30);
-            var db = _connectionMultiplexer.GetDatabase();
-            if (await db.AcquireLockAsync(lockKey, lockValue, lockExpiration))
+            string lockKey = $"order-lock-key-{input.OrderId}";
+            string lockValue = Guid.NewGuid().ToString();
+            TimeSpan lockExpiration = TimeSpan.FromSeconds(30);
+            var redisDB = _connectionMultiplexer.GetDatabase();
+            if (await redisDB.AcquireLockAsync(lockKey, lockValue, lockExpiration))
             {
                 try
                 {
@@ -179,11 +184,15 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
                         ) ?? throw new UserFriendlyException(OrderErrorCode.OrderNotFound);
 
                     order.Status = input.EventType;
+                    if (input.EventType == OrderStatuses.Confirmed)
+                    {
+                        order.OrderDetails.ForEach(x => x.StockStatus = StockStatuses.Confirmed);
+                    }
                     await _dbContext.SaveChangesAsync();
                 }
                 finally
                 {
-                    await db.ReleaseLockAsync(lockKey, lockValue);
+                    await redisDB.ReleaseLockAsync(lockKey, lockValue);
                 }
             }
             else
