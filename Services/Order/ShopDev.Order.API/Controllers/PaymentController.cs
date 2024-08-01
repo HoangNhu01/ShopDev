@@ -1,20 +1,18 @@
-﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using eShopSolution.ViewModels.Sales;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Utilities.Net;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Common;
-using ShopDev.Common.Filters;
-using ShopDev.Constants.RolePermission.Constant;
+using ShopDev.Constants.ErrorCodes;
 using ShopDev.Order.API.Models;
-using ShopDev.Order.ApplicationServices.OrderModule.Abstracts;
-using ShopDev.Order.ApplicationServices.OrderModule.Dtos;
 using ShopDev.PaymentTool.Configs;
 using ShopDev.PaymentTool.Interfaces;
+using ShopDev.Utils.Net.MimeTypes;
 using ShopDev.Utils.Net.Request;
 using ShopDev.Utils.Security;
-using ShopDev.WebAPIBase.Controllers;
 
 namespace ShopDev.Order.API.Controllers
 {
@@ -146,7 +144,77 @@ namespace ShopDev.Order.API.Controllers
                 _config.Url,
                 _config.HashSecret
             );
-            return Ok(new { paymentUrl });
+            return Ok(new ApiResponse { Data = paymentUrl });
+        }
+
+        //[Authorize]
+        [HttpGet("refund")]
+        public async Task<IActionResult> RefundTransaction(
+            string transactionId,
+            double amount,
+            double transactionDate,
+            double transactionNo
+        )
+        {
+            var vnp_Version = "2.1.0";
+            var vnp_Command = "refund";
+            var vnp_TransactionType = 03; // 02 for refund
+            var vnp_RequestId = Guid.NewGuid().ToString(); // Unique request ID
+            var vnp_CreateDate = DateTime.UtcNow.ToString("yyyyMMddHHmmss"); // Format the create date
+            var ip = _httpContext.GetCurrentRemoteIpAddress();
+            var vnp_Amount = ((long)(amount * 100)).ToString(); // VNPay expects the amount in cents
+
+            // Construct the sign data
+            var signData =
+                $"{vnp_RequestId}|{vnp_Version}"
+                + $"|{vnp_Command}|{_config.TmnCode}"
+                + $"|{vnp_TransactionType}|{transactionId}"
+                + $"|{vnp_Amount}|{transactionNo}|{transactionDate}|{"1"}"
+                + $"|{vnp_CreateDate}|{ip}|{transactionId}";
+
+            // Generate the checksum
+            string vnp_SecureHash = CryptographyUtils.HmacSHA512(_config.HashSecret, signData);
+
+            // Construct the request data
+            var rfData = new
+            {
+                vnp_RequestId,
+                vnp_Version,
+                vnp_Command,
+                vnp_TmnCode = _config.TmnCode,
+                vnp_TransactionType,
+                vnp_TxnRef = transactionId,
+                vnp_Amount,
+                vnp_OrderInfo = transactionId,
+                vnp_TransactionNo = transactionNo,
+                vnp_TransactionDate = transactionDate,
+                vnp_CreateBy = "1",
+                vnp_CreateDate,
+                vnp_IpAddr = ip,
+                vnp_SecureHash
+            };
+
+            // Send the request to VNPay
+            using HttpClient httpClient = new();
+            var content = new StringContent(
+                JsonSerializer.Serialize(rfData),
+                Encoding.UTF8,
+                MimeTypeNames.ApplicationJson
+            );
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue(MimeTypeNames.ApplicationJson)
+            );
+
+            var response = await httpClient.PostAsync(_config.RefundUrl, content);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return Ok(responseContent);
+            }
+            else
+            {
+                return Ok(new ApiResponse { Code = ErrorCode.BadRequest, Message = "Bad Request" });
+            }
         }
     }
 }
