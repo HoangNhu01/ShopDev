@@ -3,5 +3,6 @@
 	<texts>
 		<text name="error_ProductNotFound">Product is not found</text>
 		<text name="error_VariationIsDuplicate">Variation is duplicate</text>
-	</texts>
+    <text name="error_CategoryNotFound">Category is not found</text>
+  </texts>
 </localizationDictionary>

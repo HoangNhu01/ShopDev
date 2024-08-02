@@ -1,4 +1,5 @@
-﻿using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
+using ShopDev.ApplicationBase.Common;
+using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
 
 namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts
 {
@@ -6,5 +7,6 @@ namespace ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts
     {
         void Create(CategoryCreateDto request);
         CategoryDetailDto FindById(int id);
+        PagingResult<CategoryDetailDto> FindAll(CategoryFilterDto input);
     }
 }

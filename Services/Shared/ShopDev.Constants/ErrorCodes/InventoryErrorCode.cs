@@ -7,5 +7,6 @@ namespace ShopDev.Constants.ErrorCodes
 
         public const int ProductNotFound = 9000;
         public const int VariationIsDuplicate = 9001;
+        public const int CategoryNotFound = 9002;
     }
 }

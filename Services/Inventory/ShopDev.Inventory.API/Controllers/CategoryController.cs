@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using ShopDev.Authentication.Domain.Users;
 using ShopDev.Common.Filters;
@@ -6,7 +7,6 @@ using ShopDev.Inventory.ApplicationServices.CategoryModule.Abstracts;
 using ShopDev.Inventory.ApplicationServices.CategoryModule.Dtos;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
-using System.Net;
 
 namespace ShopDev.Inventory.API.Controllers
 {
@@ -30,11 +30,11 @@ namespace ShopDev.Inventory.API.Controllers
         [HttpGet("find-all")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserTableAccountManager)]
-        public ApiResponse FindAll()
+        public ApiResponse FindAll(CategoryFilterDto input)
         {
             try
             {
-                return new();
+                return new(_categoryService.FindAll(input));
             }
             catch (Exception ex)
             {

@@ -250,7 +250,7 @@ namespace ShopDev.Order.ApplicationServices.OrderModule.Implements
                             || x.ShipName.Contains(input.ShipName)
                         )
                 //include: x => x.Include(x => x.Shop).Include(x => x.Categories).ThenInclude(x => x.Category)
-                ) ?? throw new UserFriendlyException(OrderErrorCode.OrderNotFound);
+                );
             var result = new PagingResult<OrderDto>
             {
                 // đếm tổng trước khi phân trang
