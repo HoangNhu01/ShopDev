@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -181,7 +181,7 @@ namespace ShopDev.Utils.Cache
         /// <param name="pattern"></param>
         public static async Task RemoveByPatternAsync(
             this IDistributedCache cache,
-            ConnectionMultiplexer connection,
+            IConnectionMultiplexer connection,
             string pattern
         )
         {

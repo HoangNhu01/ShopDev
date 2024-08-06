@@ -158,7 +158,7 @@ services:
       - XPACK_MONITORING_ENABLED=false
       - RABBITMQ_HOST=10.0.0.14
       - RABBITMQ_USER=user
-      - RABBITMQ_PASSWORD=123@123abc
+      - RABBITMQ_PASSWORD=123qwe
       - RABBITMQ_PORT=5672
       - RABBITMQ_VHOST=/
       # - RABBITMQ_SSL_CER_PATH=/usr/share/logstash/certs/k8s-meey-ca.pfx

@@ -66,7 +66,10 @@ namespace ShopDev.WebAPIBase
             };
             configOptions.CertificateSelection += delegate
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["RedisCache:Ssl:CertPath"]!);
+                var path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    builder.Configuration["RedisCache:Ssl:CertPath"]!
+                );
                 var cert = new X509Certificate2(path);
                 return cert;
             };
@@ -102,29 +105,32 @@ namespace ShopDev.WebAPIBase
                 .Get<RabbitMqConfig>()!;
             using IConnection rabbitMqConnection = rabbitMqConfig.CreateConnection();
             using IModel model = rabbitMqConnection.CreateModel();
-            try
             {
-                //Kiểm tra queue và exchange còn tồn tại hay không
-                model.ExchangeDeclarePassive(RabbitExchangeNames.Log);
-                model.QueueDeclarePassive(queueName);
-            }
-            catch
-            {
-                Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
-                model.QueueDeclare(
-                    queueName,
-                    durable: true,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: queueArgs
-                );
-                model.ExchangeDeclare(
-                    RabbitExchangeNames.Log,
-                    ExchangeType.Direct,
-                    durable: true,
-                    autoDelete: false
-                );
-                model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+                //try
+                //{
+                //    //Kiểm tra queue và exchange còn tồn tại hay không
+                //    model.ExchangeDeclarePassive(RabbitExchangeNames.Log);
+                //    model.QueueDeclarePassive(queueName);
+                //}
+                //catch
+                //{
+                    Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
+
+                    model.ExchangeDeclare(
+                        RabbitExchangeNames.Log,
+                        ExchangeType.Direct,
+                        durable: true,
+                        autoDelete: false
+                    );
+                    model.QueueDeclare(
+                        queueName,
+                        durable: true,
+                        exclusive: false,
+                        autoDelete: false,
+                        arguments: queueArgs
+                    );
+                    model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+                //}
             }
 
             RabbitMQClientConfiguration configRabbitMqSerilog =

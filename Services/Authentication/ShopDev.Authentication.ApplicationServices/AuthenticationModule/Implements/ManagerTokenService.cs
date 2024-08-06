@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Hangfire;
 using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
 using ShopDev.Utils.Cache;
@@ -21,7 +21,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
     public class ManagerTokenService : AuthenticationServiceBase, IManagerTokenService
     {
         private readonly IOpenIddictTokenManager _tokenManager;
-        private readonly ConnectionMultiplexer _connectionMultiplexerRedis;
+        private readonly IConnectionMultiplexer _connectionMultiplexerRedis;
         private readonly IDistributedCache _distributedCache;
         private readonly IOpenIddictAuthorizationManager _openIddictAuthorizationManager;
 
@@ -33,7 +33,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             LocalizationBase localizationBase,
             IMapper mapper,
             IOpenIddictTokenManager tokenManager,
-            ConnectionMultiplexer connectionMultiplexerRedis,
+            IConnectionMultiplexer connectionMultiplexerRedis,
             IDistributedCache distributedCache,
             IOpenIddictAuthorizationManager openIddictAuthorizationManager
         )

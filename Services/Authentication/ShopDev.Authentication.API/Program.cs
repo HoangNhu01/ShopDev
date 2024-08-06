@@ -19,6 +19,7 @@ using ShopDev.Constants.Common;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Domain.Auth.Authorization;
 using ShopDev.Constants.Environments;
+using ShopDev.Constants.RabbitMQ;
 using ShopDev.IdentityServerBase.Middlewares;
 using ShopDev.IdentityServerBase.StartUp;
 using ShopDev.S3Bucket;
@@ -35,7 +36,7 @@ namespace ShopDev.Authentication.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            //builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
+            builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
             builder.ConfigureServices();
             builder.ConfigureDataProtection();
             builder
@@ -116,6 +117,7 @@ namespace ShopDev.Authentication.API
                 },
                 poolSize: 128
             );
+            builder.ConfigureHangfire(connectionString, DbSchemas.Default);
 
             builder.ConfigureS3();
             builder.Services.Configure<AuthWorkerConfiguration>(
@@ -131,6 +133,7 @@ namespace ShopDev.Authentication.API
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<INotificationTokenService, NotificationTokenService>();
             builder.Services.AddScoped<IS3ManagerFileService, S3ManagerFileService>();
+            builder.Services.AddScoped<IManagerTokenService, ManagerTokenService>();
             builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
             var app = builder.Build();
@@ -169,6 +172,11 @@ namespace ShopDev.Authentication.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.VerifyAuthorizationToken();
+            app.UseHangfireDashboard(
+                "/api/inventory/hangfire"
+            //,
+            //new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } }
+            );
             //app.UseCheckUser();
             app.MapControllers();
             app.MapHealthChecks("/health");
