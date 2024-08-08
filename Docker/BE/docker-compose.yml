@@ -17,46 +17,39 @@ services:
       sd_network:
         ipv4_address: 10.0.0.10
 
-  zookeeper:
-    container_name: zookeeper
-    image: debezium/zookeeper:1.1
+  kafdrop:
+    container_name: kafdrop
+    image: obsidiandynamics/kafdrop
+    restart: "no"
     ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
-    networks:
-      sd_network:
-        ipv4_address: 10.0.0.24
-
-  kafka:
-    container_name: kafka
-    image: debezium/kafka:1.1
-    ports:
-      - 9092:9092
-    links:
-      - zookeeper
+      - "9000:9000"
     environment:
-      - ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_LISTENER_NAME=PLAINTEXT
+      KAFKA_BROKERCONNECT: "kafka:29092"
+    depends_on:
+      - "kafka"
     networks:
       sd_network:
         ipv4_address: 10.0.0.25
-  
-  control-center:
-    container_name: control-center
-    image: confluentinc/cp-enterprise-control-center:latest
+
+  kafka:
+    container_name: kafka
+    image: obsidiandynamics/kafka
+    restart: "no"
     ports:
-      - 9021:9021
+      - "2181:2181"
+      - "9092:9092"
     environment:
-      - CONTROL_CENTER_BOOTSTRAP_SERVERS=kafka:9092
-      - CONTROL_CENTER_ZOOKEEPER_CONNECT=zookeeper:2181
-      - CONTROL_CENTER_CONNECT_CLUSTER=connect:8083
-      - CONTROL_CENTER_REPLICATION_FACTOR=1
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
     networks:
       sd_network:
-        ipv4_address: 10.0.0.27
+        ipv4_address: 10.0.0.24
 
   connect:
     container_name: debezium
@@ -67,7 +60,7 @@ services:
       - kafka
       - mssql
     environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
+      - BOOTSTRAP_SERVERS=kafka:29092
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets

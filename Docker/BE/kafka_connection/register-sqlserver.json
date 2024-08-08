@@ -4,12 +4,12 @@
         "connector.class" : "io.debezium.connector.sqlserver.SqlServerConnector",
         "tasks.max" : "1",
         "database.server.name" : "server1",
-        "database.hostname" : "10.0.0.10",
+        "database.hostname" : "mssql",
         "database.port" : "1433",
         "database.user" : "sa",
         "database.password" : "123@qwe123",
         "database.dbname" : "InventoryDb",
-        "database.history.kafka.bootstrap.servers" : "kafka:9092",
+        "database.history.kafka.bootstrap.servers" : "kafka:29092",
         "database.history.kafka.topic": "schema-changes.inventory"
     }
 }
