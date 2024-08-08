@@ -118,7 +118,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
                             openIdDictToken.CreationDate.Value
                         );
                         var epiredTimes = timeDifference.TotalSeconds;
-                        await _distributedCache!.SetAsync(
+                        await _distributedCache.SetAsync(
                             key,
                             OpenIddictConstants.Statuses.Revoked,
                             (int)epiredTimes

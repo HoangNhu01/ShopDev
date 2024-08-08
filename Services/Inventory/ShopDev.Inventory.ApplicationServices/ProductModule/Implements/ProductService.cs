@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using AutoMapper;
 using Hangfire;
 using Hangfire.Server;
@@ -341,6 +341,16 @@ namespace ShopDev.Inventory.ApplicationServices.ProductModule.Implements
             }
             result.Items = product;
             return result;
+        }
+
+        public async Task Delete(int id)
+        {
+            var product =
+                await _dbContext.Products.FindAsync(id)
+                ?? throw new UserFriendlyException(InventoryErrorCode.ProductNotFound);
+            product.Deleted = true;
+            product.Spus.AsParallel().ForAll(x => x.Deleted = true);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

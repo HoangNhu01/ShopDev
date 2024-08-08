@@ -7,6 +7,8 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "123@qwe123"
+      MSSQL_PID: "Standard"
+      MSSQL_AGENT_ENABLED: true
     ports:
       - 6000:1433
     volumes:
@@ -15,12 +17,71 @@ services:
       sd_network:
         ipv4_address: 10.0.0.10
 
+  zookeeper:
+    container_name: zookeeper
+    image: debezium/zookeeper:1.1
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.24
+
+  kafka:
+    container_name: kafka
+    image: debezium/kafka:1.1
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_LISTENER_NAME=PLAINTEXT
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.25
+  
+  control-center:
+    container_name: control-center
+    image: confluentinc/cp-enterprise-control-center:latest
+    ports:
+      - 9021:9021
+    environment:
+      - CONTROL_CENTER_BOOTSTRAP_SERVERS=kafka:9092
+      - CONTROL_CENTER_ZOOKEEPER_CONNECT=zookeeper:2181
+      - CONTROL_CENTER_CONNECT_CLUSTER=connect:8083
+      - CONTROL_CENTER_REPLICATION_FACTOR=1
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.27
+
+  connect:
+    container_name: debezium
+    image: debezium/connect:1.1
+    ports:
+      - 8083:8083
+    links:
+      - kafka
+      - mssql
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.26
+
   sd.authenticate.api:
     image: sd.authenticate.api
     container_name: sd.authenticate
     profiles:
       - donotstart
-    environment: 
+    environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     build:
       context: ../../
@@ -44,7 +105,7 @@ services:
     container_name: sd.inventory
     profiles:
       - donotstart
-    environment: 
+    environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     build:
       context: ../../
@@ -69,7 +130,7 @@ services:
     container_name: minio-manager
     ports:
       - 9000:9000
-      - 9001:9001 
+      - 9001:9001
     volumes:
       - ./data:/data
     environment:
@@ -131,7 +192,7 @@ services:
     image: consul:1.13.4
     container_name: dev-consul
     ports:
-      - "8500:8500"  # HTTP API
+      - "8500:8500" # HTTP API
       - "8600:8600"
       - "8600:8600/udp"
     volumes:

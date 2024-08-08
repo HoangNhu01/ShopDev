@@ -1,0 +1,1 @@
+// Invoke-RestMethod -Method Post -Uri http://localhost:8083/connectors -ContentType "application/json" -InFile "register-sqlserver.json" 

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Abstract;
 using ShopDev.Inventory.ApplicationServices.ProductModule.Dtos;
 using ShopDev.Utils.Net.Request;
 using ShopDev.WebAPIBase.Controllers;
-using System.Net;
 
 namespace ShopDev.Inventory.API.Controllers
 {
@@ -82,13 +82,14 @@ namespace ShopDev.Inventory.API.Controllers
             }
         }
 
-        [HttpPut("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.OK)]
         //[PermissionFilter(PermissionKeys.UserButtonAccountManagerDelete)]
-        public ApiResponse Delete(int id)
+        public async Task<ApiResponse> Delete(int id)
         {
             try
             {
+                await _productService.Delete(id);
                 return new();
             }
             catch (Exception ex)
