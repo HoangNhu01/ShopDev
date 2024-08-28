@@ -1,0 +1,19 @@
+## Xóa index
+DELETE /sql_product
+
+## Tạo api_key
+POST /_security/api_key
+{
+  "name": "logstash_access",
+  "role_descriptors": {
+    "logstash_writer": {
+      "cluster": ["all"],
+      "index": [
+        {
+          "names": ["sql_product"],
+          "privileges": ["write", "create", "delete", "index"]
+        }
+      ]
+    }
+  }
+}

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.API.HostedServices;
 using ShopDev.Authentication.API.Models;
@@ -111,6 +112,7 @@ namespace ShopDev.Authentication.API
                                 DbSchemas.TableMigrationsHistory,
                                 DbSchemas.Default
                             );
+                           
                         }
                     );
                     options.UseOpenIddict();
