@@ -17,3 +17,14 @@ POST /_security/api_key
     }
   }
 }
+
+## Truy cập vào docker-desktop và set giá trị không gian bộ nhớ ảo
+wsl -d docker-desktop -u root
+sysctl -w vm.max_map_count=262144
+
+## Cmd connect tới cdc sqlserver 
+Invoke-RestMethod -Method Post -Uri http://localhost:8083/connectors -ContentType "application/json" -InFile "register-sqlserver.json"
+## Xóa kết nối đã tồn tại
+Invoke-RestMethod -Method Delete -Uri http://localhost:8083/connectors/inventory-connector
+## Hiển thị các kết nối sẵn có
+Invoke-RestMethod -Method Get -Uri http://localhost:8083/connectors/inventory-connector/status
