@@ -116,7 +116,33 @@ services:
         target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
     networks:
       sd_network:
-        ipv4_address: 10.0.0.11
+        ipv4_address: 10.0.0.12
+
+  sd.order.api:
+    image: sd.order.api
+    command: >
+      /bin/bash -c "apt-get update && apt-get install -y libkrb5-dev && your-startup-command"
+    container_name: sd.order
+    profiles:
+      - donotstart
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    build:
+      context: ../../
+      dockerfile: Services/Order/ShopDev.Order.API/Dockerfile
+    ports:
+      - 5003:8080
+    configs:
+      - source: appsettings
+        target: /app/appsettings.${ASPNETCORE_ENVIRONMENT}.json
+    secrets:
+      - source: public_key
+        target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+      - source: private_key
+        target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.33
 
   minio:
     image: quay.io/minio/minio
@@ -195,9 +221,9 @@ services:
       - CONSUL_CLIENT_INTERFACE=eth0
       - CONSUL_ADVERTISE_ADDR=192.168.1.100
     command: agent -dev -client=0.0.0.0
-    # networks:
-    #   sd_network:
-    #     ipv4_address: 10.0.0.2
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.55
 
 configs:
   appsettings:
