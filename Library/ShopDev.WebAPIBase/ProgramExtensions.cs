@@ -114,22 +114,22 @@ namespace ShopDev.WebAPIBase
                 //}
                 //catch
                 //{
-                    Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
+                Dictionary<string, object> queueArgs = new() { { "x-queue-type", "quorum" } };
 
-                    model.ExchangeDeclare(
-                        RabbitExchangeNames.Log,
-                        ExchangeType.Direct,
-                        durable: true,
-                        autoDelete: false
-                    );
-                    model.QueueDeclare(
-                        queueName,
-                        durable: true,
-                        exclusive: false,
-                        autoDelete: false,
-                        arguments: queueArgs
-                    );
-                    model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
+                model.ExchangeDeclare(
+                    RabbitExchangeNames.Log,
+                    ExchangeType.Direct,
+                    durable: true,
+                    autoDelete: false
+                );
+                model.QueueDeclare(
+                    queueName,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: queueArgs
+                );
+                model.QueueBind(queueName, RabbitExchangeNames.Log, routingKey);
                 //}
             }
 
@@ -385,6 +385,25 @@ namespace ShopDev.WebAPIBase
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
+        }
+
+        /// <summary>
+        /// Config default Minimal-Api
+        /// </summary>
+        public static void ConfigureMinimalApi(this WebApplication app)
+        {
+            // Lấy tất cả các phương thức public static từ assembly hiện tại
+            var methods = Assembly
+                .GetExecutingAssembly()
+                .GetTypes()
+                .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                .Where(m => m.Name == "MapEndpoints");
+
+            // Thực thi các phương thức tìm được
+            foreach (var method in methods)
+            {
+                method.Invoke(null, [app]);
+            }
         }
 
         public static void UseSwaggerConfig(this WebApplication app, string prefixPath)

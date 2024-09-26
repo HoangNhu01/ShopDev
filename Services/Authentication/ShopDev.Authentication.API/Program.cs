@@ -25,6 +25,7 @@ using ShopDev.IdentityServerBase.Middlewares;
 using ShopDev.IdentityServerBase.StartUp;
 using ShopDev.S3Bucket;
 using ShopDev.S3Bucket.Configs;
+using ShopDev.ServiceDiscovery.Config;
 using ShopDev.ServiceDiscovery.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
@@ -112,7 +113,6 @@ namespace ShopDev.Authentication.API
                                 DbSchemas.TableMigrationsHistory,
                                 DbSchemas.Default
                             );
-                           
                         }
                     );
                     options.UseOpenIddict();
@@ -127,6 +127,9 @@ namespace ShopDev.Authentication.API
             );
             builder.Services.AddCommonIdentityServer<AuthenticationDbContext, ShopDevAuthWorker>(
                 builder.Configuration
+            );
+            builder.Services.Configure<ConsulConfig>(
+                builder.Configuration.GetSection("Consul:AuthService")
             );
 
             builder.Services.AddSingleton<IMapErrorCode, AuthenticationMapErrorCode>();
@@ -181,6 +184,7 @@ namespace ShopDev.Authentication.API
             );
             //app.UseCheckUser();
             app.MapControllers();
+            app.ConfigureMinimalApi();
             app.MapHealthChecks("/health");
             app.Run();
         }

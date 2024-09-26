@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Services/Inventory/ShopDev.Inventory.API/ShopDev.Inventory.API.csproj", "Services/Inventory/ShopDev.Inventory.API/"]
+COPY ["Services/Order/ShopDev.Order.API/ShopDev.Order.API.csproj", "Services/Order/ShopDev.Order.API/"]
 COPY ["Library/ShopDev.IdentityServerBase/ShopDev.IdentityServerBase.csproj", "Library/ShopDev.IdentityServerBase/"]
 COPY ["Library/ShopDev.ApplicationBase/ShopDev.ApplicationBase.csproj", "Library/ShopDev.ApplicationBase/"]
 COPY ["Library/ShopDev.EntitiesBase/ShopDev.EntitiesBase.csproj", "Library/ShopDev.EntitiesBase/"]
@@ -27,20 +27,21 @@ COPY ["Services/Authentication/ShopDev.Authentication.Domain/ShopDev.Authenticat
 COPY ["Services/Shared/ShopDev.UserRolePermission/ShopDev.UserRolePermission.csproj", "Services/Shared/ShopDev.UserRolePermission/"]
 COPY ["Services/Authentication/ShopDev.Authentication.ApplicationServices/ShopDev.Authentication.ApplicationServices.csproj", "Services/Authentication/ShopDev.Authentication.ApplicationServices/"]
 COPY ["Library/ShopDev.Notification/ShopDev.Notification.csproj", "Library/ShopDev.Notification/"]
-COPY ["Services/Inventory/ShopDev.Inventory.ApplicationServices/ShopDev.Inventory.ApplicationServices.csproj", "Services/Inventory/ShopDev.Inventory.ApplicationServices/"]
-COPY ["Services/Inventory/ShopDev.Inventory.Domain/ShopDev.Inventory.Domain.csproj", "Services/Inventory/ShopDev.Inventory.Domain/"]
-COPY ["Services/Inventory/ShopDev.Inventory.Infrastructure/ShopDev.Inventory.Infrastructure.csproj", "Services/Inventory/ShopDev.Inventory.Infrastructure/"]
-RUN dotnet restore "./Services/Inventory/ShopDev.Inventory.API/ShopDev.Inventory.API.csproj"
+COPY ["Services/Order/ShopDev.Order.ApplicationServices/ShopDev.Order.ApplicationServices.csproj", "Services/Order/ShopDev.Order.ApplicationServices/"]
+COPY ["Library/ShopDev.PaymentTool/ShopDev.PaymentTool.csproj", "Library/ShopDev.PaymentTool/"]
+COPY ["Services/Order/ShopDev.Order.Domain/ShopDev.Order.Domain.csproj", "Services/Order/ShopDev.Order.Domain/"]
+COPY ["Services/Order/ShopDev.Order.Infrastructure/ShopDev.Order.Infrastructure.csproj", "Services/Order/ShopDev.Order.Infrastructure/"]
+RUN dotnet restore "./Services/Order/ShopDev.Order.API/ShopDev.Order.API.csproj"
 COPY . .
-WORKDIR "/src/Services/Inventory/ShopDev.Inventory.API"
-RUN dotnet build "./ShopDev.Inventory.API.csproj" -c $BUILD_CONFIGURATION -p:RunAnalyzers=false -o /app/build
+WORKDIR "/src/Services/Order/ShopDev.Order.API"
+RUN dotnet build "./ShopDev.Order.API.csproj" -c $BUILD_CONFIGURATION -p:RunAnalyzers=false -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ShopDev.Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ShopDev.Order.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 ENV TZ=Asia/Ho_Chi_Minh
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ShopDev.Inventory.API.dll"]
+ENTRYPOINT ["dotnet", "ShopDev.Order.API.dll"]

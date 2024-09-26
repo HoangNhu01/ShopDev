@@ -1,4 +1,5 @@
-﻿using Consul;
+using System.Net;
+using Consul;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ namespace ShopDev.ServiceDiscovery.HostedServices
         private readonly IConfiguration _configuration;
         private readonly ILogger<ConsulWorker> _logger;
         private readonly ConsulConfig _config;
+        private Timer _timer;
 
         public ConsulWorker(
             IConsulClient consulClient,
@@ -25,6 +27,7 @@ namespace ShopDev.ServiceDiscovery.HostedServices
             _configuration = configuration;
             _logger = logger;
             _config = config.Value;
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(9));
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -33,23 +36,21 @@ namespace ShopDev.ServiceDiscovery.HostedServices
             {
                 var registration = new AgentServiceRegistration
                 {
-                    ID = _config.ServiceId,
+                    ID = $"{_config.ServiceId}_{Dns.GetHostName()}",
                     Name = _config.ServiceName,
-                    Address = _config.ServiceHost,
+                    Address = Dns.GetHostName(),
                     Port = _config.ServicePort,
-                    Tags = [_config.ServiceName]
+                    Tags = [_config.ServiceName],
+                    Check = new AgentServiceCheck()
+                    {
+                        TTL = TimeSpan.FromSeconds(10), // TTL cho health check
+                        DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1) // Thời gian sau khi hủy đăng ký nếu dịch vụ không gửi heartbeat
+                    }
                 };
 
-                //var check = new AgentServiceCheck
-                //{
-                //    HTTP = _config.HealthCheckUrl,
-                //    Interval = TimeSpan.FromSeconds(_config.HealthCheckIntervalSeconds),
-                //    Timeout = TimeSpan.FromSeconds(_config.HealthCheckTimeoutSeconds)
-                //};
-
-                //registration.Checks = [check];
-
-                _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+                _logger.LogInformation(
+                    $"Registering service with Consul : {registration.Name}, HostName: {Dns.GetHostName()}"
+                );
 
                 await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
                 await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
@@ -58,6 +59,15 @@ namespace ShopDev.ServiceDiscovery.HostedServices
             {
                 await Task.CompletedTask;
             }
+        }
+
+        private void DoWork(object? state)
+        {
+            _logger.LogInformation($"TTL check with Consul: {_config.ServiceName}");
+            _consulClient
+                .Agent.PassTTL($"service:{Dns.GetHostName()}", "TTL passed")
+                .GetAwaiter()
+                .GetResult();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

@@ -1,4 +1,4 @@
-﻿namespace ShopDev.ServiceDiscovery.Config
+namespace ShopDev.ServiceDiscovery.Config
 {
     public class ConsulConfig
     {

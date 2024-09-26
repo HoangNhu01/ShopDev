@@ -1,6 +1,9 @@
+using System.Net;
+using Consul;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
@@ -20,6 +23,8 @@ using ShopDev.Order.ApplicationServices.OrderModule.Implements;
 using ShopDev.Order.Infrastructure.Persistence;
 using ShopDev.PaymentTool.Configs;
 using ShopDev.RabbitMQ.Configs;
+using ShopDev.ServiceDiscovery.Config;
+using ShopDev.ServiceDiscovery.Configs;
 using ShopDev.WebAPIBase;
 using ShopDev.WebAPIBase.Filters;
 using ShopDev.WebAPIBase.Middlewares;
@@ -50,6 +55,8 @@ namespace ShopDev.Order.API
             builder.ConfigureCors();
             builder.ConfigureRabbitMQ();
             builder.ConfigureDistributedCacheRedis();
+            builder.ServiceDiscovery();
+
             builder.ConfigurePaymentTool();
             // Khởi tạo instance cho MongoDB
             builder.Services.AddSingleton<IMapErrorCode, OrderMapErrorCode>();
@@ -88,7 +95,7 @@ namespace ShopDev.Order.API
                 ?? throw new InvalidOperationException(
                     "Không tìm thấy connection string \"OrderDb\" trong appsettings.json"
                 );
-
+            Console.WriteLine(orderConnectionString);
             builder.Services.AddDbContextPool<OrderDbContext>(
                 options =>
                 {
@@ -110,6 +117,9 @@ namespace ShopDev.Order.API
                 poolSize: 128
             );
             builder.ConfigureHangfire(orderConnectionString, DbSchemas.SDOrder);
+            builder.Services.Configure<ConsulConfig>(
+                builder.Configuration.GetSection("Consul:OrderService")
+            );
 
             var app = builder.Build();
             //using (var scope = app.Services.CreateScope())
@@ -126,7 +136,8 @@ namespace ShopDev.Order.API
 
             using (var scope = app.Services.CreateScope())
             {
-                var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+                IOrderService orderService =
+                    scope.ServiceProvider.GetRequiredService<IOrderService>();
                 RecurringJob.AddOrUpdate(
                     nameof(orderService.ExecuteUpdateStock),
                     () => orderService.ExecuteUpdateStock(null),

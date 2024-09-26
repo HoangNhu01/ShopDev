@@ -64,6 +64,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Library\ShopDev.IdentityServerBase\ShopDev.IdentityServerBase.csproj" />
     <ProjectReference Include="..\..\..\Library\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\..\Library\ShopDev.ServiceDiscovery\ShopDev.ServiceDiscovery.csproj" />
     <ProjectReference Include="..\..\..\Library\ShopDev.WebAPIBase\ShopDev.WebAPIBase.csproj" />
     <ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />
     <ProjectReference Include="..\..\Shared\ShopDev.UserRolePermission\ShopDev.UserRolePermission.csproj" />

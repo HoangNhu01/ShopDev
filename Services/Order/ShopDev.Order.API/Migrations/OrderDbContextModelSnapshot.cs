@@ -213,7 +213,7 @@ namespace ShopDev.Order.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("ShopDev.Order.Domain.Products.Product", "Product", b1 =>
+                    b.OwnsOne("ShopDev.Order.Domain.Order.OrderDetail.Product#ShopDev.Order.Domain.Products.Product", "Product", b1 =>
                         {
                             b1.Property<int>("OrderDetailId")
                                 .HasColumnType("int");
@@ -259,7 +259,7 @@ namespace ShopDev.Order.API.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("OrderDetailId");
 
-                            b1.OwnsMany("ShopDev.Order.Domain.Products.Spu", "Spus", b2 =>
+                            b1.OwnsMany("ShopDev.Order.Domain.Order.OrderDetail.Product#ShopDev.Order.Domain.Products.Product.Spus#ShopDev.Order.Domain.Products.Spu", "Spus", b2 =>
                                 {
                                     b2.Property<int>("ProductOrderDetailId")
                                         .HasColumnType("int");
