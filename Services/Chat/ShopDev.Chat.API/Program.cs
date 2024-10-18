@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using ShopDev.ApplicationBase.Localization;
+using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Infrastructure.Persistence;
+using ShopDev.Chat.ApplicationServices.Common;
 using ShopDev.Chat.ApplicationServices.Common.Localization;
 using ShopDev.Chat.Infrastructure.Persistence;
 using ShopDev.Common.Filters;
@@ -29,7 +31,7 @@ namespace ShopDev.Chat.API
             var builder = WebApplication.CreateBuilder(args);
             //builder.ConfigureLogging(RabbitQueues.LogAuth, RabbitRoutingKeys.LogAuth);
             builder.ConfigureServices();
-            builder.ConfigureDataProtection();
+            //builder.ConfigureDataProtection();
             builder
                 .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(c =>
@@ -102,7 +104,7 @@ namespace ShopDev.Chat.API
             );
 
             builder.ConfigureS3();
-            builder.Services.AddScoped<IS3ManagerFileService, S3ManagerFileService>();
+			builder.Services.AddSingleton<IMapErrorCode, ChatMapErrorCode>();
             builder.Services.AddSingleton<LocalizationBase, ChatLocalization>();
 
             var app = builder.Build();
@@ -111,7 +113,7 @@ namespace ShopDev.Chat.API
             {
                 Console.WriteLine(app.Environment.EnvironmentName);
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerConfig("api/auth/swagger");
+                app.UseSwaggerConfig("api/chat/swagger");
             }
 
             if (EnvironmentNames.Productions.Any(x => x == app.Environment.EnvironmentName))
