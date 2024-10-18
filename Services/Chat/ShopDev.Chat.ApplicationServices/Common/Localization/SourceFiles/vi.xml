@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!--Định nghĩa các lỗi-->
+		<text name="error_System">Lỗi hệ thống (Authentication Service)</text>
+	</texts>
+</localizationDictionary>

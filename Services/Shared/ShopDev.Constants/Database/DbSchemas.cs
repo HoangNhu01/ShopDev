@@ -6,5 +6,6 @@ namespace ShopDev.Constants.Database
         public const string Default = "dbo";
         public const string SDInventory = "sd_inventory";
         public const string SDOrder = "sd_order";
+        public const string SDChat = "sd_chat";
     }
 }
