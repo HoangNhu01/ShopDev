@@ -1,0 +1,167 @@
+version: '3.4'
+services:
+  mssql:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "123@qwe123"
+      MSSQL_AGENT_ENABLED: true
+    ports:
+      - 6000:1433
+    volumes:
+      - ./data:/var/opt/mssql/data
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.10
+
+  sd.authenticate.api:
+    image: sd.authenticate.api
+    container_name: sd.authenticate
+    profiles:
+      - donotstart
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    build:
+      context: ../../
+      dockerfile: Services/Authentication/ShopDev.Authentication.API/Dockerfile
+    ports:
+      - 5001:8080
+    configs:
+      - source: appsettings
+        target: /app/appsettings.${ASPNETCORE_ENVIRONMENT}.json
+    secrets:
+      - source: public_key
+        target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+      - source: private_key
+        target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.11
+
+  sd.inventory.api:
+    image: sd.inventory.api
+    container_name: sd.inventory
+    profiles:
+      - donotstart
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    build:
+      context: ../../
+      dockerfile: Services/Inventory/ShopDev.Inventory.API/Dockerfile
+    ports:
+      - 5002:8080
+      - 5102:8180
+    configs:
+      - source: appsettings
+        target: /app/appsettings.${ASPNETCORE_ENVIRONMENT}.json
+    secrets:
+      - source: public_key
+        target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+      - source: private_key
+        target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.11
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio-manager
+    ports:
+      - 9000:9000
+      - 9001:9001 
+    volumes:
+      - ./data:/data
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=123qwe@123
+    command: server --console-address ":9001" /data
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.12
+
+  seq:
+    image: datalust/seq:latest
+    container_name: cr.seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.13
+
+  gotenberg:
+    image: gotenberg/gotenberg:7
+    ports:
+      - 3001:3000
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      - ./rabbitmq/log/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_DEFAULT_USER: "user"
+      RABBITMQ_DEFAULT_PASS: "123qwe"
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.14
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123qwe
+    networks:
+      sd_network:
+        ipv4_address: 10.0.0.15
+
+  consul:
+    image: consul:1.13.4
+    container_name: dev-consul
+    ports:
+      - "8500:8500"  # HTTP API
+      - "8600:8600"
+      - "8600:8600/udp"
+    volumes:
+      - ./consul/data:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+      - CONSUL_ADVERTISE_ADDR=192.168.1.100
+    command: agent -dev -client=0.0.0.0
+    # networks:
+    #   sd_network:
+    #     ipv4_address: 10.0.0.2
+
+configs:
+  appsettings:
+    file: ./configs/appsettings.${ASPNETCORE_ENVIRONMENT}.json
+    name: appsettings
+  notification-env:
+    file: ./configs/.env
+    name: notification-env
+secrets:
+  public_key:
+    file: ./secrets/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+  private_key:
+    file: ./secrets/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+
+networks:
+  sd_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24

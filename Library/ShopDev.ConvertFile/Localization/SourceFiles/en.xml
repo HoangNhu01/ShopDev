@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_convert_file_InvalidFormatFileExtension">Invalid format file extension</text>
+		<text name="error_convert_file_ConvertFileServiceOutOfDuration">Convert file service service out of duration</text>
+		<text name="error_convert_file_InternalServerError">Internal server error</text>
+  </texts>
+</localizationDictionary>

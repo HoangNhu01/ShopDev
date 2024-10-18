@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Common\Localization\SourceFiles\*.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+	</ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="Protos\Product.proto" GrpcServices="Client" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="ClosedXML" Version="0.102.1" />
+		<PackageReference Include="Google.Protobuf" Version="3.27.2" />
+
+		<PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+
+		<PackageReference Include="Grpc.Net.Client" Version="2.64.0" />
+
+		<PackageReference Include="Grpc.Tools" Version="2.65.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Library\ShopDev.ApplicationBase\ShopDev.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.Notification\ShopDev.Notification.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.PaymentTool\ShopDev.PaymentTool.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
+		<ProjectReference Include="..\..\..\Library\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
+		<ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />
+		<ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />
+		<ProjectReference Include="..\ShopDev.Order.Domain\ShopDev.Order.Domain.csproj" />
+		<ProjectReference Include="..\ShopDev.Order.Infrastructure\ShopDev.Order.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="PaymentModule\Dtos\" />
+	</ItemGroup>
+
+</Project>

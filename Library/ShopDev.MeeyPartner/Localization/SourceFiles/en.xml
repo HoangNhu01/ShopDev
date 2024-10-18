@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_meey_partner_SendOtpNotSuccess">Send OTP not success</text>
+		<text name="error_meey_partner_ResendOtpNotSuccess">Resend OTP not success</text>
+		<text name="error_meey_partner_VerifyOtpNotSuccess">Verify OTP not success</text>
+		<text name="error_meey_partner_VerifyOtpTurnEnd">OTP code has turn end. Please request a resend</text>
+		<text name="error_meey_partner_VerifyOtpExpired">OTP code has expired. Please request a resend</text>
+		<text name="error_meey_partner_SendOtpMutipleRequest">Exceeded the allowed number of attempts to send authentication codes. Please try again later</text>
+	</texts>
+</localizationDictionary>

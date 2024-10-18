@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_meey_partner_SendOtpNotSuccess">Gửi OTP không thành công</text>
+		<text name="error_meey_partner_ResendOtpNotSuccess">Gửi lại OTP không thành công</text>
+		<text name="error_meey_partner_VerifyOtpNotSuccess">Xác thực OTP không thành công</text>
+		<text name="error_meey_partner_VerifyOtpTurnEnd">Mã OTP đã hết lượt xác thực. Vui lòng yêu cầu gửi lại</text>
+		<text name="error_meey_partner_VerifyOtpExpired">Mã OTP đã hết hạn. Vui lòng yêu cầu gửi lại</text>
+		<text name="error_meey_partner_SendOtpMutipleRequest">Vượt quá số lần gửi mã xác thực cho phép</text>
+	</texts>
+</localizationDictionary>

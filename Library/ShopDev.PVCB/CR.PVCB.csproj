@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Localization\SourceFiles\*.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
+	<PackageReference Include="GoogleAuthenticator" Version="3.1.1" />
+  </ItemGroup>
+  
+	<ItemGroup>
+		<ProjectReference Include="..\..\CR.ApplicationBase\CR.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\CR.InfrastructureBase\CR.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\..\CR.Utils\CR.Utils.csproj" />
+	</ItemGroup>
+</Project>

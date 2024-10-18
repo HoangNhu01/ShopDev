@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>false</InvariantGlobalization>
+        <UserSecretsId>79ace56c-30a4-428d-bde2-b9e860fa6550</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..\..</DockerfileContext>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1701;1702;1591</NoWarn>
+        <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="*.pem">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Include="*.crt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Include="*.pfx">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="k8s-meey-ca.Development.crt" />
+      <None Remove="protect_key_certificate.Development.pfx" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Views\Payment\ConfirmBill.cshtml" />
+      <None Include="Views\Shared\_Layout.cshtml" />
+      <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+      <None Include="Views\_ViewImports.cshtml" />
+      <None Include="Views\_ViewStart.cshtml" />
+    </ItemGroup>
+  
+  <ItemGroup>
+	  
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.5" />
+	  
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	  <ProjectReference Include="..\..\..\Library\ShopDev.IdentityServerBase\ShopDev.IdentityServerBase.csproj" />
+	  <ProjectReference Include="..\..\..\Library\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
+	  <ProjectReference Include="..\..\..\Library\ShopDev.WebAPIBase\ShopDev.WebAPIBase.csproj" />
+	  <ProjectReference Include="..\..\Shared\ShopDev.Common\ShopDev.Common.csproj" />
+	  <ProjectReference Include="..\..\Shared\ShopDev.UserRolePermission\ShopDev.UserRolePermission.csproj" />
+	  <ProjectReference Include="..\ShopDev.Order.ApplicationServices\ShopDev.Order.ApplicationServices.csproj" />
+  </ItemGroup>
+</Project>

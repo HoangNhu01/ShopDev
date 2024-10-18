@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_s3_ErrorMessage">{0}</text>
+		<text name="error_s3_UploadMediaError">Lỗi tải lên media</text>
+		<text name="error_s3_UploadMediaNotFound">Không tìm thấy tài nguyên Source/Bucket</text>
+		<text name="error_s3_UploadMediaBadRequest">Tải lên media không hợp lệ</text>
+
+		<text name="error_s3_DeleteMediaError">Lỗi xóa media</text>
+		<text name="error_s3_DeleteMediaNotFound">Không tìm thấy tài nguyên Source/Bucket</text>
+		<text name="error_s3_DeleteMediaBadRequest">Xóa media không hợp lệ</text>
+
+		<text name="error_s3_ReadMediaNotFound">Không tìm thấy tài nguyên Source/Bucket</text>
+		<text name="error_s3_ReadMediaBadRequest">Đọc media không hợp lệ</text>
+		<text name="error_s3_ReadMediaError">Lỗi đọc media</text>
+		<text name="error_s3_CreatBucketError">Lỗi tạo bucket</text>
+		<text name="error_s3_MoveFileError">Lỗi move file</text>
+		<text name="error_s3_MoveFileBadRequest">Move file không hợp lệ</text>
+
+	</texts>
+</localizationDictionary>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_ProductNotFound">Không tìm thấy sản phẩm</text>
+		<text name="error_VariationIsDuplicate">Không thể phân phối loại sản phẩm giống nhau</text>
+		<text name="error_OrderProcessProblemOccurs">Quá trình xử lý đơn đã xảy ra vấn đề</text>
+		<text name="error_OrderNotFound">Không tìm thấy đơn hàng</text>
+	</texts>
+</localizationDictionary>

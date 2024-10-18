@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option csharp_namespace = "ShopDev.Order.ApplicationServices.Protos";
+
+package product;
+// The greeting service definition.
+service ProductProto {
+  // Sends a greeting
+  rpc FindById (ProductRequest) returns (ProductResponse);
+}
+
+// The request message containing the user's name.
+message ProductRequest {
+  int32 id = 1;
+  int32 spuId = 2;
+  int32 quantity = 3;
+}
+
+// The response message containing the greetings.
+// The Product message
+message Product {
+    int32 id = 1;
+    string name = 2;
+    string title = 3;
+    int32 quantity = 4;
+    double price = 5;
+    int32 shopId = 6;
+    string thumbUri = 7;
+    int32 spuId = 8;
+    repeated Spu spus = 9;
+}
+
+// The Spu message
+message Spu {
+    string name = 2;
+    string options = 3;
+}
+
+message ProductResponse {
+    Product product = 1;
+}

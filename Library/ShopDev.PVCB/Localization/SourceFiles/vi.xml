@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<text name="error_pvcb_ErrorMessage">{0}</text>
+		<!--HttpCode"> 201-->
+		<text name="error_pvcb_WaitForConfirmation">Chờ thanh toán (201)</text>
+		<!--//Code 04,Không có HttpStatuscode-->
+		<text name="error_pvcb_TransactionPendingPayment">Giao dịch chờ thanh toán (04)</text>
+		<text name="error_pvcb_TheTransactionHasBeenRefunded">Giao dịch đã được hoàn tiền (06)</text>
+		<text name="error_pvcb_BackendResponseSuccess">Phản hồi thành công (08)</text>
+		<!--//HttpCode"> 400-->
+		<text name="error_pvcb_NoDataFound">Không tìm thấy thông tin dữ liệu (Code: 101)</text>
+		<text name="error_pvcb_TransactionIdNotFound">Không tìm thấy Id giao dịch (Code: 102)</text>
+		<text name="error_pvcb_OriginalPaymentNeverReceived">Chưa nhận được tiền gốc (Code: 103)</text>
+		<text name="error_pvcb_JSONRequestInvalid">Yêu cầu JSON không hợp lệ (Code: 028)</text>
+		<text name="error_pvcb_AmountExceededDailyTransactionLimit">Số tiền vượt hạn mức giao dịch trong ngày (Code: 301)</text>
+		<text name="error_pvcb_TransactionAmountExceedsTheAllowedLimit">Số tiền giao dịch vượt quá hạn mức cho phép (Code: 302)</text>
+		<text name="error_pvcb_TransactionAmountBelowAllowable">Số tiền giao dịch dưới mức cho phép (Code: 303)</text>
+		<text name="error_pvcb_TheAmountInTheAccountIsNotEnoughToMakeTheTransaction">Số tiền trong tài khoản không đủ để thực hiện giao dịch (Code: 304)</text>
+		<text name="error_pvcb_InvalidTransactionAmount">Số tiền giao dịch không hợp lệ (Code: 305)</text>
+		<text name="error_pvcb_CardNumberOrAccountNotFound">Không tìm thấy số thẻ/số tài khoản (Code: 401)</text>
+		<text name="error_pvcb_CardNumberOrAccountNotCorrect">Số thẻ/Tài khoản không đúng (Code: 402)</text>
+		<text name="error_pvcb_CardOrAccountStatusNotValid">Trạng thái thẻ/tài khoản không hợp lệ (Code: 403)</text>
+		<text name="error_pvcb_CardOrccountTypeNotValid">Loại thẻ/tài khoản không hợp lệ (Code: 404)</text>
+		<text name="error_pvcb_NameOnCardOrAccountNotCorrect">Tên thẻ/Tài khoản không đúng (Code: 405)</text>
+		<text name="error_pvcb_CardOrAccountNotActivated">Thẻ/Tài khoản chưa được kích hoạt (Code: 406)</text>
+		<text name="error_pvcb_CardOrAccountHasBeenBlocked">Thẻ/Tài khoản đã bị khóa (Code: 407)</text>
+		<text name="error_pvcb_InsufficientFunds">Không đủ tiền (Code: 409)</text>
+		<text name="error_pvcb_BeneficiaryBankIsNotValidOrHasNotJoinedTheService">Ngân hàng thụ hưởng không hợp lệ hoặc chưa tham gia dịch vụ (Code: 410)</text>
+		<text name="error_pvcb_ExpiredBeneficiaryCard">Thẻ thụ hưởng hết hạn sử dụng (Code: 411)</text>
+		<text name="error_pvcb_TransactionFailedBecauseDestinationCardIsInLostStatus">Giao dịch không thành công do thẻ đích bị mất (Code: 412)</text>
+		<text name="error_pvcb_CardNumberOrAccountHasExpired">Số thẻ/tài khoản đã hết hạn (Code: 413)</text>
+		<text name="error_pvcb_CardNumberIsInLostStatus">Số thẻ đang trong tình trạng bị thất lạc (Code: 414)</text>
+		<text name="error_pvcb_TransactionAmountExceedsTheAllowedLimitForTheDay">Số tiền giao dịch vượt quá hạn mức cho phép trong ngày (Code: 415)</text>
+		<text name="error_pvcb_NumberOfTransactionsRxceedingTheAllowedLimitInADay">Số lượng giao dịch vượt quá hạn mức cho phép trong ngày (Code: 416)</text>
+		<text name="error_pvcb_TimeoutFromBeneficiaryBank">Hết thời gian chờ từ ngân hàng thụ hưởng(Code: 417)</text>
+		<text name="error_pvcb_NoTransactionProcessingStatusMessagesFromNapas">Không có thông báo trạng thái xử lý giao dịch từ Napas(Code: 418)</text>
+		<text name="error_pvcb_ThisTransactionDoesNotSupportRefund">Giao dịch này không hỗ trợ hoàn tiền (Code: 501)</text>
+		<text name="error_pvcb_NotEligibleToUseTheService">Không đủ điều kiện sử dụng dịch vụ (Code: 502)</text>
+		<text name="error_pvcb_TransactionIsDuplicate">Giao dịch bị trùng lặp (Code: 503)</text>
+		<text name="error_pvcb_ClientIDInvalid">ID khách hàng không hợp lệ (Code: 600)</text>
+		<!--//Không có HttpStatus-->
+		<text name="error_pvcb_MACInvalid">MAC không hợp lệ (Code: 990)</text>
+		<!--//HttpStatus"> 500-->
+		<text name="error_pvcb_UnableToConnectToNapasSystem">Không thể kết nối với hệ thống Napas (Code: 991)</text>
+		<text name="error_pvcb_UnableToParseMessageFromNapas">Không thể phân tích tin nhắn từ Napas (Code: 992)</text>
+		<text name="error_pvcb_UnableToConnectToT24System">Không kết nối được với hệ thống T24 (Code 993)</text>
+		<text name="error_pvcb_UnableToConnectToERSSystem">Không kết nối được với hệ thống ERS (Code: 994)</text>
+		<!--//Không có HttpStatus-->
+		<text name="error_pvcb_GenerateMACFailure">Lỗi tạo MAC (Code: 995)</text>
+		<!--//HttpStatus"> 504-->
+		<text name="error_pvcb_Timeout">Quá thười gian kết nối (Code: 996)</text>
+		<!--//HttpStatus"> 500-->
+		<text name="error_pvcb_UnableToConnectToFESystem">Không kết nối được với hệ thống FE (Code: 997)</text>
+		<text name="error_pvcb_UnableToGetMessageFromNapasSystem">Không nhận được tin nhắn từ hệ thống Napas (Code: 68)</text>
+		<text name="error_pvcb_SystemHasAnErrorPleaseContactBankForMoreDetails">Hệ thống gặp lỗi. Vui lòng liên hệ ngân hàng để biết thêm chi tiết (Code: 999)</text>
+		<!--//HttpStatus"> 501-->
+		<text name="error_pvcb_TransactionsRejectedByInternalSystems">Giao dịch bị hệ thống nội bộ từ chối (Code: 027)</text>
+		<text name="error_pvcb_TransactionsRejectedByExternalSystems">Giao dịch bị hệ thống bên ngoài từ chối (Code: 029)</text>
+		<!--//HttpStatus"> 400-->
+		<text name="error_pvcb_DataCreditorAccountSourceNumberMustNotBeNull">Số tài khoản/số thẻ ngân hàng không được phép trống (Code: 0001)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeMustNotBeNull">Loại nguồn của tài khoản không được bỏ trống (Code: 0002)</text>
+		<text name="error_pvcb_RiskBINIdMustNotBeNull">Mã ngân hàng không được bỏ trống (Code: 0003)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeBeneficiaryAccountTypeACCAccountOrPANCard">Loại tài khoản thụ hưởng chỉ bao gồm ACC: tài khoản PAN: thẻ (Code: 0004)</text>
+		<text name="error_pvcb_DataTransIdMustNotBeNull">Mã giao dịch không được trống (Code: 0005)</text>
+		<text name="error_pvcb_DataDateTimeMustNotBeNull">Ngày giao dịch không được bỏ trống (Code: 0006)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberMustNotBeNull2">Số tài khoản/số thẻ ngân hàng không được phép trống (Code: 0007)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeMustNotBeNull2">Loại nguồn của tài khoản không được bỏ trống (Code: 0008)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountMustNotBeNull">Số tiền không được bỏ trống (Code: 0009)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountIsNotNumber">Số tiền trong giao dịch không phải là số (Code: 0010)</text>
+		<text name="error_pvcb_RiskBINIdMustNotBeNull2">Mã ngân hàng không được bỏ trống (Code: 0011)</text>
+		<text name="error_pvcb_DataTransIdAlreadyExists">Mã giao dịch đã tồn tại (Code: 0012)</text>
+		<text name="error_pvcb_DataDateTimeIsNotInTheCorrectFormat">Ngày giao dịch không đúng định dạng (Code: 0013)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceTypeBeneficiaryAccountTypeACCAccountPANCard">Loại tài khoản thụ hưởng chỉ bao gồm ACC: tài khoản PAN: thẻ (Code: 0014)</text>
+		<text name="error_pvcb_DataInstructedAmountAmountLimitPerTime">Số tiền bị giới hạn mỗi lần giao dịch (Code: 0015)</text>
+		<text name="error_pvcb_RiskTransDescNeedsToBeLessThan210Characters">Nội dung giao dịch phải ít hơn 210 ký tự (Code: 0016)</text>
+		<text name="error_pvcb_RiskMustNotBeNull">Risk không được rỗng (Code: 0017)</text>
+		<text name="error_pvcb_RiskTransDescMustNotBeNull">Nội dung giao dịch không được bỏ trống (Code: 0018)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNameMustNotBeNull">Tên nguồn tài khoản không được bỏ trống (Code: 0019)</text>
+		<text name="error_pvcb_RiskTransDescDoNotUseSpecialCharacters">Nội dung giao dịch không sử dụng ký tự đặc biệt (Code: 0020)</text>
+		<text name="error_pvcb_DataTransIdCannotBeANumber">Mã giao dịch không được là số (Code: 0021)</text>
+		<text name="error_pvcb_DataTransIdWrongFormat">Mã giao dịch sai định dạng (Code: 0022)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberCannotBeANumber">Số tài khoản/số thẻ ngân không được là số (Code: 0023)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNumberWrongFormat">Số tài khoản/số thẻ ngân sai định dạng (Code: 0024)</text>
+		<text name="error_pvcb_RiskTransDescCannotBeANumber">Nội dung giao dịch không được là số (Code: 0025)</text>
+		<text name="error_pvcb_DataCreditorAccountSourceNameCannotBeANumber">Tên nguồn tài khoản không được là số (Code: 0026)</text>
+		<text name="error_pvcb_SystemErrorPleaseTrAagainLater">Lỗi hệ thống vui lòng thử lại sau (Code: 500)</text>
+		<text name="error_pvcb_SystemError">Lỗi hệ thống (Code: 400)</text>
+		
+		<text name="error_pvcb_PvcbBadRequest">Kết nối đến PVCB không hợp lệ</text>
+    	<text name="error_pvcb_PvcbCannotConnectToServer">Không thể kết nối đến PVCB</text>
+		<text name="error_pvcb_PvcbError">Có lỗi xảy ra trong quá trình kết nối đến PVCB</text>
+		
+		<text name="error_pvcb_PvcbResponseDataNull">Lỗi kết quả rả về từ PVCB</text>
+		<text name="error_pvcb_PvcbResponseCredittorAccountNull">Lỗi thông tin trả về từ PVCB</text>
+		<text name="error_pvcb_PvcbResponseSourceNameNull">Lỗi kết quả truy vấn tài khoản ngân hàng từ PVCB</text>
+
+		<text name="error_pvcb_GetInforNotFound">Không thể mở tài khoản ảo (Code: 134)</text>
+		<text name="error_pvcb_GetVirtualAccNotFound">Không tìm thấy thông tin tài khoản ảo (Code: 136)</text>
+		<text name="error_pvcb_GetTransactionVirtualAccNotFound">Không tìm thấy thông tin giao dịch (Code: 135)</text>
+		<text name="error_pvcb_VAIsClosed">Tài khoản này đã bị khóa, không thể đóng tài khoản! (Code: 113)</text>
+		<text name="error_pvcb_LiveRecordNotChange">Lỗi, tài khoản này không đổi trạng thái (Code: 121)</text>
+		<text name="error_pvcb_NotAllowClose">Không thể đóng tài khoản khi đang trong trạng thái khóa (Code: 133)</text>
+
+		<!--ErrorPVcomBankeKYC-->
+		<text name="error_pvcb_EkycErrorHttpRequest">PVcomBank Ekyc lỗi request</text>
+		<text name="error_pvcb_EkycErrorGetInformationUnauthorized">PVcomBank Ekyc lỗi xác thực</text>
+		<text name="error_pvcb_EkycErrorGetInformationNotFound">PVcomBank Ekyc không tìm thấy thông tin</text>
+    <text name="error_pvcb_AnErrorOccurred">Có lỗi xảy ra!</text>
+  </texts>
+</localizationDictionary>

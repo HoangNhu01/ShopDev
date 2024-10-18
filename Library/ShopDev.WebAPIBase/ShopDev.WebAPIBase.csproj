@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+            <PackageReference Include="AutoMapper" Version="12.0.1" />
+            <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+            <PackageReference Include="Hangfire" Version="1.8.11" />
+            <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+            <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.2" />
+            <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.2" />
+            <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+            <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
+            <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
+            <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.4.0" />
+            <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+            <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+            <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+            <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
+            <PackageReference Include="Serilog.Sinks.Network" Version="2.0.2.68" />
+            <PackageReference Include="Serilog.Sinks.RabbitMQ" Version="7.0.2" />
+            <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+            <PackageReference Include="OpenIddict.AspNetCore" Version="5.4.0" />
+            <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+            <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+            <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+            <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+            <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+            <PackageReference Include="Serilog.Sinks.Http" Version="8.0.0" />
+            <PackageReference Include="Elastic.CommonSchema.Serilog" Version="8.6.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ShopDev.ConvertFile\ShopDev.ConvertFile.csproj" />
+		<ProjectReference Include="..\ShopDev.InfrastructureBase\ShopDev.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\ShopDev.RabbitMQ\ShopDev.RabbitMQ.csproj" />
+		<ProjectReference Include="..\ShopDev.S3Bucket\ShopDev.S3Bucket.csproj" />
+		<ProjectReference Include="..\ShopDev.Utils\ShopDev.Utils.csproj" />
+	</ItemGroup>
+
+</Project>

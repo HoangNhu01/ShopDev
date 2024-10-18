@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<text name="error_ProductNotFound">Product is not found</text>
+		<text name="error_VariationIsDuplicate">Variation is duplicate</text>
+	</texts>
+</localizationDictionary>
