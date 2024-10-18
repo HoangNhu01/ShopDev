@@ -176,7 +176,7 @@ namespace ShopDev.WebAPIBase
         }
 
         [Obsolete]
-        public static void ConfigureSignalR(this WebApplicationBuilder builder)
+        public static void ConfigureSignalRObsolete(this WebApplicationBuilder builder)
         {
             //nếu có cấu hình redis
             string? redisConnectionString = builder.Configuration.GetConnectionString(Redis);
