@@ -1,119 +1,27 @@
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Database;
 using ShopDev.Constants.Users;
 using ShopDev.EntitiesBase.AuthorizationEntities;
 
-namespace ShopDev.Authentication.Domain.Users
+namespace ShopDev.Chat.Domain.Users
 {
     /// <summary>
     /// User
     /// </summary>
-    [Table(nameof(User), Schema = DbSchemas.Default)]
-    [Index(
-        nameof(Username),
-        nameof(CreatedDate),
-        nameof(Status),
-        nameof(UserType),
-        Name = $"IX_{nameof(User)}"
-    )]
-    public class User : IUser
+    public class User : IFullAudited
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string Id { get; set; } // ID của người dùng
 
-        [Required]
-        [MaxLength(128)]
-        [Unicode(false)]
-        public required string Username { get; set; }
-
-        [Required]
-        [MaxLength(128)]
-        [Unicode(false)]
-        public required string Password { get; set; }
-
-        [MaxLength(256)]
-        public string? FullName { get; set; }
-
-        /// <summary>
-        /// Loại user <see cref="UserTypes"/>
-        /// </summary>
-        public int UserType { get; set; }
-
-        /// <summary>
-        /// Trạng thái user <see cref="UserStatus"/>
-        /// </summary>
-        public int Status { get; set; }
-
-        /// <summary>
-        /// Thời gian xóa tài khoản theo Status = 3(LOCK)
-        /// </summary>
-        public DateTime? LockedStatus { get; set; }
-
-        /// <summary>
-        /// Mã pin
-        /// </summary>
-        [MaxLength(128)]
-        [Unicode(false)]
-        public string? PinCode { get; set; }
-        public bool IsTempPin { get; set; }
-
-        /// <summary>
-        /// Có phải là mật khẩu tạm, Yêu cầu thay đổi mật khẩu mới ngay khi đăng nhập
-        /// </summary>
-        public bool IsPasswordTemp { get; set; }
-
-        /// <summary>
-        /// Lần đầu đăng nhập vào App
-        /// Mặc định là false. True khi tạo tài khoản trên Cms chọn là mật khẩu tạm !IsPasswordTemp
-        /// </summary>
-        public bool IsFirstTime { get; set; }
-
-        [MaxLength(256)]
-        public string? OperatingSystem { get; set; }
-
-        [MaxLength(256)]
-        public string? Browser { get; set; }
-        public DateTime? LastLogin { get; set; }
-
-        /// <summary>
-        /// Ảnh đại diện
-        /// </summary>
-        [MaxLength(2048)]
-        public string? AvatarImageUri { get; set; }
-
-        /// <summary>
-        /// S3 Key
-        /// </summary>
-        [MaxLength(2024)]
-        public string? S3Key { get; set; }
-
-        /// <summary>
-        /// requestId Otp từ MeeyPartner
-        /// </summary>
-        [MaxLength(128)]
-        public string? OtpRequestId { get; set; }
-
-        /// <summary>
-        /// Thời gian gửi lại Otp khi quá số lần gửi Otp từ MeeyPartner
-        /// </summary>
-        public DateTime? ResendOtpDate { get; set; }
-
-        public int LoginFailCount { get; set; }
-        public DateTime DateTimeLoginFailCount { get; set; }
-
-        /// <summary>
-        /// Mã bí mật khi xác nhận quên mật khẩu
-        /// </summary>
-        [MaxLength(128)]
-        public string? SecretPasswordCode { get; set; }
-
-        /// <summary>
-        /// Thời gian hết hạn mã bí mật khi xác nhận quên mật khẩu
-        /// </summary>
-        public DateTime? SecretPasswordExpiryDate { get; set; }
-        public List<UserRole> UserRoles { get; set; } = [];
-
+        public required string Username { get; set; } // Tên người dùng
+        public required string Email { get; set; } // Địa chỉ email
+        public DateTime? LastLogin { get; set; } // Ngày đăng nhập gần nhất
+        public required string ProfilePicture { get; set; } // URL ảnh đại diện
+        public required string Status { get; set; } // Trạng thái người dùng (online, offline)
         #region audit
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
