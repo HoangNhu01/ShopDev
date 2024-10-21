@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace ShopDev.Chat.Infrastructure.Repository
 {
     public interface IRepository<TEntity, TFilter>
@@ -17,5 +19,9 @@ namespace ShopDev.Chat.Infrastructure.Repository
         Task<PagingResult<TEntity>> GetPaginatedAsync(int pageNumber, int pageSize);
         Task<bool> AnyAsync(TFilter filter);
         Task<IEnumerable<TEntity>> CreateManyAsync(IEnumerable<TEntity> entities);
+		Task<object> ProjectionOneAsync(
+			 TFilter filter,
+			 Expression<Func<TEntity, object>> projectionExpression
+		 );
     }
 }

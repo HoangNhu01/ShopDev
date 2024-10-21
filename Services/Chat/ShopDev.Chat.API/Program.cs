@@ -9,8 +9,11 @@ using MongoDB.Driver;
 using ShopDev.ApplicationBase.Localization;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Chat.API.Hubs;
+using ShopDev.Chat.ApplicationServices.ChatModule.Abstract;
 using ShopDev.Chat.ApplicationServices.Common;
 using ShopDev.Chat.ApplicationServices.Common.Localization;
+using ShopDev.Chat.Domain.Chats.ChatModule.Implements;
+using ShopDev.Chat.Infrastructure.Persistence;
 using ShopDev.Chat.Infrastructure.Persistence.SeedData;
 using ShopDev.Chat.Infrastructure.Persistence.UnitOfWork;
 using ShopDev.Chat.Infrastructure.Repositories.Abstracts;
@@ -110,12 +113,28 @@ namespace ShopDev.Chat.API
                 },
                 poolSize: 128
             );
+            builder.Services.AddDbContextPool<ChatDbContext>(
+				 options =>
+				 {
+					 //options.UseInMemoryDatabase("DbDefault");
+					 options.UseSqlServer(
+						 authConnectionString,
+						 sqlOptions =>
+						 {
+							 sqlOptions.EnableRetryOnFailure();
+						 }
+					 );
+				 },
+				poolSize: 128);
 
-            builder.ConfigureS3();
+			builder.ConfigureS3();
             builder.Services.AddSingleton<IMapErrorCode, ChatMapErrorCode>();
             builder.Services.AddSingleton<LocalizationBase, ChatLocalization>();
+            builder.Services.AddScoped<IConversationService, ConversationService>();
+            builder.Services.AddScoped<IMessageService, MessageService>();
+			builder.Services.AddSingleton<MessageBrokerService>();
 
-            builder.Services.Configure<MongoDBSettings>(
+			builder.Services.Configure<MongoDBSettings>(
                 builder.Configuration.GetSection("MongoDB")
             );
 
@@ -136,6 +155,8 @@ namespace ShopDev.Chat.API
 
             builder.Services.AddScoped<IChatUnitOfWork, ChatUnitOfWork>();
             builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+            builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (EnvironmentNames.DevelopEnv.Any(x => x == app.Environment.EnvironmentName))
@@ -156,11 +177,12 @@ namespace ShopDev.Chat.API
             app.UseRequestLocalizationCustom();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCheckAuthorizationToken();
+           // app.UseCheckAuthorizationToken();
             //app.UseCheckUser();
             app.MapControllers();
             app.MapHealthChecks("/health");
             app.MapHub<ChatHub>("/chat-hub");
+            app.MapHub<NotificationHub>("/notification-hub");
             app.Run();
         }
     }

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.9.34407.89
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{657D0E0A-C1E3-4323-B40B-17BF92E5DBD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Authentication.API", "Services\Authentication\ShopDev.Authentication.API\ShopDev.Authentication.API.csproj", "{1B8EA37C-D4F4-403C-A675-CAAB98D235DA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4DDEAE9F-010D-40AB-B184-AC63831405CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Authentication.Infrastructure", "Services\Authentication\ShopDev.Authentication.Infrastructure\ShopDev.Authentication.Infrastructure.csproj", "{C377858C-BD41-482B-A3A2-894E9608F4CB}"
@@ -84,7 +82,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.ServiceDiscovery", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.PaymentTool", "Library\ShopDev.PaymentTool\ShopDev.PaymentTool.csproj", "{ABE463D2-4480-4151-B9DB-7FEC4BC17911}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopDev.SignalR", "Library\ShopDev.SignalR\ShopDev.SignalR.csproj", "{B7C341BF-A66D-47F3-8855-A0B44F997912}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.SignalR", "Library\ShopDev.SignalR\ShopDev.SignalR.csproj", "{B7C341BF-A66D-47F3-8855-A0B44F997912}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chat", "Chat", "{217E01E1-DDD2-4910-9D83-CC13BF2901BB}"
 EndProject
@@ -96,16 +94,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Chat.Domain", "Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Chat.Infrastructure", "Services\Chat\ShopDev.Chat.Infrastructure\ShopDev.Chat.Infrastructure.csproj", "{D1698197-DF2D-4238-92FB-0E6A2174ED2B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Authentication.API", "Services\Authentication\ShopDev.Authentication.API\ShopDev.Authentication.API.csproj", "{2E422B65-218A-4883-B556-3E78FA7D7CAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1B8EA37C-D4F4-403C-A675-CAAB98D235DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B8EA37C-D4F4-403C-A675-CAAB98D235DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B8EA37C-D4F4-403C-A675-CAAB98D235DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B8EA37C-D4F4-403C-A675-CAAB98D235DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C377858C-BD41-482B-A3A2-894E9608F4CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C377858C-BD41-482B-A3A2-894E9608F4CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C377858C-BD41-482B-A3A2-894E9608F4CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -234,12 +230,15 @@ Global
 		{D1698197-DF2D-4238-92FB-0E6A2174ED2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1698197-DF2D-4238-92FB-0E6A2174ED2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1698197-DF2D-4238-92FB-0E6A2174ED2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1B8EA37C-D4F4-403C-A675-CAAB98D235DA} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
 		{C377858C-BD41-482B-A3A2-894E9608F4CB} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
 		{5EF7C01B-22C2-454C-9992-3E371A45CD4F} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
 		{C25384DA-264C-41FB-A1A6-D0FCE979D503} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
@@ -280,6 +279,7 @@ Global
 		{F5AB59EE-DD61-49B0-953A-A382A7FE495E} = {217E01E1-DDD2-4910-9D83-CC13BF2901BB}
 		{41A3F0BA-92A5-470F-9A4D-EC95EA4D2F7B} = {217E01E1-DDD2-4910-9D83-CC13BF2901BB}
 		{D1698197-DF2D-4238-92FB-0E6A2174ED2B} = {217E01E1-DDD2-4910-9D83-CC13BF2901BB}
+		{2E422B65-218A-4883-B556-3E78FA7D7CAC} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9FD0C05-0CF5-4023-8A3A-00662DC03F85}

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Pipelines.Sockets.Unofficial.Arenas;
 using ShopDev.Abstractions.EntitiesBase.Interfaces;
 using ShopDev.Constants.Header;
 using ShopDev.EntitiesBase.Base;
@@ -23,6 +25,7 @@ namespace ShopDev.Chat.Infrastructure.Repository
         protected readonly int? TenantId;
         protected readonly IMongoCollection<TEntity> _collection;
         protected StringValues XRequestId;
+        protected IMongoDatabase _database;
 
         public Repository(
             ILogger logger,
@@ -32,16 +35,16 @@ namespace ShopDev.Chat.Infrastructure.Repository
         )
         {
             if (
-                httpContextAccessor.HttpContext?.Request.Headers.TryGetValue(
-                    HeaderNames.XRequestId,
-                    out var requestId
-                ) == true
+                httpContextAccessor
+                    .HttpContext?.Request
+                    .Headers.TryGetValue(HeaderNames.XRequestId, out var requestId) == true
             )
             {
                 XRequestId = requestId;
                 Serilog.Log.ForContext<ILogger>().ForContext("XRequestId", requestId);
             }
             _logger = logger;
+            _database = database;
             _collection = database.GetCollection<TEntity>(collectionName);
             var claims = httpContextAccessor.HttpContext?.User?.Identity as ClaimsIdentity;
             var claim = claims?.FindFirst("user_id");
@@ -362,6 +365,23 @@ namespace ShopDev.Chat.Infrastructure.Repository
                 update.ToJson()
             );
             await _collection.UpdateOneAsync(filterAnd, update);
+        }
+
+        public async Task<object> ProjectionOneAsync(
+            TFilter filter,
+            Expression<Func<TEntity, object>> projectionExpression
+        )
+        {
+            var filterAnd = filter & CreateFilter();
+            _logger.LogInformation(
+                "{Repo}->{Method}: {Filter} = {FilterData}",
+                GetType().FullName,
+                nameof(DeleteAsync),
+                nameof(filter),
+                filter.ToJson()
+            );
+            var projection = Builders<TEntity>.Projection.Expression(projectionExpression);
+            return (await _collection.Find(filter).Project(projection).FirstOrDefaultAsync());
         }
 
         public abstract Task SetIndex();

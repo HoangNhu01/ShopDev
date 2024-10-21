@@ -181,7 +181,7 @@ namespace ShopDev.Utils.Cache
         /// <param name="pattern"></param>
         public static async Task RemoveByPatternAsync(
             this IDistributedCache cache,
-            ConnectionMultiplexer connection,
+            IConnectionMultiplexer connection,
             string pattern
         )
         {

@@ -8,7 +8,7 @@ using ShopDev.Constants.Users;
 namespace ShopDev.SignalR
 {
     [Authorize]
-    public abstract class BaseHub<TClient> : Hub<TClient>
+    public class BaseHub<TClient> : Hub<TClient>
         where TClient : class, IHubClient
 	{
         private readonly ILogger<BaseHub<TClient>> _logger;
@@ -42,11 +42,10 @@ namespace ShopDev.SignalR
         /// </summary>
         /// <param name="groupName"></param>
         /// <returns></returns>
-        public async Task JoinGroup(string groupName)
+        public virtual async  Task JoinGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
-        public abstract Task SendMessage(object message);
     }
 }

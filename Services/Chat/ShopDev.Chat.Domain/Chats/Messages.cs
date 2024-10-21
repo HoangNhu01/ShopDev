@@ -1,16 +1,19 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using ShopDev.Abstractions.EntitiesBase.Interfaces;
+using ShopDev.EntitiesBase.Base;
 
 namespace ShopDev.Chat.Domain.Chats
 {
-    public class Message
+    public class Message: IFullAudited, IEntity<string>
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public required string Id { get; set; }  // ID của tin nhắn
 
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string ChatId { get; set; }  // ID cuộc trò chuyện
+        public required string ConversationId { get; set; }  // ID cuộc trò chuyện
+        public string? ConversationName { get; set; }  // ID cuộc trò chuyện
 
         [BsonRepresentation(BsonType.ObjectId)]
         public required string SenderId { get; set; }  // ID người gửi
@@ -27,8 +30,19 @@ namespace ShopDev.Chat.Domain.Chats
         public List<Reader> Readers { get; set; } = [];  // Danh sách người đã đọc
         public List<Reaction> Reactions { get; set; } = [];  // Danh sách người đã reaction
         public List<ChatDocument>? Documents { get; set; }  // Danh sách tài liệu
-    }
-    public class Reaction 
+
+		#region audit
+		public DateTime? CreatedDate { get; set; }
+		public int? CreatedBy { get; set; }
+		public DateTime? ModifiedDate { get; set; }
+		public int? ModifiedBy { get; set; }
+		public DateTime? DeletedDate { get; set; }
+		public int? DeletedBy { get; set; }
+		public bool Deleted { get; set; }
+		#endregion
+
+	}
+	public class Reaction 
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public required string UserId { get; set; }  // ID người dùng

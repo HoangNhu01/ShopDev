@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Hangfire;
 using MB.Authentication.ApplicationServices.AuthenticationModule.Abstract;
-using ShopDev.Utils.Cache;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -14,6 +13,7 @@ using ShopDev.Authentication.ApplicationServices.Common;
 using ShopDev.Authentication.Infrastructure.Persistence;
 using ShopDev.Constants.Common.Cache;
 using ShopDev.InfrastructureBase.Hangfire.Attributes;
+using ShopDev.Utils.Cache;
 using StackExchange.Redis;
 
 namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implements
@@ -21,7 +21,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
     public class ManagerTokenService : AuthenticationServiceBase, IManagerTokenService
     {
         private readonly IOpenIddictTokenManager _tokenManager;
-        private readonly ConnectionMultiplexer _connectionMultiplexerRedis;
+        private readonly IConnectionMultiplexer _connectionMultiplexerRedis;
         private readonly IDistributedCache _distributedCache;
         private readonly IOpenIddictAuthorizationManager _openIddictAuthorizationManager;
 
@@ -33,7 +33,7 @@ namespace ShopDev.Authentication.ApplicationServices.AuthenticationModule.Implem
             LocalizationBase localizationBase,
             IMapper mapper,
             IOpenIddictTokenManager tokenManager,
-            ConnectionMultiplexer connectionMultiplexerRedis,
+            IConnectionMultiplexer connectionMultiplexerRedis,
             IDistributedCache distributedCache,
             IOpenIddictAuthorizationManager openIddictAuthorizationManager
         )

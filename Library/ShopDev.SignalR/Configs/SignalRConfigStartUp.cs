@@ -41,7 +41,7 @@ namespace MB.SignalR.Configs
 						var config = configOptions;
 						var multiplexer = builder
 							.Services.BuildServiceProvider()
-							.GetRequiredService<ConnectionMultiplexer>();
+							.GetRequiredService<IConnectionMultiplexer>();
 
 						var connection = multiplexer;
 

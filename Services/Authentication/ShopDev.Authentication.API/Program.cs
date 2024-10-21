@@ -95,7 +95,7 @@ namespace ShopDev.Authentication.API
                     "Không tìm thấy connection string \"Default\" trong appsettings.json"
                 );
             Console.WriteLine(connectionString);
-
+            builder.ConfigureHangfire(connectionString, DbSchemas.Default);
             //entity framework
             builder.Services.AddDbContextPool<AuthenticationDbContext>(
                 options =>
@@ -131,6 +131,7 @@ namespace ShopDev.Authentication.API
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<INotificationTokenService, NotificationTokenService>();
             builder.Services.AddScoped<IS3ManagerFileService, S3ManagerFileService>();
+            builder.Services.AddScoped<IManagerTokenService, ManagerTokenService>();
             builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
             var app = builder.Build();
