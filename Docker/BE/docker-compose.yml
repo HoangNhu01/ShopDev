@@ -117,6 +117,7 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
       - 27017:27017
     volumes:

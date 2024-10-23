@@ -24,7 +24,6 @@ namespace ShopDev.SignalR
             _logger.LogInformation($"{nameof(OnConnectedAsync)}: userId = {userId} has connected");
             await JoinGroup(GroupNames.NOTIFY_GROUP + userId);
 			await base.OnConnectedAsync();
-
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
