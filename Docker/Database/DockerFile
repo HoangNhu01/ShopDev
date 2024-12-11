@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/mssql/server:2022-latest
+# Đặt password cho sa user
+ENV ACCEPT_EULA=Y
+ENV MSSQL_SA_PASSWORD=123@qwe123
+# Chạy với quyền root
+USER root
+RUN chmod -R 777 /var/lib/apt/lists
+# Đảm bảo biến PATH được thiết lập
+ENV PATH="/opt/mssql-tools/bin:$PATH"
+# Sao chép script SQL
+COPY configure_alwayson.sql /usr/configure_alwayson.sql
+
+# Tạo entrypoint script với quyền thực thi
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Thiết lập các thư mục
+RUN mkdir -p /var/opt/mssql
+
+ENTRYPOINT ["/entrypoint.sh"]

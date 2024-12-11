@@ -135,7 +135,8 @@ namespace ShopDev.Authentication.API
             builder.Services.AddSingleton<LocalizationBase, AuthenticationLocalization>();
 
             var app = builder.Build();
-            using (var scope = app.Services.CreateScope())
+			app.Urls.Add("http://0.0.0.0:5001"); // Thêm dòng này để lắng nghe trên tất cả IP ở cổng 5000
+			using (var scope = app.Services.CreateScope())
             {
                 var managerTokenService =
                     scope.ServiceProvider.GetRequiredService<IManagerTokenService>();

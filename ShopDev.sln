@@ -96,6 +96,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Chat.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Authentication.API", "Services\Authentication\ShopDev.Authentication.API\ShopDev.Authentication.API.csproj", "{2E422B65-218A-4883-B556-3E78FA7D7CAC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopDev.Kafka", "Library\ShopDev.Kafka\ShopDev.Kafka.csproj", "{98C68845-D3D2-46CE-B36D-551B6F455A7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -234,6 +236,10 @@ Global
 		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E422B65-218A-4883-B556-3E78FA7D7CAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C68845-D3D2-46CE-B36D-551B6F455A7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C68845-D3D2-46CE-B36D-551B6F455A7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C68845-D3D2-46CE-B36D-551B6F455A7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C68845-D3D2-46CE-B36D-551B6F455A7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,6 +286,7 @@ Global
 		{41A3F0BA-92A5-470F-9A4D-EC95EA4D2F7B} = {217E01E1-DDD2-4910-9D83-CC13BF2901BB}
 		{D1698197-DF2D-4238-92FB-0E6A2174ED2B} = {217E01E1-DDD2-4910-9D83-CC13BF2901BB}
 		{2E422B65-218A-4883-B556-3E78FA7D7CAC} = {E4C73187-ECAF-47C7-8AE3-334C33AF5692}
+		{98C68845-D3D2-46CE-B36D-551B6F455A7C} = {4ABCF73B-D6C1-45DD-B611-2F8C6A1A1D3A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9FD0C05-0CF5-4023-8A3A-00662DC03F85}

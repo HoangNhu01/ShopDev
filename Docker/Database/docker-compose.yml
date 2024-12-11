@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  sqlserver_primary:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: sqlserver_primary
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "123@qwe123"
+      HADR_ENABLED: 1
+      MSSQL_AGENT_ENABLED: true
+    networks:
+      - sql_network
+    ports:
+      - "6001:1433"
+      - "5022:5022"  # Endpoint cho Always On
+    # volumes:
+    #   - sql_data_primary:/var/opt/mssql
+    hostname: sqlserver_primary
+    restart: always
+
+  sqlserver_secondary:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: sqlserver_secondary
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "123@qwe123"
+      HADR_ENABLED: 1
+      MSSQL_AGENT_ENABLED: true
+    networks:
+      - sql_network
+    ports:
+      - "6002:1433"
+      - "5023:5022"  # Endpoint cho Always On
+    # volumes:
+    #   - sql_data_secondary:/var/opt/mssql
+    hostname: sqlserver_secondary
+    restart: always
+
+networks:
+  sql_network:
+    driver: bridge
+
+volumes:
+  sql_data_primary:
+    driver: local
+  sql_data_secondary:
+    driver: local
